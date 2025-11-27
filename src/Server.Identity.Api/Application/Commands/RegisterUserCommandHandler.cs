@@ -1,25 +1,23 @@
 ﻿using MediatR;
-using Server.Identity.Api.Application.Commands;
+using Server.Identity.Api.Infrastructure;
+using Server.Identity.Api.Models.Entities;
 
 namespace Server.Identity.Api.Application.Commands;
-public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, bool>
+public class RegisterUserCommandHandler(UserContext _userContext)
+: IRequestHandler<RegisterUserCommand, bool>
 {
-    //private readonly IOrderRepository _orderRepository;
-
-    //public RegisterUserCommandHandler(IOrderRepository orderRepository)
-    //{
-    //    _orderRepository = orderRepository;
-    //}
     public async Task<bool> Handle(RegisterUserCommand command, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
-        //var orderToUpdate = await _orderRepository.GetAsync(command.OrderNumber);
-        //if (orderToUpdate == null)
-        //{
-        //    return false;
-        //}
-
-        //orderToUpdate.SetCancelledStatus();
-        //return await _orderRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
+        var user = new User()
+        {
+            UserAccount = command.UserAccount,
+            UserPassword = command.UserPassword,
+            UserRole = "admin",
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow
+        };
+        await _userContext.Users.AddAsync(user, cancellationToken);
+        await _userContext.SaveChangesAsync(cancellationToken);
+        return true;
     }
 }

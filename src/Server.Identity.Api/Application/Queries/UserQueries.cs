@@ -1,26 +1,29 @@
-﻿using Server.Identity.Api.Models.Responses;
+﻿using Microsoft.EntityFrameworkCore;
+using Server.Common.Types;
+using Server.Identity.Api.Infrastructure;
+using Server.Identity.Api.Models.Responses;
 
 namespace Server.Identity.Api.Application.Queries;
 
-public class UserQueries : IUserQueries
+public class UserQueries(UserContext _userContext) : IUserQueries
 {
     public async Task<LoginUserDto> GetUserByPassword(string userAccount, string password)
     {
-        var user = new LoginUserDto()
+        var user = await _userContext.Users.FirstOrDefaultAsync(u => u.UserAccount == userAccount && u.UserPassword == password);
+        if (user == null)
         {
-            Id = 1,
-            UserName = "TestUser",
-        };
-        return user;
+            throw new ExceptionNotFound("User not found or password is incorrect");
+        }
+        return new LoginUserDto(user);
     }
     public async Task<LoginUserDto> GetUserById(int userId)
     {
-        var user = new LoginUserDto()
+        var user = await _userContext.Users.FirstOrDefaultAsync(u => u.Id == userId);
+        if (user == null)
         {
-            Id = 1,
-            UserName = "TestUser",
-        };
-        return user;
+            throw new ExceptionNotFound($"User with ID {userId} not found");
+        }
+        return new LoginUserDto(user);
     }
 }
 
