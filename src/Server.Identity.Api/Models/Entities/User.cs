@@ -3,8 +3,8 @@
 namespace Server.Identity.Api.Models.Entities;
 public class User : AuditableEntity
 {
-    public string UserAccount { get; set; }
-    public string UserPassword { get; set; }
+    public string UserAccount { get; set; } = string.Empty;
+    public string UserPassword { get; set; } = string.Empty;
     public string? UserEmail { get; set; }
     public string? UserName { get; set; }
     public string? UserAvatar { get; set; }
@@ -12,6 +12,6 @@ public class User : AuditableEntity
     /// <summary>
     /// User role: admin, user, editor 
     /// </summary>
-    public string UserRole { get; set; }
+    public string UserRole { get; set; } = string.Empty;
 }
 
