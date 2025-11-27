@@ -6,6 +6,7 @@ using Server.Identity.Api;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddJwt(builder.Configuration);
+builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddApplicationServices(builder.Configuration);
 
 builder.Services.AddControllers();

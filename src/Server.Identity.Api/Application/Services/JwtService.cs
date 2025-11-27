@@ -2,15 +2,17 @@
 using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Microsoft.Extensions.Options;
+using Server.Common.Configurations;
 
 namespace Server.Identity.Api.Application.Services;
-public class JwtService(IConfiguration _config) : IJwtService
+public class JwtService(IOptions<JwtSettings> _jwtSettings) : IJwtService
 {
 
     public string GenerateToken(string userId, string username)
     {
-        var jwtSettings = _config.GetSection("Jwt");
-        var key = Encoding.UTF8.GetBytes(jwtSettings["Key"]);
+        var settings = _jwtSettings.Value;
+        var key = Encoding.UTF8.GetBytes(settings.Key);
 
         var claims = new[]
         {
@@ -22,7 +24,7 @@ public class JwtService(IConfiguration _config) : IJwtService
             //issuer: jwtSettings["Issuer"],
             //audience: jwtSettings["Audience"],
             claims: claims,
-            expires: DateTime.UtcNow.AddHours(Convert.ToDouble(jwtSettings["ExpireHours"])),
+            expires: DateTime.UtcNow.AddHours(Convert.ToDouble(settings.ExpireHours)),
             signingCredentials: new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256)
         );
 

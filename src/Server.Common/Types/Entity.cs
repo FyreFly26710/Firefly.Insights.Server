@@ -12,6 +12,6 @@ public abstract class Entity
 public abstract class AuditableEntity : Entity
 {
     public DateTime CreatedAt { get; set; }
-    public DateTime UpdatedAt { get; set; } = DateTime.Now;
+    public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
     public bool IsDeleted { get; set; } = false;
 }
