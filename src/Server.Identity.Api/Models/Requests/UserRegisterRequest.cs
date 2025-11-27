@@ -15,11 +15,14 @@ public class UserRegisterRequestValidator : AbstractValidator<UserRegisterReques
     public UserRegisterRequestValidator()
     {
         RuleFor(x => x.UserAccount)
-            .NotEmpty().WithMessage("User account is required");
+            .NotEmpty().WithMessage("User account is required")
+            .MinimumLength(4)
+            .MaximumLength(20);
 
         RuleFor(x => x.UserPassword)
             .NotEmpty().WithMessage("Password is required")
-            .MinimumLength(6).WithMessage("Password must be at least 6 characters");
+            .MinimumLength(4)
+            .MaximumLength(20);
 
         RuleFor(x => x.ConfirmPassword)
             .Equal(x => x.UserPassword).WithMessage("Passwords do not match");

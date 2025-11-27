@@ -1,7 +1,11 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Server.Common.Exceptions;
-using Server.Identity.Api.Interfaces.Services;
+using Server.Common.Types;
+using Server.Common.Utils;
+using Server.Identity.Api.Application.Commands;
+using Server.Identity.Api.Application.Queries;
+using Server.Identity.Api.Application.Services;
 using Server.Identity.Api.Models.Requests;
 using Server.Identity.Api.Models.Responses;
 
@@ -10,29 +14,30 @@ namespace Server.Identity.Api.Controllers;
 [ApiController]
 [Route("api/identity/auth")]
 public class AuthController(
-    IUserService _userService,
+    IUserQueries _userQueries,
     IJwtService _jwtService,
+    IMediator _mediator,
     ILogger<AuthController> _logger)
     : ControllerBase
 {
 
-    //[HttpPost("register")]
-    //public async Task<ActionResult<string>> Register([FromBody] UserRegisterRequest request)
-    //{
-    //    if (EnvUtil.IsProduction())
-    //        throw new ForbiddenException("User register is disabled in production environment");
+    [HttpPost("register")]
+    public async Task<ActionResult<bool>> Register([FromBody] UserRegisterRequest request)
+    {
+        if (EnvUtil.IsProduction())
+            throw new ExceptionForbidden("User register is disabled in production environment");
 
+        var command = new RegisterUserCommand(request.UserAccount, request.UserPassword);
+        bool result = await _mediator.Send(command);
 
-    //    long result = await _authService.UserRegister(request.UserAccount, request.UserPassword, request.ConfirmPassword);
-
-    //    return Ok(result.ToString());
-    //}
+        return Ok(result);
+    }
     [HttpPost("login")]
     public async Task<ActionResult<LoginUserWithTokenDto>> Login([FromBody] UserLoginRequest request)
     {
 
-        var user = await _userService.GetUserByPassword(request.UserAccount, request.UserPassword);
-        var token = _jwtService.GenerateToken(user.Id.ToString(), user.UserName??"");
+        var user = await _userQueries.GetUserByPassword(request.UserAccount, request.UserPassword);
+        var token = _jwtService.GenerateToken(user.Id.ToString(), user.UserName ?? "");
 
         return Ok(new LoginUserWithTokenDto
         {
@@ -49,9 +54,9 @@ public class AuthController(
         var jwtToken = authHeader!.Substring("Bearer ".Length).Trim();
 
         var userId = _jwtService.GetUserId(jwtToken);
-        if(int.TryParse(userId, out int userIdInt))
+        if (int.TryParse(userId, out int userIdInt))
         {
-            var user = await _userService.GetUserById(userIdInt);
+            var user = await _userQueries.GetUserById(userIdInt);
             return Ok(user);
         }
         else
@@ -83,3 +88,4 @@ public class AuthController(
     //    return Redirect(homePage ?? "/");
     //}
 }
+

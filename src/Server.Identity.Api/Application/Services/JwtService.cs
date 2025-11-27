@@ -2,12 +2,11 @@
 using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using Server.Identity.Api.Interfaces.Services;
 
-namespace Server.Identity.Api.Services;
+namespace Server.Identity.Api.Application.Services;
 public class JwtService(IConfiguration _config) : IJwtService
 {
-    
+
     public string GenerateToken(string userId, string username)
     {
         var jwtSettings = _config.GetSection("Jwt");

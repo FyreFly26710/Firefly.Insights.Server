@@ -1,4 +1,4 @@
-﻿namespace Server.Identity.Api.Interfaces.Services;
+﻿namespace Server.Identity.Api.Application.Services;
 public interface IJwtService
 {
     string GenerateToken(string userId, string username);

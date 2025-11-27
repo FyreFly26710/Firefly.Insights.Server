@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using Server.Common.Types;
 using System.Text.Json;
 
 namespace Server.Common.Exceptions;

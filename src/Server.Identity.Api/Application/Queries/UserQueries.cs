@@ -1,16 +1,9 @@
-﻿using Server.Identity.Api.Interfaces.Services;
-using Server.Identity.Api.Models.Responses;
+﻿using Server.Identity.Api.Models.Responses;
 
-namespace Server.Identity.Api.Services;
-public class UserService() : IUserService
+namespace Server.Identity.Api.Application.Queries;
+
+public class UserQueries : IUserQueries
 {
-    //public async Task<LoginUserDto> GetLoginUser(string jwtToken)
-    //{
-    //    var user = new LoginUserDto() {Id = 1, UserName="test" };
-
-    //    return user;
-    //}
-
     public async Task<LoginUserDto> GetUserByPassword(string userAccount, string password)
     {
         var user = new LoginUserDto()
@@ -19,7 +12,7 @@ public class UserService() : IUserService
             UserName = "TestUser",
         };
         return user;
-    } 
+    }
     public async Task<LoginUserDto> GetUserById(int userId)
     {
         var user = new LoginUserDto()
@@ -30,3 +23,4 @@ public class UserService() : IUserService
         return user;
     }
 }
+

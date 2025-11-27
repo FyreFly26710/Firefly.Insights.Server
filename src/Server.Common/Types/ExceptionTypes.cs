@@ -1,4 +1,4 @@
-﻿namespace Server.Common.Exceptions;
+﻿namespace Server.Common.Types;
 
 public abstract class HandledException : Exception
 {
