@@ -13,6 +13,15 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Server.Common", "src\Server
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Server.Gateway.Api", "src\Server.Gateway.Api\Server.Gateway.Api.csproj", "{B8CFB8EC-02FE-47F6-BC68-77A5201C2DBB}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_solution items", "_solution items", "{E8B91A3A-DC7E-4943-9F72-27C1679134F2}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		LICENSE.txt = LICENSE.txt
+		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Server.Identity.Api", "src\Server.Identity.Api\Server.Identity.Api.csproj", "{EFFDF396-99B7-4AC5-9878-969310C0FA43}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +36,10 @@ Global
 		{B8CFB8EC-02FE-47F6-BC68-77A5201C2DBB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B8CFB8EC-02FE-47F6-BC68-77A5201C2DBB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B8CFB8EC-02FE-47F6-BC68-77A5201C2DBB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EFFDF396-99B7-4AC5-9878-969310C0FA43}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EFFDF396-99B7-4AC5-9878-969310C0FA43}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EFFDF396-99B7-4AC5-9878-969310C0FA43}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EFFDF396-99B7-4AC5-9878-969310C0FA43}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -34,5 +47,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{C4DFA9A2-01DF-46AF-841A-F21DC51D3847} = {C1F1FA54-C36B-4FC0-95A2-D09EC7B6AF4F}
 		{B8CFB8EC-02FE-47F6-BC68-77A5201C2DBB} = {C1F1FA54-C36B-4FC0-95A2-D09EC7B6AF4F}
+		{EFFDF396-99B7-4AC5-9878-969310C0FA43} = {C1F1FA54-C36B-4FC0-95A2-D09EC7B6AF4F}
 	EndGlobalSection
 EndGlobal

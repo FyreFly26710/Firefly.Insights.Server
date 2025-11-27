@@ -10,6 +10,21 @@ var builder = WebApplication.CreateBuilder(args);
 //Console.WriteLine($"MaxRequestBodySize: {104857600} bytes (100MB)");
 //Console.WriteLine($"KeepAliveTimeout: {TimeSpan.FromMinutes(10)}");
 //Console.WriteLine($"RequestHeadersTimeout: {TimeSpan.FromSeconds(60)}");
+var origins = "http://localhost:3000";
+//if (EnvUtil.IsProduction())
+//{
+//    origins = "";
+//}
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+    {
+        policy.WithOrigins(origins)
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials();
+    });
+});
 
 builder.Services.AddReverseProxy()
     .LoadFromMemory(GetRoutes(), GetClusters(builder.Configuration))
@@ -49,6 +64,7 @@ var app = builder.Build();
 //}
 
 app.MapReverseProxy();
+app.UseCors();
 
 app.Run();
 
