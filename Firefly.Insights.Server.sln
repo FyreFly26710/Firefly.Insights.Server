@@ -6,6 +6,9 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{C1F1FA54-C36B-4FC0-95A2-D09EC7B6AF4F}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{142B31C4-1A50-4B74-8CE6-10B69083FE44}"
+	ProjectSection(SolutionItems) = preProject
+		Ef Commands.md = Ef Commands.md
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{8780B409-575F-4BF6-BE99-F79672A7EDE8}"
 EndProject

@@ -5,10 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Server.Common.Types;
-/// <summary>
-/// Can be used for both request and response pagination info
-/// </summary>
-public class PageInfo
+public class PageRequest
 {
     /// <summary>
     /// Page number. Default: 1
@@ -23,11 +20,17 @@ public class PageInfo
     /// <summary>
     /// Sort field. Default: null, override by child class
     /// </summary>
-    public virtual string? SortField { get; set; }
+    public virtual string? SortField { get; set; } = null;
 
     /// <summary>
     /// Sort order. Default: ASC
     /// </summary>
-    public string SortOrder { get; set; } = "asc";
+    public virtual SortOrder SortOrder { get; set; } = SortOrder.asc;
 
+}
+
+public enum SortOrder
+{
+    asc,
+    desc
 }

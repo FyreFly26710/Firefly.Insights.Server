@@ -6,7 +6,6 @@ public class UserContext : DbContext
 {
     public UserContext(DbContextOptions<UserContext> options, IConfiguration configuration) : base(options)
     {
-        ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
     }
 
     public DbSet<User> Users { get; set; }
