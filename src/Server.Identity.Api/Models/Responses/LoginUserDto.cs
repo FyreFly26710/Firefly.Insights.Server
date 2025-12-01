@@ -13,18 +13,6 @@ public class LoginUserDto
     public string UserRole { get; set; } = string.Empty;
     public DateTime? CreatedAt { get; set; }
 
-    public LoginUserDto() { }
-    public LoginUserDto(User user)
-    {
-        Id = user.Id;
-        UserAccount = user.UserAccount;
-        UserName = user.UserName;
-        UserEmail = user.UserEmail;
-        UserAvatar = user.UserAvatar;
-        UserProfile = user.UserProfile;
-        UserRole = user.UserRole;
-        CreatedAt = user.CreatedAt;
-    }
 }
 public class LoginUserWithTokenDto
 {

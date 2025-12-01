@@ -1,8 +1,9 @@
 ﻿using Server.Common.Types;
 
 namespace Server.Identity.Api.Models.Entities;
-public class User : AuditableEntity
+public partial class User : AuditableEntity
 {
+    public User() { }
     public string UserAccount { get; set; } = string.Empty;
     public string UserPassword { get; set; } = string.Empty;
     public string? UserEmail { get; set; }

@@ -5,16 +5,10 @@ using Yarp.ReverseProxy.Transforms;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Log Kestrel settings
-//Console.WriteLine("=== Kestrel Server Settings ===");
-//Console.WriteLine($"MaxRequestBodySize: {104857600} bytes (100MB)");
-//Console.WriteLine($"KeepAliveTimeout: {TimeSpan.FromMinutes(10)}");
-//Console.WriteLine($"RequestHeadersTimeout: {TimeSpan.FromSeconds(60)}");
 var origins = "http://localhost:3000";
 //if (EnvUtil.IsProduction())
-//{
 //    origins = "";
-//}
+
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>

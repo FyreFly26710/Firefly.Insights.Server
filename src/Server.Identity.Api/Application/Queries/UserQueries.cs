@@ -14,7 +14,7 @@ public class UserQueries(UserContext _userContext) : IUserQueries
         {
             throw new ExceptionNotFound("User not found or password is incorrect");
         }
-        return new LoginUserDto(user);
+        return user.ToLoginUserDto();
     }
     public async Task<LoginUserDto> GetUserById(int userId)
     {
@@ -23,7 +23,7 @@ public class UserQueries(UserContext _userContext) : IUserQueries
         {
             throw new ExceptionNotFound($"User with ID {userId} not found");
         }
-        return new LoginUserDto(user);
+        return user.ToLoginUserDto();
     }
 }
 

@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 using Server.Common.Types;
 using System.Text.Json;
 
-namespace Server.Common.Exceptions;
+namespace Server.Common.Middlewares;
 public class ExceptionMiddleware
 {
     private readonly RequestDelegate _next;

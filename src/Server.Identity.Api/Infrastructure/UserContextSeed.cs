@@ -1,6 +1,7 @@
 ﻿
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
+using Server.Common.Extensions;
 using Server.Identity.Api.Models.Entities;
 
 namespace Server.Identity.Api.Infrastructure

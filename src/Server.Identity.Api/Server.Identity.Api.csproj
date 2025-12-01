@@ -5,7 +5,9 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
-
+	<PropertyGroup>
+		<NoWarn>CS0168;CS9113</NoWarn>
+	</PropertyGroup>
   <ItemGroup>
     <PackageReference Include="FluentValidation" Version="12.1.0" />
     <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.1" />

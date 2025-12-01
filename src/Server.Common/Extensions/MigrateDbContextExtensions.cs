@@ -8,7 +8,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics;
 
-namespace Microsoft.AspNetCore.Hosting;
+namespace Server.Common.Extensions;
 
 public static class MigrateDbContextExtensions
 {

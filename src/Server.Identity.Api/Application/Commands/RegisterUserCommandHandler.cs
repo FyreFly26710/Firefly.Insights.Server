@@ -11,6 +11,7 @@ public class RegisterUserCommandHandler(UserContext _userContext)
         var user = new User()
         {
             UserAccount = command.UserAccount,
+            UserName = command.UserAccount,
             UserPassword = command.UserPassword,
             UserRole = "admin",
             CreatedAt = DateTime.UtcNow,

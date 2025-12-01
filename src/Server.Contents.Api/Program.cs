@@ -1,6 +1,6 @@
+using Server.Contents.Api;
 using Server.Common.Extensions;
 using Server.Common.Middlewares;
-using Server.Identity.Api;
 
 
 var builder = WebApplication.CreateBuilder(args);
