@@ -47,7 +47,7 @@ public class ExceptionMiddleware
 
         var error = new ErrorObj
         {
-            Message = ex.Message,
+            Message = message,
             Code = statusCode
         };
 
