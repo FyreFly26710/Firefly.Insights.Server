@@ -9,7 +9,7 @@ public partial class User
     {
         return new UserDto
         {
-            Id = Id,
+            UserId = Id,
             UserAccount = UserAccount,
             UserName = UserName,
             UserEmail = UserEmail,
@@ -18,20 +18,6 @@ public partial class User
             UserRole = UserRole,
             CreateTime = CreatedAt,
             UpdateTime = UpdatedAt,
-        };
-    }
-    public LoginUserDto ToLoginUserDto()
-    {
-        return new LoginUserDto
-        {
-            Id = Id,
-            UserAccount = UserAccount,
-            UserName = UserName,
-            UserEmail = UserEmail,
-            UserAvatar = UserAvatar,
-            UserProfile = UserProfile,
-            UserRole = UserRole,
-            CreatedAt = CreatedAt,
         };
     }
 

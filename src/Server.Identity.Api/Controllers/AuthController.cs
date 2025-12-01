@@ -33,13 +33,13 @@ public class AuthController(
         return Ok(result);
     }
     [HttpPost("login")]
-    public async Task<ActionResult<LoginUserWithTokenDto>> Login([FromBody] UserLoginRequest request)
+    public async Task<ActionResult<LoginUserDto>> Login([FromBody] UserLoginRequest request)
     {
 
         var user = await _userQueries.GetUserByPassword(request.UserAccount, request.UserPassword);
-        var token = _jwtService.GenerateToken(user.Id.ToString(), user.UserName ?? "");
+        var token = _jwtService.GenerateToken(user.UserId.ToString(), user.UserName ?? "");
 
-        return Ok(new LoginUserWithTokenDto
+        return Ok(new LoginUserDto
         {
             User = user,
             Token = token

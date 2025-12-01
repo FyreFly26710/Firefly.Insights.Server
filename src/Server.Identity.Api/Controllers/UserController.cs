@@ -16,11 +16,18 @@ public class UserController(
     : ControllerBase
 {
     [HttpGet("{userId}")]
-    public async Task<ActionResult<UserDto>> GetUserById(int userId)
+    public async Task<ActionResult<UserDto>> GetUserById(long userId)
     {
         var user = await _userQueries.GetUserById(userId);
         return Ok(user);
     }
+    [HttpGet]
+    public async Task<ActionResult<List<UserDto>>> GetUsersByIds([FromQuery]List<long> userIds)
+    {
+        var users = await _userQueries.GetUsersByIds(userIds);
+        return Ok(users);
+    }
+
 
 
 }

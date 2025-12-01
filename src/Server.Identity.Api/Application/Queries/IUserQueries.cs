@@ -3,7 +3,8 @@
 namespace Server.Identity.Api.Application.Queries;
 public interface IUserQueries
 {
-    Task<LoginUserDto> GetUserByPassword(string userAccount, string password);
-    Task<LoginUserDto> GetUserById(int userId);
+    Task<UserDto> GetUserByPassword(string userAccount, string password);
+    Task<UserDto> GetUserById(long userId);
+    Task<List<UserDto>> GetUsersByIds(List<long> userIds);
 
 }
