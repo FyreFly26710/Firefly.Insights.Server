@@ -12,7 +12,7 @@ using Server.Contents.Api.Infrastructure;
 namespace Server.Contents.Api.Infrastructure.Migrations
 {
     [DbContext(typeof(ContentsContext))]
-    [Migration("20251201205955_InitialCreate")]
+    [Migration("20251202154658_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -150,8 +150,8 @@ namespace Server.Contents.Api.Infrastructure.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
-                    b.Property<int>("IsHidden")
-                        .HasColumnType("integer");
+                    b.Property<bool>("IsHidden")
+                        .HasColumnType("boolean");
 
                     b.Property<string>("Name")
                         .IsRequired()

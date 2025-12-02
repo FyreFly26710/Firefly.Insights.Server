@@ -42,7 +42,7 @@ namespace Server.Contents.Api.Infrastructure.Migrations
                     Description = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
                     ImageUrl = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
                     SortNumber = table.Column<int>(type: "integer", nullable: false),
-                    IsHidden = table.Column<int>(type: "integer", nullable: false),
+                    IsHidden = table.Column<bool>(type: "boolean", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false)

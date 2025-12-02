@@ -2,7 +2,7 @@
 
 namespace Server.Contents.Api.Models.Entities;
 
-public class Topic : AuditableEntity
+public partial class Topic : AuditableEntity
 {
     public string Name { get; set; } = "";
     public string Description { get; set; } = "";

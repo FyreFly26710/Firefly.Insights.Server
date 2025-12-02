@@ -98,9 +98,9 @@ public class SeedData
     ];
 
     public static List<Category> Categories = [
-        new Category() { Id = 1, Name = "Category 1", Description = "Description 1", ImageUrl = "", SortNumber = 1, IsHidden = 0},
-        new Category() { Id = 2, Name = "Category 2", Description = "Description 2", ImageUrl = "", SortNumber = 2, IsHidden = 0},
-        new Category() { Id = 3, Name = "Category 3", Description = "Description 3", ImageUrl = "", SortNumber = 3, IsHidden = 0},
+        new Category() { Id = 1, Name = "Category 1", Description = "Description 1", ImageUrl = "", SortNumber = 1, IsHidden = false},
+        new Category() { Id = 2, Name = "Category 2", Description = "Description 2", ImageUrl = "", SortNumber = 2, IsHidden = false},
+        new Category() { Id = 3, Name = "Category 3", Description = "Description 3", ImageUrl = "", SortNumber = 3, IsHidden = false},
     ];
 
     public static List<Topic> Topics = [

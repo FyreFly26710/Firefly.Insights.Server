@@ -20,7 +20,8 @@ public static class ProgramExtensions
         });
 
         services.AddScoped<IArticleQueries, ArticleQueries>();
-
+        services.AddScoped<ICategoryQueries, CategoryQueries>();
+        services.AddScoped<ITopicQueries, TopicQueries>();
 
         return services;
     }

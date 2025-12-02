@@ -147,8 +147,8 @@ namespace Server.Contents.Api.Infrastructure.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
-                    b.Property<int>("IsHidden")
-                        .HasColumnType("integer");
+                    b.Property<bool>("IsHidden")
+                        .HasColumnType("boolean");
 
                     b.Property<string>("Name")
                         .IsRequired()
