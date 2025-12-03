@@ -5,7 +5,7 @@ using Yarp.ReverseProxy.Transforms;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var origins = "http://localhost:3000";
+var origins = "http://localhost:5173";
 //if (EnvUtil.IsProduction())
 //    origins = "";
 
