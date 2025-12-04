@@ -27,6 +27,7 @@ public class TopicQueries(ContentsContext _contentsContext, ILogger<TopicQueries
         if (topic is null)
             throw new ExceptionNotFound();
 
+        topic.ArticleMetas = topic.ArticleMetas.OrderBy(am => am.SortNumber).ToList();
         return topic.ToTopicDto();
     }
     public async Task<List<TopicDto>> GetTopicList()
@@ -34,6 +35,8 @@ public class TopicQueries(ContentsContext _contentsContext, ILogger<TopicQueries
         var query = GetNavigationQuery(false);
 
         var topics = await query.ToListAsync();
+        
+        topics = topics.OrderBy(t => t.SortNumber).ToList();
         return topics.Select(t => t.ToTopicDto()).ToList();
     }
 }

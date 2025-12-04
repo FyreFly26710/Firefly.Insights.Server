@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
 using Server.Common.Extensions;
+using Server.Common.Utils;
 using Server.Contents.Api.Models.Entities;
 
 namespace Server.Contents.Api.Infrastructure;
@@ -25,11 +26,11 @@ public class ContentsContextSeed : IDbSeeder<ContentsContext>
         await context.Tags.ExecuteDeleteAsync();
 
         await context.Tags.AddRangeAsync(SeedData.Tags);
-        await context.Articles.AddRangeAsync(SeedData.Articles);
         await context.Categories.AddRangeAsync(SeedData.Categories);
         await context.Topics.AddRangeAsync(SeedData.Topics);
-        await context.ArticleMetas.AddRangeAsync(SeedData.ArticleMetas);
-        await context.ArticleTags.AddRangeAsync(SeedData.ArticleTags);
+        await context.ArticleMetas.AddRangeAsync(SeedData.BuildArticleMetas(200));
+        await context.ArticleMetas.AddRangeAsync(SeedData.BuildTopicSummary());
+
         await context.SaveChangesAsync();
 
     }
@@ -37,28 +38,6 @@ public class ContentsContextSeed : IDbSeeder<ContentsContext>
 
 public class SeedData
 {
-    public static List<Article> Articles = [
-        new Article() { Id = 1, Title = "Article 1", Content = "Content 1"},
-        new Article() { Id = 2, Title = "Article 2", Content = "Content 2"},
-        new Article() { Id = 3, Title = "Article 3", Content = "Content 3"},
-        new Article() { Id = 4, Title = "Article 4", Content = "Content 4"},
-        new Article() { Id = 5, Title = "Article 5", Content = "Content 5"},
-        new Article() { Id = 6, Title = "Article 6", Content = "Content 6"},
-        new Article() { Id = 7, Title = "Article 7", Content = "Content 7"},
-        new Article() { Id = 8, Title = "Article 8", Content = "Content 8"},
-        new Article() { Id = 9, Title = "Article 9", Content = "Content 9"},
-        new Article() { Id = 10, Title = "Article 10", Content = "Content 10"},
-        new Article() { Id = 11, Title = "Article 11", Content = "Content 11"},
-        new Article() { Id = 12, Title = "Article 12", Content = "Content 12"},
-        new Article() { Id = 13, Title = "Article 13", Content = "Content 13"},
-        new Article() { Id = 14, Title = "Article 14", Content = "Content 14"},
-        new Article() { Id = 15, Title = "Article 15", Content = "Content 15"},
-        new Article() { Id = 16, Title = "Article 16", Content = "Content 16"},
-        new Article() { Id = 17, Title = "Article 17", Content = "Content 17"},
-        new Article() { Id = 18, Title = "Article 18", Content = "Content 18"},
-        new Article() { Id = 19, Title = "Article 19", Content = "Content 19"},
-        new Article() { Id = 20, Title = "Article 20", Content = "Content 20"},
-    ];
     public static List<Tag> Tags = [
         new Tag() { Id = 1, Name = "Beginner", Type = TagType.SkillLevel},
         new Tag() { Id = 2, Name = "Advanced", Type = TagType.SkillLevel},
@@ -77,26 +56,6 @@ public class SeedData
         new Tag() { Id = 15, Name = "Performance Optimization", Type = TagType.FocusArea},
         new Tag() { Id = 16, Name = "C#", Type = TagType.TechStack},
     ];
-    public static List<ArticleTag> ArticleTags = [
-        new ArticleTag() { Id = 1, ArticleMetaId = 1, TagId = 1},
-        new ArticleTag() { Id = 2, ArticleMetaId = 1, TagId = 5},
-        new ArticleTag() { Id = 3, ArticleMetaId = 1, TagId = 11},
-        new ArticleTag() { Id = 4, ArticleMetaId = 1, TagId = 15},
-        new ArticleTag() { Id = 5, ArticleMetaId = 1, TagId = 16},
-        new ArticleTag() { Id = 6, ArticleMetaId = 2, TagId = 2},
-        new ArticleTag() { Id = 7, ArticleMetaId = 3, TagId = 6},
-        new ArticleTag() { Id = 8, ArticleMetaId = 2, TagId = 12},
-        new ArticleTag() { Id = 9, ArticleMetaId = 2, TagId = 16},
-        new ArticleTag() { Id = 10, ArticleMetaId = 3, TagId = 3},
-        new ArticleTag() { Id = 11, ArticleMetaId = 4, TagId = 4},
-        new ArticleTag() { Id = 12, ArticleMetaId = 5, TagId = 5},
-        new ArticleTag() { Id = 13, ArticleMetaId = 5, TagId = 6},
-        new ArticleTag() { Id = 14, ArticleMetaId = 7, TagId = 7},
-        new ArticleTag() { Id = 15, ArticleMetaId = 8, TagId = 8},
-        new ArticleTag() { Id = 16, ArticleMetaId = 9, TagId = 9},
-        new ArticleTag() { Id = 17, ArticleMetaId = 10, TagId = 10},
-    ];
-
     public static List<Category> Categories = [
         new Category() { Id = 1, Name = "Category 1", Description = "Description 1", ImageUrl = "", SortNumber = 1, IsHidden = false},
         new Category() { Id = 2, Name = "Category 2", Description = "Description 2", ImageUrl = "", SortNumber = 2, IsHidden = false},
@@ -109,28 +68,142 @@ public class SeedData
         new Topic() { Id = 3, Name = "Topic 3", Description = "Description 3", CategoryId = 1, ImageUrl = "", SortNumber = 3, IsHidden = false},
         new Topic() { Id = 4, Name = "Topic 4", Description = "Description 4", CategoryId = 2, ImageUrl = "", SortNumber = 4, IsHidden = false},
         new Topic() { Id = 5, Name = "Topic 5", Description = "Description 5", CategoryId = 2, ImageUrl = "", SortNumber = 5, IsHidden = false},
+        new Topic() { Id = 6, Name = "Topic 6", Description = "Description 6", CategoryId = 3, ImageUrl = "", SortNumber = 6, IsHidden = false},
+        new Topic() { Id = 7, Name = "Topic 7", Description = "Description 7", CategoryId = 3, ImageUrl = "", SortNumber = 7, IsHidden = false},
+        new Topic() { Id = 8, Name = "Topic 8", Description = "Description 8", CategoryId = 3, ImageUrl = "", SortNumber = 8, IsHidden = false},
     ];
+    public static List<ArticleMeta> BuildArticleMetas(int articleCount)
+    {
+        var articleMetas = new List<ArticleMeta>();
+        for (int i = 0; i < articleCount; i++)
+        {
+            var articleMetaId = SnowflakeId.GenerateId();
+            var articleId = SnowflakeId.GenerateId();
+            var articleMeta = new ArticleMeta()
+            {
+                Id = articleMetaId,
+                ArticleId = articleId,
+                TopicId = Topics[Random.Shared.Next(0, Topics.Count - 1)].Id,
+                IsTopicSummary = false,
+                ImageUrl = "",
+                UserId = 1,
+                SortNumber = i + 1,
+                IsHidden = false,
+                Article = new Article()
+                {
+                    Id = articleId,
+                    Title = $"Article {i + 1}",
+                    Description = $"Description {i + 1}",
+                    Content = $"Content {i + 1}"
+                },
+                ArticleTags = new List<ArticleTag>()
+                {
+                    new ArticleTag(){ ArticleMetaId = articleMetaId, TagId = Tags[Random.Shared.Next(0, Tags.Count - 1)].Id },
+                    new ArticleTag(){ ArticleMetaId = articleMetaId, TagId = Tags[Random.Shared.Next(0, Tags.Count - 1)].Id },
+                }
+            };
+            articleMetas.Add(articleMeta);
+        }
 
-    public static List<ArticleMeta> ArticleMetas = [
-        new ArticleMeta() { Id = 1, ArticleId = 1, TopicId = 1, IsTopicSummary = false, ImageUrl = "", UserId = 1, SortNumber = 1, IsHidden = false},
-        new ArticleMeta() { Id = 2, ArticleId = 2, TopicId = 2, IsTopicSummary = false, ImageUrl = "", UserId = 1, SortNumber = 2, IsHidden = false},
-        new ArticleMeta() { Id = 3, ArticleId = 3, TopicId = 3, IsTopicSummary = false, ImageUrl = "", UserId = 1, SortNumber = 3, IsHidden = false},
-        new ArticleMeta() { Id = 4, ArticleId = 4, TopicId = 4, IsTopicSummary = false, ImageUrl = "", UserId = 1, SortNumber = 4, IsHidden = false},
-        new ArticleMeta() { Id = 5, ArticleId = 5, TopicId = 5, IsTopicSummary = false, ImageUrl = "", UserId = 2, SortNumber = 5, IsHidden = false},
-        new ArticleMeta() { Id = 6, ArticleId = 6, TopicId = 1, IsTopicSummary = false, ImageUrl = "", UserId = 2, SortNumber = 6, IsHidden = false},
-        new ArticleMeta() { Id = 7, ArticleId = 7, TopicId = 2, IsTopicSummary = false, ImageUrl = "", UserId = 2, SortNumber = 7, IsHidden = false},
-        new ArticleMeta() { Id = 8, ArticleId = 8, TopicId = 3, IsTopicSummary = false, ImageUrl = "", UserId = 2, SortNumber = 8, IsHidden = false},
-        new ArticleMeta() { Id = 9, ArticleId = 9, TopicId = 4, IsTopicSummary = false, ImageUrl = "", UserId = 2, SortNumber = 9, IsHidden = false},
-        new ArticleMeta() { Id = 10, ArticleId = 10, TopicId = 5, IsTopicSummary = false, ImageUrl = "", UserId = 1, SortNumber = 10, IsHidden = false},
-        new ArticleMeta() { Id = 11, ArticleId = 11, TopicId = 1, IsTopicSummary = false, ImageUrl = "", UserId = 1, SortNumber = 11, IsHidden = false},
-        new ArticleMeta() { Id = 12, ArticleId = 12, TopicId = 2, IsTopicSummary = false, ImageUrl = "", UserId = 1, SortNumber = 12, IsHidden = false},
-        new ArticleMeta() { Id = 13, ArticleId = 13, TopicId = 3, IsTopicSummary = false, ImageUrl = "", UserId = 1, SortNumber = 13, IsHidden = false},
-        new ArticleMeta() { Id = 14, ArticleId = 14, TopicId = 2, IsTopicSummary = false, ImageUrl = "", UserId = 1, SortNumber = 14, IsHidden = false},
-        new ArticleMeta() { Id = 15, ArticleId = 15, TopicId = 4, IsTopicSummary = false, ImageUrl = "", UserId = 2, SortNumber = 15, IsHidden = false},
-        new ArticleMeta() { Id = 16, ArticleId = 16, TopicId = 5, IsTopicSummary = false, ImageUrl = "", UserId = 2, SortNumber = 16, IsHidden = false},
-        new ArticleMeta() { Id = 17, ArticleId = 17, TopicId = 1, IsTopicSummary = false, ImageUrl = "", UserId = 2, SortNumber = 17, IsHidden = false},
-        new ArticleMeta() { Id = 18, ArticleId = 18, TopicId = 2, IsTopicSummary = false, ImageUrl = "", UserId = 2, SortNumber = 18, IsHidden = false},
-        new ArticleMeta() { Id = 19, ArticleId = 19, TopicId = 3, IsTopicSummary = false, ImageUrl = "", UserId = 2, SortNumber = 19, IsHidden = false},
-        new ArticleMeta() { Id = 20, ArticleId = 20, TopicId = 4, IsTopicSummary = false, ImageUrl = "", UserId = 1, SortNumber = 20, IsHidden = false},
-    ];
+        return articleMetas;
+    }
+    public static List<ArticleMeta> BuildTopicSummary()
+    {
+        var articleMetas = new List<ArticleMeta>();
+        for (int i = 0; i < Topics.Count; i++)
+        {
+            var articleMetaId = SnowflakeId.GenerateId();
+            var articleId = SnowflakeId.GenerateId();
+            var articleMeta = new ArticleMeta()
+            {
+                Id = articleMetaId,
+                ArticleId = articleId,
+                TopicId = Topics[i].Id,
+                IsTopicSummary = true,
+                ImageUrl = "",
+                UserId = 1,
+                SortNumber = 0,
+                IsHidden = false,
+                Article = new Article()
+                {
+                    Id = articleId,
+                    Title = $"Topic {i + 1} Summary",
+                    Description = $"Topic {i + 1} Summary Description",
+                    Content = GetSampleContent(i + 1)
+                }
+            };
+            articleMetas.Add(articleMeta);
+        }
+
+        return articleMetas;
+    }
+    private static string GetSampleContent(int id) =>
+    $"#Article {id}#\n\n" +
+    "## Basic Syntax\n\n" +
+    "These are the elements outlined in John Gruber’s original design document. All Markdown applications support these elements.\n\n" +
+    "### Heading\n\n" +
+    "# H1\n" +
+    "## H2\n" +
+    "### H3\n\n" +
+    "### Bold\n\n" +
+    "**bold text**\n\n" +
+    "### Italic\n\n" +
+    "*italicized text*\n\n" +
+    "### Blockquote\n\n" +
+    "> blockquote\n\n" +
+    "### Ordered List\n\n" +
+    "1. First item\n" +
+    "2. Second item\n" +
+    "3. Third item\n\n" +
+    "### Unordered List\n\n" +
+    "- First item\n" +
+    "- Second item\n" +
+    "- Third item\n\n" +
+    "### Code\n\n" +
+    "`code`\n\n" +
+    "### Horizontal Rule\n\n" +
+    "---\n\n" +
+    "### Link\n\n" +
+    "[Markdown Guide](https://www.markdownguide.org)\n\n" +
+    "### Image\n\n" +
+    "![alt text](https://www.markdownguide.org/assets/images/tux.png)\n\n" +
+    "## Extended Syntax\n\n" +
+    "These elements extend the basic syntax by adding additional features. Not all Markdown applications support these elements.\n\n" +
+    "### Table\n\n" +
+    "| Syntax | Description |\n" +
+    "| ----------- | ----------- |\n" +
+    "| Header | Title |\n" +
+    "| Paragraph | Text |\n\n" +
+    "### Fenced Code Block\n\n" +
+    "```\n" +
+    "{\n" +
+    "  \"firstName\": \"John\",\n" +
+    "  \"lastName\": \"Smith\",\n" +
+    "  \"age\": 25\n" +
+    "}\n" +
+    "```\n\n" +
+    "### Footnote\n\n" +
+    "Here's a sentence with a footnote. [^1]\n\n" +
+    "[^1]: This is the footnote.\n\n" +
+    "### Heading ID\n\n" +
+    "### My Great Heading {#custom-id}\n\n" +
+    "### Definition List\n\n" +
+    "term\n" +
+    ": definition\n\n" +
+    "### Strikethrough\n\n" +
+    "~~The world is flat.~~\n\n" +
+    "### Task List\n\n" +
+    "- [x] Write the press release\n" +
+    "- [ ] Update the website\n" +
+    "- [ ] Contact the media\n\n" +
+    "### Emoji\n\n" +
+    "That is so funny! :joy:\n\n" +
+    "### Highlight\n\n" +
+    "I need to highlight these ==very important words==.\n\n" +
+    "### Subscript\n\n" +
+    "H~2~O\n\n" +
+    "### Superscript\n\n" +
+    "X^2^\n";
+
+
 }

@@ -21,6 +21,7 @@ public class CategoryQueries(ContentsContext _contentsContext, ILogger<CategoryQ
         var category = await query.FirstOrDefaultAsync(c => c.Id == categoryId);
         if (category is null)
             throw new ExceptionNotFound();
+        category.Topics = category.Topics.OrderBy(t => t.SortNumber).ToList();
         return category.ToCategoryDto();
     }
 
