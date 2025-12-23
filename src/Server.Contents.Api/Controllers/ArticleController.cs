@@ -16,13 +16,13 @@ public class ArticleController(
     ILogger<ArticleController> _logger) : ControllerBase
 {
     [HttpGet("{articleId}")]
-    public async Task<ActionResult<ArticleDto>> GetArticleById(long articleId)
+    public async Task<ActionResult<ArticleDto>> GetById(long articleId)
     {
         var article = await _articleQueries.GetArticleById(articleId);
         return Ok(article);
     }
     [HttpGet]
-    public async Task<ActionResult<Paged<ArticleDto>>> GetArticleList([FromQuery] ArticleListRequest request)
+    public async Task<ActionResult<Paged<ArticleDto>>> GetList([FromQuery] ArticleListRequest request)
     {
         var articles = await _articleQueries.GetArticleList(request);
         return Ok(articles);
