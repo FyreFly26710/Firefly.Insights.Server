@@ -1,11 +1,4 @@
-using System;
-using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Server.Common.Types;
-using Server.Contents.Api.Application.Queries;
-using Server.Contents.Api.Models.Requests;
-using Server.Contents.Api.Models.Responses;
-
 namespace Server.Contents.Api.Controllers;
 
 [ApiController]

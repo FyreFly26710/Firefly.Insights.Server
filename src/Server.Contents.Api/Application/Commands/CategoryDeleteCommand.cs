@@ -1,7 +1,3 @@
-using System;
-using MediatR;
-using Server.Contents.Api.Infrastructure;
-
 namespace Server.Contents.Api.Application.Commands;
 
 record CategoryDeleteCommand(long CategoryId) : IRequest<bool>;

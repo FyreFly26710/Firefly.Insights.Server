@@ -1,10 +1,3 @@
-using System;
-using Microsoft.EntityFrameworkCore;
-using Server.Common.Types;
-using Server.Contents.Api.Infrastructure;
-using Server.Contents.Api.Models.Entities;
-using Server.Contents.Api.Models.Responses;
-
 namespace Server.Contents.Api.Application.Queries;
 
 public class CategoryQueries(ContentsContext _contentsContext, ILogger<CategoryQueries> _logger) : ICategoryQueries

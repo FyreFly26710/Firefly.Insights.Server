@@ -1,10 +1,3 @@
-using System;
-using MediatR;
-using Microsoft.EntityFrameworkCore;
-using Server.Contents.Api.Infrastructure;
-using Server.Contents.Api.Models.Entities;
-using Server.Contents.Api.Models.Requests;
-
 namespace Server.Contents.Api.Application.Commands;
 
 record CategoryCreateCommand(CategoryCreateRequest Request) : IRequest<long?>;

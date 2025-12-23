@@ -1,8 +1,3 @@
-using System;
-using MediatR;
-using Server.Contents.Api.Infrastructure;
-using Server.Contents.Api.Models.Requests;
-
 namespace Server.Contents.Api.Application.Commands;
 record CategoryUpdateCommand(CategoryUpdateRequest Request) : IRequest<bool>;
 

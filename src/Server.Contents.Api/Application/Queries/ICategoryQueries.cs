@@ -1,5 +1,3 @@
-using Server.Contents.Api.Models.Responses;
-
 namespace Server.Contents.Api.Application.Queries;
 
 public interface ICategoryQueries
