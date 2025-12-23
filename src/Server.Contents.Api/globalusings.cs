@@ -1,6 +1,7 @@
 global using System;
 global using MediatR;
 global using Microsoft.EntityFrameworkCore;
+global using FluentValidation;
 
 global using Server.Common.Types;
 global using Server.Contents.Api.Infrastructure;

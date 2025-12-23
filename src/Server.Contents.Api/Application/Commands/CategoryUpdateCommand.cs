@@ -1,7 +1,6 @@
 namespace Server.Contents.Api.Application.Commands;
-record CategoryUpdateCommand(CategoryUpdateRequest Request) : IRequest<bool>;
-
-class CategoryUpdateCommandHandler(ContentsContext _contentsContext) : IRequestHandler<CategoryUpdateCommand, bool>
+public record CategoryUpdateCommand(CategoryUpdateRequest Request) : IRequest<bool>;
+public class CategoryUpdateCommandHandler(ContentsContext _contentsContext) : IRequestHandler<CategoryUpdateCommand, bool>
 {
     public async Task<bool> Handle(CategoryUpdateCommand command, CancellationToken cancellationToken)
     {
@@ -21,4 +20,22 @@ class CategoryUpdateCommandHandler(ContentsContext _contentsContext) : IRequestH
         return true;
     }
 
+}
+
+public class CategoryUpdateRequestValidator : AbstractValidator<CategoryUpdateRequest>
+{
+    public CategoryUpdateRequestValidator()
+    {
+        RuleFor(x => x.Name)
+            .NotEmpty().WithMessage("Category name is required.")
+            .MaximumLength(128).WithMessage("Category name cannot exceed 128 characters.");
+
+        RuleFor(x => x.Description)
+            .MaximumLength(256).WithMessage("Description cannot exceed 256 characters.");
+
+        RuleFor(x => x.ImageUrl)
+            .MaximumLength(256).WithMessage("Image URL cannot exceed 256 characters.")
+            .Must(uri => string.IsNullOrEmpty(uri) || Uri.IsWellFormedUriString(uri, UriKind.Absolute))
+            .WithMessage("Image URL must be a valid URL.");
+    }
 }

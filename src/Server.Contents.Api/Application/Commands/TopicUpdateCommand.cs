@@ -1,8 +1,7 @@
 namespace Server.Contents.Api.Application.Commands;
 
-record TopicUpdateCommand(TopicUpdateRequest Request) : IRequest<bool>;
-
-class TopicUpdateCommandHandler(ContentsContext _contentsContext) : IRequestHandler<TopicUpdateCommand, bool>
+public record TopicUpdateCommand(TopicUpdateRequest Request) : IRequest<bool>;
+public class TopicUpdateCommandHandler(ContentsContext _contentsContext) : IRequestHandler<TopicUpdateCommand, bool>
 {
     public async Task<bool> Handle(TopicUpdateCommand command, CancellationToken cancellationToken)
     {
@@ -25,5 +24,22 @@ class TopicUpdateCommandHandler(ContentsContext _contentsContext) : IRequestHand
         await _contentsContext.SaveChangesAsync(cancellationToken);
 
         return true;
+    }
+}
+public class TopicUpdateRequestValidator : AbstractValidator<TopicUpdateRequest>
+{
+    public TopicUpdateRequestValidator()
+    {
+        RuleFor(x => x.Name)
+            .NotEmpty().WithMessage("Topic name is required.")
+            .MaximumLength(128).WithMessage("Topic name cannot exceed 128 characters.");
+
+        RuleFor(x => x.Description)
+            .MaximumLength(256).WithMessage("Description cannot exceed 256 characters.");
+
+        RuleFor(x => x.ImageUrl)
+            .MaximumLength(256).WithMessage("Image URL cannot exceed 256 characters.")
+            .Must(uri => string.IsNullOrEmpty(uri) || Uri.IsWellFormedUriString(uri, UriKind.Absolute))
+            .WithMessage("Image URL must be a valid URL.");
     }
 }

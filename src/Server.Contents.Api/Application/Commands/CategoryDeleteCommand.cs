@@ -1,7 +1,7 @@
 namespace Server.Contents.Api.Application.Commands;
 
-record CategoryDeleteCommand(long CategoryId) : IRequest<bool>;
-class CategoryDeleteCommandHandler(ContentsContext _contentsContext) : IRequestHandler<CategoryDeleteCommand, bool>
+public record CategoryDeleteCommand(long CategoryId) : IRequest<bool>;
+public class CategoryDeleteCommandHandler(ContentsContext _contentsContext) : IRequestHandler<CategoryDeleteCommand, bool>
 {
     public async Task<bool> Handle(CategoryDeleteCommand command, CancellationToken cancellationToken)
     {

@@ -3,6 +3,7 @@ using FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
 using Server.Common.Extensions;
 using Server.Common.Utils;
+using Server.Contents.Api.Application.Behaviours;
 using Server.Contents.Api.Application.Queries;
 using Server.Contents.Api.Infrastructure;
 namespace Server.Contents.Api;
@@ -18,6 +19,9 @@ public static class ProgramExtensions
         {
             cfg.RegisterServicesFromAssemblyContaining(typeof(IAssemblyMarker));
         });
+
+        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+
 
         services.AddScoped<IArticleQueries, ArticleQueries>();
         services.AddScoped<ICategoryQueries, CategoryQueries>();
