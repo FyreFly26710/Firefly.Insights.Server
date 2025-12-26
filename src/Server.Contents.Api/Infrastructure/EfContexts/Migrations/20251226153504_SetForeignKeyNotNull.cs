@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace Server.Contents.Api.Infrastructure.Migrations
+namespace Server.Contents.Api.Infrastructure.EfContexts.Migrations
 {
     /// <inheritdoc />
     public partial class SetForeignKeyNotNull : Migration

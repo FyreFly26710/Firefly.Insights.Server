@@ -5,7 +5,7 @@ using Server.Common.Extensions;
 using Server.Common.Utils;
 using Server.Contents.Api.Models.Entities;
 
-namespace Server.Contents.Api.Infrastructure;
+namespace Server.Contents.Api.Infrastructure.EfContexts;
 
 public class ContentsContextSeed : IDbSeeder<ContentsContext>
 {
@@ -14,27 +14,27 @@ public class ContentsContextSeed : IDbSeeder<ContentsContext>
         context.Database.OpenConnection();
         ((NpgsqlConnection)context.Database.GetDbConnection()).ReloadTypes();
 
-        if (await context.Tags.AnyAsync())
-        {
-            return;
-        }
+        // if (await context.Categories.AnyAsync())
+        // {
+        //     return;
+        // }
+
+        await context.Tags.ExecuteDeleteAsync();
         await context.ArticleTags.ExecuteDeleteAsync();
         await context.ArticleMetas.ExecuteDeleteAsync();
         await context.Articles.ExecuteDeleteAsync();
         await context.Topics.ExecuteDeleteAsync();
         await context.Categories.ExecuteDeleteAsync();
-        await context.Tags.ExecuteDeleteAsync();
 
-        var defaultTopic = new Topic() { Id = 0, Name = "Unallocated", Description = "Unallocated topics", CategoryId = 0, ImageUrl = "", SortNumber = 0, IsHidden = false };
-        await context.Topics.AddAsync(defaultTopic);
-        var defaultCategory = new Category() { Id = 0, Name = "Unallocated", Description = "Unallocated categories", ImageUrl = "", SortNumber = 0, IsHidden = false };
-        await context.Categories.AddAsync(defaultCategory);
+        // var defaultCategory = new Category() { Id = 0, Name = "Unallocated", Description = "Unallocated categories", ImageUrl = "", SortNumber = 0, IsHidden = false };
+        // await context.Categories.AddAsync(defaultCategory);
+        // var defaultTopic = new Topic() { Id = 0, Name = "Unallocated", Description = "Unallocated topics", CategoryId = 0, ImageUrl = "", SortNumber = 0, IsHidden = false };
+        // await context.Topics.AddAsync(defaultTopic);
 
-        await context.Tags.AddRangeAsync(SeedData.Tags);
-        await context.Categories.AddRangeAsync(SeedData.Categories);
-        await context.Topics.AddRangeAsync(SeedData.Topics);
-        await context.ArticleMetas.AddRangeAsync(SeedData.BuildArticleMetas(200));
-        await context.ArticleMetas.AddRangeAsync(SeedData.BuildTopicSummary());
+        // await context.Categories.AddRangeAsync(SeedData.Categories);
+        // await context.Topics.AddRangeAsync(SeedData.Topics);
+        // await context.ArticleMetas.AddRangeAsync(SeedData.BuildArticleMetas(200));
+        // await context.ArticleMetas.AddRangeAsync(SeedData.BuildTopicSummary());
 
         await context.SaveChangesAsync();
 

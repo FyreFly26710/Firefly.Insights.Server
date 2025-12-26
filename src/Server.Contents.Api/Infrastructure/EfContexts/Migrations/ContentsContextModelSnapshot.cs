@@ -2,21 +2,18 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using Server.Contents.Api.Infrastructure;
+using Server.Contents.Api.Infrastructure.EfContexts;
 
 #nullable disable
 
-namespace Server.Contents.Api.Infrastructure.Migrations
+namespace Server.Contents.Api.Infrastructure.EfContexts.Migrations
 {
     [DbContext(typeof(ContentsContext))]
-    [Migration("20251226133356_SetDeletedToNull")]
-    partial class SetDeletedToNull
+    partial class ContentsContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -93,7 +90,7 @@ namespace Server.Contents.Api.Infrastructure.Migrations
                     b.Property<int>("SortNumber")
                         .HasColumnType("integer");
 
-                    b.Property<long?>("TopicId")
+                    b.Property<long>("TopicId")
                         .HasColumnType("bigint");
 
                     b.Property<DateTime>("UpdatedAt")
@@ -218,7 +215,7 @@ namespace Server.Contents.Api.Infrastructure.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
-                    b.Property<long?>("CategoryId")
+                    b.Property<long>("CategoryId")
                         .HasColumnType("bigint");
 
                     b.Property<DateTime>("CreatedAt")
@@ -269,7 +266,8 @@ namespace Server.Contents.Api.Infrastructure.Migrations
                     b.HasOne("Server.Contents.Api.Models.Entities.Topic", "Topic")
                         .WithMany("ArticleMetas")
                         .HasForeignKey("TopicId")
-                        .OnDelete(DeleteBehavior.NoAction);
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
 
                     b.Navigation("Article");
 
@@ -300,7 +298,8 @@ namespace Server.Contents.Api.Infrastructure.Migrations
                     b.HasOne("Server.Contents.Api.Models.Entities.Category", "Category")
                         .WithMany("Topics")
                         .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.NoAction);
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
 
                     b.Navigation("Category");
                 });

@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Server.Contents.Api.Infrastructure.Migrations
+namespace Server.Contents.Api.Infrastructure.EfContexts.Migrations
 {
     /// <inheritdoc />
     public partial class SetDeletedToNull : Migration

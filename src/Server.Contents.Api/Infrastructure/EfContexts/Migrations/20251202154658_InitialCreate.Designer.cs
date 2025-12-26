@@ -5,11 +5,11 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using Server.Contents.Api.Infrastructure;
+using Server.Contents.Api.Infrastructure.EfContexts;
 
 #nullable disable
 
-namespace Server.Contents.Api.Infrastructure.Migrations
+namespace Server.Contents.Api.Infrastructure.EfContexts.Migrations
 {
     [DbContext(typeof(ContentsContext))]
     [Migration("20251202154658_InitialCreate")]

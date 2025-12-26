@@ -1,4 +1,6 @@
 
+using Server.Contents.Api.Infrastructure.EfContexts;
+
 namespace Server.Contents.Api.Application.Commands;
 
 public record CategoryCreateCommand(CategoryCreateRequest Request) : IRequest<long?>;

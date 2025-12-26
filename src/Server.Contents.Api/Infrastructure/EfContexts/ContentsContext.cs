@@ -1,6 +1,6 @@
 ﻿using Server.Common.Extensions;
 
-namespace Server.Contents.Api.Infrastructure;
+namespace Server.Contents.Api.Infrastructure.EfContexts;
 
 public class ContentsContext : DbContext
 {

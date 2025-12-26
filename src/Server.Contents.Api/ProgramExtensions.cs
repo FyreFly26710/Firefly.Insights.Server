@@ -5,7 +5,9 @@ using Server.Common.Extensions;
 using Server.Common.Utils;
 using Server.Contents.Api.Application.Behaviours;
 using Server.Contents.Api.Application.Queries;
-using Server.Contents.Api.Infrastructure;
+using Server.Contents.Api.Infrastructure.EfContexts;
+using Server.Contents.Api.Infrastructure.RedisRepositories;
+using StackExchange.Redis;
 namespace Server.Contents.Api;
 public static class ProgramExtensions
 {
@@ -32,18 +34,22 @@ public static class ProgramExtensions
     }
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
-        var connectionString = configuration.GetConnectionString("ContentDb");
+        var connectionString = configuration.GetConnectionString("ContentDb") ?? throw new Exception("ContentDb connection string is not configured");
         services.AddDbContext<ContentsContext>(options =>
         {
             options.UseNpgsql(connectionString);
         });
 
+        var redisConnectionString = configuration.GetConnectionString("Redis") ?? throw new Exception("Redis connection string is not configured");
+        services.AddSingleton<IConnectionMultiplexer>(sp => ConnectionMultiplexer.Connect(redisConnectionString));
+        services.AddSingleton<ITagRepository, RedisTagRepository>();
+
         if (EnvUtil.IsDevelopment())
         {
+            // seed static tags into Redis
+            services.BuildServiceProvider().GetRequiredService<ITagRepository>().SeedStaticTagsAsync();
             services.AddMigration<ContentsContext, ContentsContextSeed>();
         }
-
-
         return services;
     }
 

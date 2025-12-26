@@ -1,3 +1,5 @@
+using Server.Contents.Api.Infrastructure.EfContexts;
+
 namespace Server.Contents.Api.Application.Commands;
 
 public record ArticleUpdateCommand(ArticleUpdateRequest Request) : IRequest<bool>;

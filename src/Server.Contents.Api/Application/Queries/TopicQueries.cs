@@ -1,4 +1,6 @@
-﻿namespace Server.Contents.Api.Application.Queries;
+﻿using Server.Contents.Api.Infrastructure.EfContexts;
+
+namespace Server.Contents.Api.Application.Queries;
 
 public class TopicQueries(ContentsContext _contentsContext, ILogger<TopicQueries> _logger) : ITopicQueries
 {

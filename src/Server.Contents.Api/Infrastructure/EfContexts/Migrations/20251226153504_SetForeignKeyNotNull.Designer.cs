@@ -2,18 +2,21 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using Server.Contents.Api.Infrastructure;
+using Server.Contents.Api.Infrastructure.EfContexts;
 
 #nullable disable
 
-namespace Server.Contents.Api.Infrastructure.Migrations
+namespace Server.Contents.Api.Infrastructure.EfContexts.Migrations
 {
     [DbContext(typeof(ContentsContext))]
-    partial class ContentsContextModelSnapshot : ModelSnapshot
+    [Migration("20251226153504_SetForeignKeyNotNull")]
+    partial class SetForeignKeyNotNull
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

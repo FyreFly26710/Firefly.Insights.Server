@@ -1,3 +1,5 @@
+using Server.Contents.Api.Infrastructure.EfContexts;
+
 namespace Server.Contents.Api.Application.Queries;
 
 public class CategoryQueries(ContentsContext _contentsContext, ILogger<CategoryQueries> _logger) : ICategoryQueries
