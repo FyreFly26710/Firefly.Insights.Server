@@ -5,7 +5,7 @@ namespace Server.Contents.Api.Models.Entities;
 
 public partial class Article
 {
-    public ArticleDto ToArticleDto(string userName) => new ArticleDto()
+    public ArticleDto ToArticleDto(string userName, ICollection<TagDto> tags) => new ArticleDto()
     {
         ArticleId = Id,
         Title = Title,
@@ -22,6 +22,25 @@ public partial class Article
         IsHidden = ArticleMeta.IsHidden,
         CreatedAt = ArticleMeta.CreatedAt,
         UpdatedAt = ArticleMeta.UpdatedAt,
-        Tags = ArticleMeta.ArticleTags.Select(t => t.Tag.Name).ToList()
+        Tags = tags
+    };
+    public ArticleDto ToArticleDto() => new ArticleDto()
+    {
+        ArticleId = Id,
+        Title = Title,
+        Content = Content,
+        Description = Description,
+
+        ImageUrl = ArticleMeta.ImageUrl,
+        TopicId = ArticleMeta.TopicId,
+        TopicName = ArticleMeta.Topic.Name,
+        IsTopicSummary = ArticleMeta.IsTopicSummary,
+        UserId = ArticleMeta.UserId,
+        UserName = "",
+        SortNumber = ArticleMeta.SortNumber,
+        IsHidden = ArticleMeta.IsHidden,
+        CreatedAt = ArticleMeta.CreatedAt,
+        UpdatedAt = ArticleMeta.UpdatedAt,
+        Tags = []
     };
 }

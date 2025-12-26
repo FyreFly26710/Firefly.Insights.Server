@@ -24,5 +24,6 @@ public class TopicArticleDto
     public string ImageUrl { get; set; } = "";
     public int SortNumber { get; set; }
     public bool IsHidden { get; set; }
-    public List<string> Tags { get; set; } = [];
+    public ICollection<long> TagIds { get; set; } = [];
+    public ICollection<TagDto> Tags { get; set; } = [];
 }

@@ -6,5 +6,4 @@ public interface ITagRepository
 {
     Task<Tag> GetOrAddTagAsync(string name, TagType type);
     Task<List<Tag>> GetTagsByIdsAsync(IEnumerable<long> ids);
-    Task SeedStaticTagsAsync();
 }

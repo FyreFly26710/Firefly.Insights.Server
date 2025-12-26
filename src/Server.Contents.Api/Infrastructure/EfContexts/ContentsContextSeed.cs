@@ -19,22 +19,22 @@ public class ContentsContextSeed : IDbSeeder<ContentsContext>
         //     return;
         // }
 
-        await context.Tags.ExecuteDeleteAsync();
+        // await context.Tags.ExecuteDeleteAsync();
         await context.ArticleTags.ExecuteDeleteAsync();
         await context.ArticleMetas.ExecuteDeleteAsync();
         await context.Articles.ExecuteDeleteAsync();
         await context.Topics.ExecuteDeleteAsync();
         await context.Categories.ExecuteDeleteAsync();
 
-        // var defaultCategory = new Category() { Id = 0, Name = "Unallocated", Description = "Unallocated categories", ImageUrl = "", SortNumber = 0, IsHidden = false };
-        // await context.Categories.AddAsync(defaultCategory);
-        // var defaultTopic = new Topic() { Id = 0, Name = "Unallocated", Description = "Unallocated topics", CategoryId = 0, ImageUrl = "", SortNumber = 0, IsHidden = false };
-        // await context.Topics.AddAsync(defaultTopic);
+        var defaultCategory = new Category() { Id = 0, Name = "Unallocated", Description = "Unallocated categories", ImageUrl = "", SortNumber = 0, IsHidden = false };
+        await context.Categories.AddAsync(defaultCategory);
+        var defaultTopic = new Topic() { Id = 0, Name = "Unallocated", Description = "Unallocated topics", CategoryId = defaultCategory.Id, ImageUrl = "", SortNumber = 0, IsHidden = false };
+        await context.Topics.AddAsync(defaultTopic);
 
-        // await context.Categories.AddRangeAsync(SeedData.Categories);
-        // await context.Topics.AddRangeAsync(SeedData.Topics);
-        // await context.ArticleMetas.AddRangeAsync(SeedData.BuildArticleMetas(200));
-        // await context.ArticleMetas.AddRangeAsync(SeedData.BuildTopicSummary());
+        await context.Categories.AddRangeAsync(SeedData.Categories);
+        await context.Topics.AddRangeAsync(SeedData.Topics);
+        await context.ArticleMetas.AddRangeAsync(SeedData.BuildArticleMetas(200));
+        await context.ArticleMetas.AddRangeAsync(SeedData.BuildTopicSummary());
 
         await context.SaveChangesAsync();
 
@@ -43,27 +43,7 @@ public class ContentsContextSeed : IDbSeeder<ContentsContext>
 
 public class SeedData
 {
-    public static List<Tag> Tags = [
-        new Tag() { Id = 1, Name = "Beginner", Type = TagType.SkillLevel},
-        new Tag() { Id = 2, Name = "Advanced", Type = TagType.SkillLevel},
-        new Tag() { Id = 3, Name = "Expert", Type = TagType.SkillLevel},
-        new Tag() { Id = 4, Name = "General", Type = TagType.SkillLevel},
-
-        new Tag() { Id = 5, Name = "Overview", Type = TagType.ArticleStyle},
-        new Tag() { Id = 6, Name = "Deep-dive", Type = TagType.ArticleStyle},
-        new Tag() { Id = 7, Name = "Best-practices", Type = TagType.ArticleStyle},
-        new Tag() { Id = 8, Name = "Listicle", Type = TagType.ArticleStyle},
-        new Tag() { Id = 9, Name = "Q&A", Type = TagType.ArticleStyle},
-        new Tag() { Id = 10, Name = "Comparison", Type = TagType.ArticleStyle},
-
-        new Tag() { Id = 11, Name = "Conversational", Type = TagType.Tone},
-        new Tag() { Id = 12, Name = "Academic", Type = TagType.Tone},
-        new Tag() { Id = 13, Name = "Technical", Type = TagType.Tone},
-        new Tag() { Id = 14, Name = "Code-heavy", Type = TagType.Tone},
-
-        new Tag() { Id = 15, Name = "Performance Optimization", Type = TagType.FocusArea},
-        new Tag() { Id = 16, Name = "C#", Type = TagType.TechStack},
-    ];
+    public static List<Tag> Tags = TagTypeExtensions.GetStaticTags();
     public static List<Category> Categories = [
         new Category() { Id = 1, Name = "Category 1", Description = "Description 1", ImageUrl = "", SortNumber = 1, IsHidden = false},
         new Category() { Id = 2, Name = "Category 2", Description = "Description 2", ImageUrl = "", SortNumber = 2, IsHidden = false},

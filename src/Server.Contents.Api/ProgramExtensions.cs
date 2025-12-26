@@ -47,10 +47,21 @@ public static class ProgramExtensions
         if (EnvUtil.IsDevelopment())
         {
             // seed static tags into Redis
-            services.BuildServiceProvider().GetRequiredService<ITagRepository>().SeedStaticTagsAsync();
+            SeedRedisStaticTags(services);
             services.AddMigration<ContentsContext, ContentsContextSeed>();
         }
         return services;
+    }
+
+    private static void SeedRedisStaticTags(IServiceCollection services)
+    {
+        using var provider = services.BuildServiceProvider();
+        var redis = provider.GetRequiredService<IConnectionMultiplexer>().GetDatabase();
+
+        foreach (var tag in TagTypeExtensions.GetStaticTags())
+        {
+            redis.HashSet($"tags:name:{tag.Type}", tag.Name, tag.Id, When.NotExists);
+        }
     }
 
 

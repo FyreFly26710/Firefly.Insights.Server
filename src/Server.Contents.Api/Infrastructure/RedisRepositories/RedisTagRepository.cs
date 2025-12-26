@@ -67,15 +67,4 @@ public class RedisTagRepository : ITagRepository
 
         return result;
     }
-    public async Task SeedStaticTagsAsync()
-    {
-        // uncomment this to clear all tags from Redis
-        // await _redis.KeyDeleteAsync("tags:name:*");
-
-        foreach (var tag in TagTypeExtensions.GetStaticTags())
-        {
-            await _redis.HashSetAsync($"tags:name:{tag.Type}", tag.Name, tag.Id, When.NotExists);
-            var tags = await _redis.HashGetAllAsync($"tags:name:{tag.Type}");
-        }
-    }
 }

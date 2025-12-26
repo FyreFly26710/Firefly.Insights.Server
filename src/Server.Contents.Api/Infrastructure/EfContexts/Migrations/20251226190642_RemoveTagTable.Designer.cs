@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Server.Contents.Api.Infrastructure.EfContexts;
@@ -11,9 +12,11 @@ using Server.Contents.Api.Infrastructure.EfContexts;
 namespace Server.Contents.Api.Infrastructure.EfContexts.Migrations
 {
     [DbContext(typeof(ContentsContext))]
-    partial class ContentsContextModelSnapshot : ModelSnapshot
+    [Migration("20251226190642_RemoveTagTable")]
+    partial class RemoveTagTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -26,7 +29,10 @@ namespace Server.Contents.Api.Infrastructure.EfContexts.Migrations
             modelBuilder.Entity("Server.Contents.Api.Models.Entities.Article", b =>
                 {
                     b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<string>("Content")
                         .IsRequired()
@@ -59,7 +65,10 @@ namespace Server.Contents.Api.Infrastructure.EfContexts.Migrations
             modelBuilder.Entity("Server.Contents.Api.Models.Entities.ArticleMeta", b =>
                 {
                     b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<long>("ArticleId")
                         .HasColumnType("bigint");
@@ -106,7 +115,10 @@ namespace Server.Contents.Api.Infrastructure.EfContexts.Migrations
             modelBuilder.Entity("Server.Contents.Api.Models.Entities.ArticleTag", b =>
                 {
                     b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<long>("ArticleMetaId")
                         .HasColumnType("bigint");
@@ -133,7 +145,10 @@ namespace Server.Contents.Api.Infrastructure.EfContexts.Migrations
             modelBuilder.Entity("Server.Contents.Api.Models.Entities.Category", b =>
                 {
                     b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -173,7 +188,10 @@ namespace Server.Contents.Api.Infrastructure.EfContexts.Migrations
             modelBuilder.Entity("Server.Contents.Api.Models.Entities.Topic", b =>
                 {
                     b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<long>("CategoryId")
                         .HasColumnType("bigint");

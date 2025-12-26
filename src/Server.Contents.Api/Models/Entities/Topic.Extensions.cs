@@ -24,7 +24,7 @@ public partial class Topic
                 ImageUrl = a.ImageUrl,
                 SortNumber = a.SortNumber,
                 IsHidden = a.IsHidden,
-                Tags = a.ArticleTags.Select(t => t.Tag.Name).ToList()
+                TagIds = a.ArticleTags.Select(t => t.TagId).ToList()
             }
         ).ToList()
     };
