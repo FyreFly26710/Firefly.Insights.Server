@@ -5,20 +5,23 @@ public class TopicUpdateCommandHandler(ContentsContext _contentsContext) : IRequ
 {
     public async Task<bool> Handle(TopicUpdateCommand command, CancellationToken cancellationToken)
     {
-        var category = await _contentsContext.Categories.FindAsync(command.Request.CategoryId, cancellationToken);
-        if (category is null)
-            throw new ExceptionNotFound($"Category of id {command.Request.CategoryId} not found");
-
         var topic = await _contentsContext.Topics.FindAsync(command.Request.TopicId, cancellationToken);
         if (topic is null)
             throw new ExceptionNotFound($"Topic of id {command.Request.TopicId} not found");
+            
+        if (command.Request.CategoryId is not null)
+        {
+            var category = await _contentsContext.Categories.FindAsync(command.Request.CategoryId, cancellationToken);
+            if (category is null)
+                throw new ExceptionNotFound($"Category of id {command.Request.CategoryId} not found");
+        }
 
-        topic.Name = command.Request.Name;
-        topic.Description = command.Request.Description;
-        topic.CategoryId = command.Request.CategoryId;
-        topic.ImageUrl = command.Request.ImageUrl;
-        topic.SortNumber = command.Request.SortNumber;
-        topic.IsHidden = command.Request.IsHidden;
+        topic.Name = command.Request.Name ?? topic.Name;
+        topic.Description = command.Request.Description ?? topic.Description;
+        topic.CategoryId = command.Request.CategoryId ?? topic.CategoryId;
+        topic.ImageUrl = command.Request.ImageUrl ?? topic.ImageUrl;
+        topic.SortNumber = command.Request.SortNumber ?? topic.SortNumber;
+        topic.IsHidden = command.Request.IsHidden ?? topic.IsHidden;
         topic.UpdatedAt = DateTime.UtcNow;
 
         await _contentsContext.SaveChangesAsync(cancellationToken);

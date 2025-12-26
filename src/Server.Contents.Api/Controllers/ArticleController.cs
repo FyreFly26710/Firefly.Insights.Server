@@ -26,4 +26,16 @@ public class ArticleController(
         var articleId = await _mediator.Send(new ArticleCreateCommand(request));
         return Ok(articleId);
     }
+    [HttpPut("{articleId}")]
+    public async Task<ActionResult<bool>> Update([FromBody] ArticleUpdateRequest request)
+    {
+        var result = await _mediator.Send(new ArticleUpdateCommand(request));
+        return Ok(result);
+    }
+    [HttpDelete("{articleId}")]
+    public async Task<ActionResult<bool>> Delete(long articleId)
+    {
+        var result = await _mediator.Send(new ArticleDeleteCommand(articleId));
+        return Ok(result);
+    }
 }

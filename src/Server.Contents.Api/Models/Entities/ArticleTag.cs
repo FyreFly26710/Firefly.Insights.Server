@@ -2,7 +2,7 @@
 
 namespace Server.Contents.Api.Models.Entities;
 
-public class ArticleTag : Entity
+public class ArticleTag : AuditableEntity
 {
     public long ArticleMetaId { get; set; }
     public long TagId { get; set; }

@@ -9,9 +9,8 @@ public class ArticleCreateCommandHandler(ContentsContext _contentsContext) : IRe
     {
         var topicId = command.Request.TopicId;
         var topic = await _contentsContext.Topics.FindAsync(command.Request.TopicId, cancellationToken);
-        // if topic not found, set topicId to 0
         if (topic is null)
-            topicId = 0;
+            throw new ExceptionNotFound($"Topic of id {command.Request.TopicId} not found");
 
         var sortNumber = command.Request.SortNumber ?? await _contentsContext.ArticleMetas.MaxAsync(am => (int?)am.SortNumber ?? 0, cancellationToken) + 1;
         var article = new Article()

@@ -5,12 +5,18 @@ public class TopicDeleteCommandHandler(ContentsContext _contentsContext) : IRequ
 {
     public async Task<bool> Handle(TopicDeleteCommand command, CancellationToken cancellationToken)
     {
-        var topic = await _contentsContext.Topics.FindAsync(command.TopicId, cancellationToken);
+        var topic = await _contentsContext.Topics
+            .Include(t => t.ArticleMetas)
+            .FirstOrDefaultAsync(t => t.Id == command.TopicId, cancellationToken);
         if (topic is null)
-            return false;
+            throw new ExceptionNotFound($"Topic of id {command.TopicId} not found");
         topic.IsDeleted = true;
-        topic.IsHidden = true;
         topic.UpdatedAt = DateTime.UtcNow;
+        foreach (var articleMeta in topic.ArticleMetas)
+        {
+            articleMeta.TopicId = null;
+            articleMeta.UpdatedAt = DateTime.UtcNow;
+        }
         await _contentsContext.SaveChangesAsync(cancellationToken);
         return true;
     }

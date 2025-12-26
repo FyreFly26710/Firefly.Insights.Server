@@ -6,13 +6,13 @@ public class CategoryUpdateCommandHandler(ContentsContext _contentsContext) : IR
     {
         var category = await _contentsContext.Categories.FindAsync(command.Request.CategoryId, cancellationToken);
         if (category is null)
-            return false;
+            throw new ExceptionNotFound($"Category of id {command.Request.CategoryId} not found");
 
-        category.Name = command.Request.Name;
-        category.Description = command.Request.Description;
-        category.ImageUrl = command.Request.ImageUrl;
-        category.IsHidden = command.Request.IsHidden;
-        category.SortNumber = command.Request.SortNumber;
+        category.Name = command.Request.Name ?? category.Name;
+        category.Description = command.Request.Description ?? category.Description;
+        category.ImageUrl = command.Request.ImageUrl ?? category.ImageUrl;
+        category.IsHidden = command.Request.IsHidden ?? category.IsHidden;
+        category.SortNumber = command.Request.SortNumber ?? category.SortNumber;
         category.UpdatedAt = DateTime.UtcNow;
 
         await _contentsContext.SaveChangesAsync(cancellationToken);

@@ -3,7 +3,7 @@ using Server.Contents.Api.Models.Responses;
 
 namespace Server.Contents.Api.Models.Entities;
 
-public partial class Article : Entity
+public partial class Article : AuditableEntity
 {
     public string Title { get; set; } = "";
     public string Content { get; set; } = "";
