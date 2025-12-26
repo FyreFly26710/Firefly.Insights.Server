@@ -14,7 +14,7 @@ public class CategoryDeleteCommandHandler(ContentsContext _contentsContext) : IR
         category.UpdatedAt = DateTime.UtcNow;
         foreach (var topic in category.Topics)
         {
-            topic.CategoryId = null;
+            topic.CategoryId = 0;
             topic.UpdatedAt = DateTime.UtcNow;
         }
         await _contentsContext.SaveChangesAsync(cancellationToken);

@@ -6,14 +6,13 @@ public class CategoryCreateCommandHandler(ContentsContext _contentsContext) : IR
 {
     public async Task<long?> Handle(CategoryCreateCommand command, CancellationToken cancellationToken)
     {
-        var maxSortNumber = await _contentsContext.Categories.MaxAsync(c => (int?)c.SortNumber ?? 0, cancellationToken);
         var category = new Category()
         {
             Name = command.Request.Name,
             Description = command.Request.Description,
             ImageUrl = command.Request.ImageUrl,
             IsHidden = command.Request.IsHidden,
-            SortNumber = maxSortNumber + 1,
+            SortNumber = command.Request.SortNumber,
         };
         await _contentsContext.Categories.AddAsync(category, cancellationToken);
         await _contentsContext.SaveChangesAsync(cancellationToken);

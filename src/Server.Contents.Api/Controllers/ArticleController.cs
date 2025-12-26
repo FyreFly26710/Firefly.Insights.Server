@@ -27,7 +27,7 @@ public class ArticleController(
         return Ok(articleId);
     }
     [HttpPut("{articleId}")]
-    public async Task<ActionResult<bool>> Update([FromBody] ArticleUpdateRequest request)
+    public async Task<ActionResult<bool>> Update(long articleId, [FromBody] ArticleUpdateRequest request)
     {
         var result = await _mediator.Send(new ArticleUpdateCommand(request));
         return Ok(result);

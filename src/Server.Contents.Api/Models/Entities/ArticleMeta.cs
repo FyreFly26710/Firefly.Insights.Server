@@ -7,7 +7,7 @@ public class ArticleMeta : AuditableEntity
     public long ArticleId { get; set; }
     public string ImageUrl { get; set; } = "";
 
-    public long? TopicId { get; set; }
+    public long TopicId { get; set; }
     public bool IsTopicSummary { get; set; }
     public long UserId { get; set; }
     public int SortNumber { get; set; }

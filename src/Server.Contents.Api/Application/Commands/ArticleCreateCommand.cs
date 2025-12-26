@@ -12,7 +12,6 @@ public class ArticleCreateCommandHandler(ContentsContext _contentsContext) : IRe
         if (topic is null)
             throw new ExceptionNotFound($"Topic of id {command.Request.TopicId} not found");
 
-        var sortNumber = command.Request.SortNumber ?? await _contentsContext.ArticleMetas.MaxAsync(am => (int?)am.SortNumber ?? 0, cancellationToken) + 1;
         var article = new Article()
         {
             Title = command.Request.Title,
@@ -24,7 +23,7 @@ public class ArticleCreateCommandHandler(ContentsContext _contentsContext) : IRe
                 IsTopicSummary = command.Request.IsTopicSummary,
                 ImageUrl = command.Request.ImageUrl,
                 UserId = 1,
-                SortNumber = sortNumber,
+                SortNumber = command.Request.SortNumber,
                 IsHidden = command.Request.IsHidden,
             }
         };

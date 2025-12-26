@@ -9,14 +9,13 @@ public class TopicCreateCommandHandler(ContentsContext _contentsContext) : IRequ
         if (category is null)
             throw new ExceptionNotFound($"Category of id {command.Request.CategoryId} not found");
 
-        var maxSortNumber = await _contentsContext.Topics.MaxAsync(t => t.SortNumber, cancellationToken);
         var topic = new Topic()
         {
             Name = command.Request.Name,
             Description = command.Request.Description,
             CategoryId = command.Request.CategoryId,
             ImageUrl = command.Request.ImageUrl,
-            SortNumber = maxSortNumber + 1,
+            SortNumber = command.Request.SortNumber,
         };
         await _contentsContext.Topics.AddAsync(topic, cancellationToken);
         await _contentsContext.SaveChangesAsync(cancellationToken);

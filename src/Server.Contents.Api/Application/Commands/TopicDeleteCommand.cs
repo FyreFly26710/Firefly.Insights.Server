@@ -14,7 +14,7 @@ public class TopicDeleteCommandHandler(ContentsContext _contentsContext) : IRequ
         topic.UpdatedAt = DateTime.UtcNow;
         foreach (var articleMeta in topic.ArticleMetas)
         {
-            articleMeta.TopicId = null;
+            articleMeta.TopicId = 0;
             articleMeta.UpdatedAt = DateTime.UtcNow;
         }
         await _contentsContext.SaveChangesAsync(cancellationToken);

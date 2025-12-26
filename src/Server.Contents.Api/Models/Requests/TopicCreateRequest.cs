@@ -8,5 +8,6 @@ public class TopicCreateRequest
     public string Description { get; set; } = "";
     public required long CategoryId { get; set; }
     public string ImageUrl { get; set; } = "";
+    public int SortNumber { get; set; }
     public bool IsHidden { get; set; } = false;
 }

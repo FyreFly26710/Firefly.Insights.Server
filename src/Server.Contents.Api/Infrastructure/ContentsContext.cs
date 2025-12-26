@@ -1,10 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Server.Common.Extensions;
-using Server.Common.Types;
-using Server.Common.Utils;
-using Server.Contents.Api.Models.Entities;
-using System.Linq.Expressions;
-using System.Reflection.Emit;
+﻿using Server.Common.Extensions;
 
 namespace Server.Contents.Api.Infrastructure;
 
@@ -17,7 +11,7 @@ public class ContentsContext : DbContext
     public DbSet<Tag> Tags { get; set; }
     public DbSet<Topic> Topics { get; set; }
 
-    public ContentsContext(DbContextOptions<ContentsContext> options, IConfiguration configuration) : base(options)
+    public ContentsContext(DbContextOptions<ContentsContext> options) : base(options)
     {
     }
     protected override void OnModelCreating(ModelBuilder builder)

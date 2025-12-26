@@ -10,7 +10,7 @@ public class ArticleDto
     public string Description { get; set; } = "";
 
     public string ImageUrl { get; set; } = "";
-    public long? TopicId { get; set; }
+    public long TopicId { get; set; }
     public string TopicName { get; set; } = "";
     public bool IsTopicSummary { get; set; }
     public long UserId { get; set; }
