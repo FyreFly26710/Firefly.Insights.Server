@@ -20,6 +20,7 @@ public static class ProgramExtensions
             cfg.RegisterServicesFromAssemblyContaining(typeof(IAssemblyMarker));
         });
 
+        // this line seems to be unnecessary, because the validation is done at controller level
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
 

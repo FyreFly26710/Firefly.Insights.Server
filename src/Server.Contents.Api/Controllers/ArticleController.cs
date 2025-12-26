@@ -20,4 +20,10 @@ public class ArticleController(
         var articles = await _articleQueries.GetArticleList(request);
         return Ok(articles);
     }
+    [HttpPost]
+    public async Task<ActionResult<long?>> Create([FromBody] ArticleCreateRequest request)
+    {
+        var articleId = await _mediator.Send(new ArticleCreateCommand(request));
+        return Ok(articleId);
+    }
 }
