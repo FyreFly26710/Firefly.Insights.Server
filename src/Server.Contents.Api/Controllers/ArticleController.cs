@@ -23,12 +23,13 @@ public class ArticleController(
     [HttpPost]
     public async Task<ActionResult<long?>> Create([FromBody] ArticleCreateRequest request)
     {
-        var articleId = await _mediator.Send(new ArticleCreateCommand(request));
+        var articleId = await _mediator.Send(new ArticleCreateCommand(request, 1));
         return Ok(articleId);
     }
     [HttpPut("{articleId}")]
     public async Task<ActionResult<bool>> Update(long articleId, [FromBody] ArticleUpdateRequest request)
     {
+        request = request with { ArticleId = articleId };
         var result = await _mediator.Send(new ArticleUpdateCommand(request));
         return Ok(result);
     }

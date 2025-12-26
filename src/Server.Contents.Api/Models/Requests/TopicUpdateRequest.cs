@@ -1,12 +1,15 @@
 namespace Server.Contents.Api.Models.Requests;
 
-public class TopicUpdateRequest
-{
-    public required long TopicId { get; set; }
-    public string? Name { get; set; }
-    public string? Description { get; set; }
-    public long? CategoryId { get; set; }
-    public string? ImageUrl { get; set; }
-    public int? SortNumber { get; set; }
-    public bool? IsHidden { get; set; }
-}
+public record TopicUpdateRequest
+(
+    // Required
+    long TopicId,
+
+    // Optional
+    string? Name = null,
+    string? Description = null,
+    long? CategoryId = null,
+    string? ImageUrl = null,
+    int? SortNumber = null,
+    bool? IsHidden = null
+);

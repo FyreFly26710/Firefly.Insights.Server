@@ -4,9 +4,9 @@ using Server.Contents.Api.Models.Entities;
 
 namespace Server.Contents.Api.Models.Requests;
 
-public class ArticleListRequest : PageRequest
+public record ArticleListRequest : PageInfo
 {
-    public string? ArticleTitle { get; set; }
-    public override SortOrder SortOrder { get; set; } = SortOrder.desc;
-    public override string? SortField { get; set; } = nameof(ArticleMeta.CreatedAt);
+    public string? ArticleTitle { get; init; }
+    public override bool IsAscending { get; init; } = false;
+    public override string? SortField { get; init; } = nameof(ArticleMeta.CreatedAt);
 }

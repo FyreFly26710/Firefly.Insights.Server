@@ -5,19 +5,19 @@ namespace Server.Contents.Api.Models.Entities;
 
 public partial class Article
 {
-    public ArticleDto ToArticleDto() => new ArticleDto()
+    public ArticleDto ToArticleDto(string userName) => new ArticleDto()
     {
         ArticleId = Id,
         Title = Title,
         Content = Content,
         Description = Description,
 
-        ImageUrl = ArticleMeta.ImageUrl ?? "",
+        ImageUrl = ArticleMeta.ImageUrl,
         TopicId = ArticleMeta.TopicId,
         TopicName = ArticleMeta.Topic.Name,
         IsTopicSummary = ArticleMeta.IsTopicSummary,
         UserId = ArticleMeta.UserId,
-        UserName = "",
+        UserName = userName,
         SortNumber = ArticleMeta.SortNumber,
         IsHidden = ArticleMeta.IsHidden,
         CreatedAt = ArticleMeta.CreatedAt,

@@ -11,8 +11,8 @@ public class CategoryCreateCommandHandler(ContentsContext _contentsContext) : IR
             Name = command.Request.Name,
             Description = command.Request.Description,
             ImageUrl = command.Request.ImageUrl,
-            IsHidden = command.Request.IsHidden,
             SortNumber = command.Request.SortNumber,
+            IsHidden = command.Request.IsHidden,
         };
         await _contentsContext.Categories.AddAsync(category, cancellationToken);
         await _contentsContext.SaveChangesAsync(cancellationToken);

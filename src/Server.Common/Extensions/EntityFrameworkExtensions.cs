@@ -21,7 +21,7 @@ public static class EntityFrameworkExtensions
             }
         }
     }
-    public static IQueryable<TEntity> ApplyPageQuery<TEntity>(this IQueryable<TEntity> query, PageRequest pageInfo)
+    public static IQueryable<TEntity> ApplyPageQuery<TEntity>(this IQueryable<TEntity> query, PageInfo pageInfo)
     {
         // Apply sorting if a SortField is provided
         if (!string.IsNullOrWhiteSpace(pageInfo.SortField))
@@ -31,7 +31,7 @@ public static class EntityFrameworkExtensions
 
             if (propertyInfo != null)
             {
-                query = pageInfo.SortOrder == SortOrder.asc
+                query = pageInfo.IsAscending
                     ? query.OrderBy(e => EF.Property<object>(e, propertyInfo.Name))
                     : query.OrderByDescending(e => EF.Property<object>(e, propertyInfo.Name));
             }
@@ -40,15 +40,27 @@ public static class EntityFrameworkExtensions
         // Apply pagination
         return query.Skip((pageInfo.PageNumber - 1) * pageInfo.PageSize).Take(pageInfo.PageSize);
     }
-    public static async Task<Paged<TEntity>> ToPagedAsync<TEntity>(this IQueryable<TEntity> query, PageRequest pageInfo) where TEntity : class
+    public static async Task<Paged<TEntity>> ToPagedAsync<TEntity>(
+        this IQueryable<TEntity> query,
+        PageInfo pageInfo
+        )
+        where TEntity : class
     {
         var totalCount = await query.CountAsync();
         var data = await query.ApplyPageQuery(pageInfo).ToListAsync();
-        return new Paged<TEntity>()
-        {
-            PageRequest = pageInfo,
-            TotalCount = totalCount,
-            Data = data
-        };
+        return new Paged<TEntity>(pageInfo, totalCount, data);
+    }
+    public static async Task<Paged<TDto>> ToPagedDtoAsync<TEntity, TDto>(
+        this IQueryable<TEntity> query,
+        PageInfo pageInfo,
+        Func<TEntity, TDto> selector
+        )
+        where TEntity : class
+        where TDto : class
+    {
+        var totalCount = await query.CountAsync();
+        var data = await query.ApplyPageQuery(pageInfo).ToListAsync();
+        var dtos = data.Select(selector).ToList();
+        return new Paged<TDto>(pageInfo, totalCount, dtos);
     }
 }

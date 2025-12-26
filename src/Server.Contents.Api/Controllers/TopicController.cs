@@ -29,9 +29,10 @@ public class TopicController(
             return BadRequest("Failed to create topic");
         return Ok(topicId);
     }
-    [HttpPut]
-    public async Task<ActionResult<bool>> Update(TopicUpdateRequest request)
+    [HttpPut("{topicId}")]
+    public async Task<ActionResult<bool>> Update(long topicId, [FromBody] TopicUpdateRequest request)
     {
+        request = request with { TopicId = topicId };
         var result = await _mediator.Send(new TopicUpdateCommand(request));
         return Ok(result);
     }

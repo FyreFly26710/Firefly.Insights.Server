@@ -29,9 +29,10 @@ public class CategoryController(
             return BadRequest("Failed to create category");
         return Ok(categoryId);
     }
-    [HttpPut]
-    public async Task<ActionResult<bool>> Update(CategoryUpdateRequest request)
+    [HttpPut("{categoryId}")]
+    public async Task<ActionResult<bool>> Update(long categoryId, [FromBody] CategoryUpdateRequest request)
     {
+        request = request with { CategoryId = categoryId };
         var result = await _mediator.Send(new CategoryUpdateCommand(request));
         return Ok(result);
     }

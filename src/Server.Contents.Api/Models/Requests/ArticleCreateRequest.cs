@@ -1,5 +1,3 @@
-using System;
-
 namespace Server.Contents.Api.Models.Requests;
 
 public record ArticleCreateRequest
@@ -14,5 +12,6 @@ public record ArticleCreateRequest
     string ImageUrl = "",
     bool IsTopicSummary = false,
     int SortNumber = 0,
-    bool IsHidden = false
+    bool IsHidden = false,
+    List<string>? Tags = null
 );

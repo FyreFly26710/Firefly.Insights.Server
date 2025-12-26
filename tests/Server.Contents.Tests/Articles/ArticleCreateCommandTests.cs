@@ -1,4 +1,4 @@
-﻿namespace Server.Contents.FunctionalTests.Articles;
+﻿namespace Server.Contents.Tests.Articles;
 
 public class ArticleCreateCommandTests
 {
@@ -12,33 +12,25 @@ public class ArticleCreateCommandTests
         ImageUrl: "https://example.com/image.png",
         IsTopicSummary: true,
         SortNumber: 1,
-        IsHidden: false
+        IsHidden: false,
+        Tags: ["Tag1", "Tag2"]
         );
 
 
     #region Handler Tests
 
-    private ContentsContext CreateInMemoryDbContext()
-    {
-        var options = new DbContextOptionsBuilder<ContentsContext>()
-            .UseInMemoryDatabase(Guid.NewGuid().ToString())
-            .Options;
-
-        return new ContentsContext(options);
-    }
-
     [Fact]
     public async Task Handle_WithValidRequest_CreatesArticle()
     {
         // Arrange
-        await using var context = CreateInMemoryDbContext();
+        await using var context = TestUtils.CreateInMemoryDbContext();
         var topic = new Topic { Id = 1, Name = "Test Topic" };
         context.Topics.Add(topic);
         await context.SaveChangesAsync();
 
         var handler = new ArticleCreateCommandHandler(context);
         var request = _fullValidRequest with { Title = "My Article", Content = "Hello World", TopicId = topic.Id };
-        var command = new ArticleCreateCommand(request);
+        var command = new ArticleCreateCommand(request, 1);
 
         // Act
         var articleId = await handler.Handle(command, CancellationToken.None);
@@ -65,16 +57,12 @@ public class ArticleCreateCommandTests
     public async Task Handle_WithNonExistentTopic_ThrowsExceptionNotFound()
     {
         // Arrange
-        await using var context = CreateInMemoryDbContext();
+        await using var context = TestUtils.CreateInMemoryDbContext();
         var handler = new ArticleCreateCommandHandler(context);
 
-        var request = new ArticleCreateRequest
-        (
-            Title: "Invalid",
-            TopicId: 999 // topic does not exist
-        );
+        var request = new ArticleCreateRequest(Title: "Invalid", TopicId: 999); // topic does not exist
 
-        var command = new ArticleCreateCommand(request);
+        var command = new ArticleCreateCommand(request, 1);
 
         // Act & Assert
         var ex = await Assert.ThrowsAsync<ExceptionNotFound>(async () =>

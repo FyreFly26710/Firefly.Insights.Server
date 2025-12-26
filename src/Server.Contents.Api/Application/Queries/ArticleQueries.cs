@@ -18,20 +18,19 @@ public class ArticleQueries(ContentsContext _contentsContext, ILogger<ArticleQue
         if (article is null)
             throw new ExceptionNotFound();
 
-        return article.ToArticleDto();
+        return article.ToArticleDto("Unknown");
     }
 
     public async Task<Paged<ArticleDto>> GetArticleList(ArticleListRequest request)
     {
-        PageRequest pagedInfo = request;
+        PageInfo pagedInfo = request;
 
         var query = GetArticleNavigationQuery();
 
         if (!string.IsNullOrEmpty(request.ArticleTitle))
             query = query.Where(a => a.Title.Contains(request.ArticleTitle));
 
-        var pagedData = await query.ToPagedAsync(pagedInfo);
-        var dtos = pagedData.Data.Select(a => a.ToArticleDto()).ToList();
-        return new Paged<ArticleDto>(pagedInfo, pagedData.TotalCount, dtos);
+        var pagedData = await query.ToPagedDtoAsync(pagedInfo, a => a.ToArticleDto("Unknown"));
+        return pagedData;
     }
 }

@@ -2,7 +2,7 @@ using System;
 
 namespace Server.Contents.Api.Application.Commands;
 
-public record ArticleCreateCommand(ArticleCreateRequest Request) : IRequest<long?>;
+public record ArticleCreateCommand(ArticleCreateRequest Request, long UserId) : IRequest<long?>;
 public class ArticleCreateCommandHandler(ContentsContext _contentsContext) : IRequestHandler<ArticleCreateCommand, long?>
 {
     public async Task<long?> Handle(ArticleCreateCommand command, CancellationToken cancellationToken)
@@ -22,7 +22,7 @@ public class ArticleCreateCommandHandler(ContentsContext _contentsContext) : IRe
                 TopicId = topicId,
                 IsTopicSummary = command.Request.IsTopicSummary,
                 ImageUrl = command.Request.ImageUrl,
-                UserId = 1,
+                UserId = command.UserId,
                 SortNumber = command.Request.SortNumber,
                 IsHidden = command.Request.IsHidden,
             }

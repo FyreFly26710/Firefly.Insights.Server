@@ -10,16 +10,14 @@ namespace Server.Common.Types;
 /// </summary>
 public class Paged<T> where T : class
 {
-    public PageRequest PageRequest { get; set; } = new();
-    public int TotalCount { get; set; } = 0;
-    public int TotalPages => (int)Math.Ceiling((double)TotalCount / PageRequest.PageSize);
+    public PageInfo PageInfo { get; init; }
+    public int TotalCount { get; init; }
+    public int TotalPages => (int)Math.Ceiling((double)TotalCount / PageInfo.PageSize);
+    public List<T> Data { get; init; }
 
-    public List<T> Data { get; set; } = new();
-
-    public Paged() { }
-    public Paged(PageRequest pageRequest, int totalCount, List<T> data)
+    public Paged(PageInfo pageInfo, int totalCount, List<T> data)
     {
-        PageRequest = pageRequest;
+        PageInfo = pageInfo;
         TotalCount = totalCount;
         Data = data;
     }
