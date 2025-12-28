@@ -20,8 +20,5 @@ public class ArticleDto
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
 
-    // From Db
-    public List<long> TagIds { get; set; } = [];
-    // From Redis
-    public List<TagDto> Tags { get; set; } = [];
+    public ICollection<string> Tags { get; set; } = [];
 }

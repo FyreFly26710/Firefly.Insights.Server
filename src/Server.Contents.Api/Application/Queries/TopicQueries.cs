@@ -1,9 +1,6 @@
-﻿using Server.Contents.Api.Infrastructure.EfContexts;
-using Server.Contents.Api.Infrastructure.RedisRepositories;
+﻿namespace Server.Contents.Api.Application.Queries;
 
-namespace Server.Contents.Api.Application.Queries;
-
-public class TopicQueries(ContentsContext _contentsContext, ITagRepository _tagRepository, ILogger<TopicQueries> _logger) : ITopicQueries
+public class TopicQueries(ContentsContext _contentsContext, ILogger<TopicQueries> _logger) : ITopicQueries
 {
     private IQueryable<Topic> GetNavigationQuery(bool withArticles)
     {
@@ -12,7 +9,7 @@ public class TopicQueries(ContentsContext _contentsContext, ITagRepository _tagR
         if (withArticles)
         {
             query = query.Include(t => t.ArticleMetas).ThenInclude(am => am.Article)
-                         .Include(a => a.ArticleMetas).ThenInclude(am => am.ArticleTags);
+                         .Include(a => a.ArticleMetas).ThenInclude(am => am.ArticleTags).ThenInclude(at => at.Tag);
         }
         return query;
     }
@@ -25,14 +22,7 @@ public class TopicQueries(ContentsContext _contentsContext, ITagRepository _tagR
             throw new ExceptionNotFound();
 
         topic.ArticleMetas = topic.ArticleMetas.OrderBy(am => am.SortNumber).ToList();
-        var topicDto = topic.ToTopicDto();
-        var tagIds = topicDto.TopicArticles?.SelectMany(a => a.TagIds).Distinct().ToList() ?? [];
-        var tags = await _tagRepository.GetTagsByIdsAsync(tagIds);
-        foreach (var article in topicDto.TopicArticles ?? [])
-        {
-            article.Tags = tags.Where(t => article.TagIds.Contains(t.Id)).Select(t => t.ToTagDto()).ToList();
-        }
-        return topicDto;
+        return topic.ToTopicDto();
     }
     public async Task<List<TopicDto>> GetTopicList()
     {

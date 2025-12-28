@@ -5,15 +5,15 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using Server.Contents.Api.Infrastructure.EfContexts;
+using Server.Contents.Api.Infrastructure;
 
 #nullable disable
 
-namespace Server.Contents.Api.Infrastructure.EfContexts.Migrations
+namespace Server.Contents.Api.Infrastructure.Migrations
 {
     [DbContext(typeof(ContentsContext))]
-    [Migration("20251226190642_RemoveTagTable")]
-    partial class RemoveTagTable
+    [Migration("20251202154658_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -38,24 +38,15 @@ namespace Server.Contents.Api.Infrastructure.EfContexts.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
 
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(128)
                         .HasColumnType("character varying(128)");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
@@ -123,21 +114,14 @@ namespace Server.Contents.Api.Infrastructure.EfContexts.Migrations
                     b.Property<long>("ArticleMetaId")
                         .HasColumnType("bigint");
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
                     b.Property<long>("TagId")
                         .HasColumnType("bigint");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ArticleMetaId");
+
+                    b.HasIndex("TagId");
 
                     b.ToTable("ArticleTags", "contents");
                 });
@@ -183,6 +167,29 @@ namespace Server.Contents.Api.Infrastructure.EfContexts.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Categories", "contents");
+                });
+
+            modelBuilder.Entity("Server.Contents.Api.Models.Entities.Tag", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Tags", "contents");
                 });
 
             modelBuilder.Entity("Server.Contents.Api.Models.Entities.Topic", b =>
@@ -260,7 +267,15 @@ namespace Server.Contents.Api.Infrastructure.EfContexts.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
+                    b.HasOne("Server.Contents.Api.Models.Entities.Tag", "Tag")
+                        .WithMany("ArticleTags")
+                        .HasForeignKey("TagId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
                     b.Navigation("ArticleMeta");
+
+                    b.Navigation("Tag");
                 });
 
             modelBuilder.Entity("Server.Contents.Api.Models.Entities.Topic", b =>
@@ -288,6 +303,11 @@ namespace Server.Contents.Api.Infrastructure.EfContexts.Migrations
             modelBuilder.Entity("Server.Contents.Api.Models.Entities.Category", b =>
                 {
                     b.Navigation("Topics");
+                });
+
+            modelBuilder.Entity("Server.Contents.Api.Models.Entities.Tag", b =>
+                {
+                    b.Navigation("ArticleTags");
                 });
 
             modelBuilder.Entity("Server.Contents.Api.Models.Entities.Topic", b =>

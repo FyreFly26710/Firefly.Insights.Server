@@ -1,4 +1,4 @@
-﻿namespace Server.Contents.Tests.Application.Commands;
+﻿namespace Server.Contents.Tests.Articles;
 
 public class ArticleCreateCommandTests
 {
@@ -69,6 +69,8 @@ public class ArticleCreateCommandTests
         {
             await handler.Handle(command, CancellationToken.None);
         });
+
+        Assert.Equal("Topic of id 999 not found", ex.Message);
     }
 
     #endregion

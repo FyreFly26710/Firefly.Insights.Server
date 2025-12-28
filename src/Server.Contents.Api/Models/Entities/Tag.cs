@@ -2,8 +2,7 @@
 
 namespace Server.Contents.Api.Models.Entities;
 
-// Stored in Redis as HashSet, not Db
-public partial class Tag : Entity
+public class Tag : Entity
 {
     public string Name { get; set; } = "";
     public TagType Type { get; set; }
@@ -53,7 +52,5 @@ public static class TagTypeExtensions
         new Tag() { Id = 13, Name = "Technical", Type = TagType.Tone},
         new Tag() { Id = 14, Name = "Code-heavy", Type = TagType.Tone},
 
-        new Tag() { Id = 15, Name = "Performance Optimization", Type = TagType.FocusArea},
-        new Tag() { Id = 16, Name = "C#", Type = TagType.TechStack},
     ];
 }

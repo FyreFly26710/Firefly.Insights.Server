@@ -1,5 +1,3 @@
-using Server.Contents.Api.Infrastructure.EfContexts;
-
 namespace Server.Contents.Api.Application.Commands;
 public record CategoryUpdateCommand(CategoryUpdateRequest Request) : IRequest<bool>;
 public class CategoryUpdateCommandHandler(ContentsContext _contentsContext) : IRequestHandler<CategoryUpdateCommand, bool>

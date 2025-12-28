@@ -1,5 +1,3 @@
-using Server.Contents.Api.Infrastructure.EfContexts;
-
 namespace Server.Contents.Api.Application.Commands;
 
 public record TopicCreateCommand(TopicCreateRequest Request) : IRequest<long?>;
