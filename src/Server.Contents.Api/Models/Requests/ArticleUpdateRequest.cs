@@ -13,5 +13,6 @@ public record ArticleUpdateRequest
     long? TopicId = null,
     bool? IsTopicSummary = null,
     int? SortNumber = null,
-    bool? IsHidden = null
+    bool? IsHidden = null,
+    List<long>? TagIds = null
 );

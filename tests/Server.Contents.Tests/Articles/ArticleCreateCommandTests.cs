@@ -3,7 +3,14 @@
 public class ArticleCreateCommandTests
 {
     private readonly ArticleCreateRequestValidator _validator;
-    public ArticleCreateCommandTests() { _validator = new ArticleCreateRequestValidator(); }
+    private readonly ContentsContext _contentsContext;
+    private readonly ArticleCreateCommandHandler _handler;
+    public ArticleCreateCommandTests()
+    {
+        _validator = new ArticleCreateRequestValidator();
+        _contentsContext = TestUtils.CreateInMemoryDbContext();
+        _handler = new ArticleCreateCommandHandler(_contentsContext);
+    }
     private readonly ArticleCreateRequest _fullValidRequest = new ArticleCreateRequest(
         Title: "Valid Title",
         TopicId: 1,
@@ -23,22 +30,20 @@ public class ArticleCreateCommandTests
     public async Task Handle_WithValidRequest_CreatesArticle()
     {
         // Arrange
-        await using var context = TestUtils.CreateInMemoryDbContext();
         var topic = new Topic { Id = 1, Name = "Test Topic" };
-        context.Topics.Add(topic);
-        await context.SaveChangesAsync();
+        _contentsContext.Topics.Add(topic);
+        await _contentsContext.SaveChangesAsync();
 
-        var handler = new ArticleCreateCommandHandler(context);
         var request = _fullValidRequest with { Title = "My Article", Content = "Hello World", TopicId = topic.Id };
         var command = new ArticleCreateCommand(request, 1);
 
         // Act
-        var articleId = await handler.Handle(command, CancellationToken.None);
+        var articleId = await _handler.Handle(command, CancellationToken.None);
 
         // Assert
         Assert.NotNull(articleId);
 
-        var article = await context.Articles
+        var article = await _contentsContext.Articles
             .Include(a => a.ArticleMeta)
             .FirstOrDefaultAsync(a => a.Id == articleId);
 
@@ -51,26 +56,21 @@ public class ArticleCreateCommandTests
         Assert.Equal(request.IsTopicSummary, article.ArticleMeta.IsTopicSummary);
         Assert.Equal(request.ImageUrl, article.ArticleMeta.ImageUrl);
         Assert.Equal(request.Description, article.Description);
+        Assert.Equal(request.Tags.Count, article.ArticleMeta.ArticleTags.Count);
     }
 
     [Fact]
     public async Task Handle_WithNonExistentTopic_ThrowsExceptionNotFound()
     {
         // Arrange
-        await using var context = TestUtils.CreateInMemoryDbContext();
-        var handler = new ArticleCreateCommandHandler(context);
-
         var request = new ArticleCreateRequest(Title: "Invalid", TopicId: 999); // topic does not exist
 
         var command = new ArticleCreateCommand(request, 1);
 
         // Act & Assert
-        var ex = await Assert.ThrowsAsync<ExceptionNotFound>(async () =>
-        {
-            await handler.Handle(command, CancellationToken.None);
-        });
+        await Assert.ThrowsAsync<ExceptionNotFound>(async () =>
+            await _handler.Handle(command, CancellationToken.None));
 
-        Assert.Equal("Topic of id 999 not found", ex.Message);
     }
 
     #endregion

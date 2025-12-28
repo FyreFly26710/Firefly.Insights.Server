@@ -7,10 +7,17 @@ public class ArticleUpdateCommandHandler(ContentsContext _contentsContext) : IRe
     {
         var article = await _contentsContext.Articles
             .Include(a => a.ArticleMeta)
+            .ThenInclude(am => am.ArticleTags)
             .FirstOrDefaultAsync(a => a.Id == command.Request.ArticleId, cancellationToken);
         if (article is null)
             throw new ExceptionNotFound($"Article of id {command.Request.ArticleId} not found");
 
+        var tagIds = command.Request.TagIds;
+        if (tagIds is not null)
+        {
+            var tags = await _contentsContext.Tags.Where(t => tagIds.Contains(t.Id)).ToListAsync(cancellationToken);
+            article.ArticleMeta.ArticleTags = tags.Select(t => new ArticleTag() { ArticleMetaId = article.ArticleMeta.Id, TagId = t.Id }).ToList();
+        }
 
         if (command.Request.TopicId is not null)
         {

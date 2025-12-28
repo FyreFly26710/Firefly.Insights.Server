@@ -6,12 +6,13 @@ public class Tag : Entity
 {
     public string Name { get; set; } = "";
     public TagType Type { get; set; }
-    public ICollection<ArticleTag> ArticleTags { get; set; } = [];
+    // public ICollection<ArticleTag> ArticleTags { get; set; } = [];
 
 }
 
 public enum TagType
 {
+    Default = 0,
     SkillLevel = 1,
     ArticleStyle = 2,
     FocusArea = 3,

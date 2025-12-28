@@ -32,6 +32,7 @@ public class ContentsContext : DbContext
         builder.Entity<Topic>(entity =>
         {
             entity.ToTable("Topics");
+            entity.Property(t => t.Id).ValueGeneratedNever();
             entity.Property(t => t.Name).HasMaxLength(128).IsRequired();
             entity.Property(t => t.Description).HasMaxLength(512).IsRequired();
             entity.Property(t => t.ImageUrl).HasMaxLength(256);
@@ -45,8 +46,10 @@ public class ContentsContext : DbContext
         builder.Entity<Tag>(entity =>
         {
             entity.ToTable("Tags");
+            entity.Property(t => t.Id).ValueGeneratedNever();
             entity.Property(t => t.Name).HasMaxLength(64).IsRequired();
             entity.Property(t => t.Type).HasConversion<string>().HasMaxLength(64).IsRequired();
+            entity.HasIndex(t => new { t.Name, t.Type }).IsUnique();
         });
     }
 
@@ -55,6 +58,7 @@ public class ContentsContext : DbContext
         builder.Entity<Category>(entity =>
         {
             entity.ToTable("Categories");
+            entity.Property(c => c.Id).ValueGeneratedNever();
             entity.Property(c => c.Name).HasMaxLength(128).IsRequired();
             entity.Property(c => c.Description).HasMaxLength(256).IsRequired();
             entity.Property(c => c.ImageUrl).HasMaxLength(256).IsRequired();
@@ -66,8 +70,8 @@ public class ContentsContext : DbContext
         builder.Entity<ArticleTag>(entity =>
         {
             entity.ToTable("ArticleTags");
-
-            entity.HasOne(at => at.Tag).WithMany(t => t.ArticleTags).HasForeignKey(at => at.TagId).OnDelete(DeleteBehavior.NoAction);
+            entity.Property(at => at.Id).ValueGeneratedNever();
+            entity.HasOne(at => at.Tag).WithMany().HasForeignKey(at => at.TagId).OnDelete(DeleteBehavior.NoAction);
             entity.HasOne(at => at.ArticleMeta).WithMany(am => am.ArticleTags).HasForeignKey(at => at.ArticleMetaId).OnDelete(DeleteBehavior.NoAction);
         });
     }
@@ -77,6 +81,7 @@ public class ContentsContext : DbContext
         builder.Entity<ArticleMeta>(entity =>
         {
             entity.ToTable("ArticleMetas");
+            entity.Property(am => am.Id).ValueGeneratedNever();
             entity.Property(am => am.ImageUrl).HasMaxLength(256).IsRequired();
 
             entity.HasOne(am => am.Article).WithOne(a => a.ArticleMeta).HasForeignKey<ArticleMeta>(a => a.ArticleId).OnDelete(DeleteBehavior.Cascade);
@@ -89,6 +94,7 @@ public class ContentsContext : DbContext
         builder.Entity<Article>(entity =>
         {
             entity.ToTable("Articles");
+            entity.Property(a => a.Id).ValueGeneratedNever();
             entity.Property(a => a.Title).HasMaxLength(128).IsRequired();
             entity.Property(a => a.Description).HasMaxLength(256).IsRequired();
             entity.Property(a => a.Content).IsRequired();

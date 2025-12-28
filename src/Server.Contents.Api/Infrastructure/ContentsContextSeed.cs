@@ -14,10 +14,10 @@ public class ContentsContextSeed : IDbSeeder<ContentsContext>
         context.Database.OpenConnection();
         ((NpgsqlConnection)context.Database.GetDbConnection()).ReloadTypes();
 
-        if (await context.Tags.AnyAsync())
-        {
-            return;
-        }
+        //if (await context.Tags.AnyAsync())
+        //{
+        //    return;
+        //}
         await context.ArticleTags.ExecuteDeleteAsync();
         await context.ArticleMetas.ExecuteDeleteAsync();
         await context.Articles.ExecuteDeleteAsync();

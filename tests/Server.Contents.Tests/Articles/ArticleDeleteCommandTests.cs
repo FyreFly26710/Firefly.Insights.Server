@@ -2,12 +2,17 @@ namespace Server.Contents.Tests.Articles;
 
 public class ArticleDeleteCommandTests
 {
-
+    private readonly ContentsContext _contentsContext;
+    private readonly ArticleDeleteCommandHandler _handler;
+    public ArticleDeleteCommandTests()
+    {
+        _contentsContext = TestUtils.CreateInMemoryDbContext();
+        _handler = new ArticleDeleteCommandHandler(_contentsContext);
+    }
     [Fact]
     public async Task Handle_WithValidArticle_SetsIsDeletedFlags()
     {
         // Arrange
-        await using var context = TestUtils.CreateInMemoryDbContext();
 
         var article = new Article
         {
@@ -23,20 +28,19 @@ public class ArticleDeleteCommandTests
                 }
             }
         };
-        context.Articles.Add(article);
-        await context.SaveChangesAsync();
+        _contentsContext.Articles.Add(article);
+        await _contentsContext.SaveChangesAsync();
 
-        var handler = new ArticleDeleteCommandHandler(context);
         var command = new ArticleDeleteCommand(article.Id);
 
         // Act
-        var result = await handler.Handle(command, CancellationToken.None);
+        var result = await _handler.Handle(command, CancellationToken.None);
 
         // Assert
         Assert.True(result);
 
         // Use IgnoreQueryFilters to bypass soft delete filter and check flags
-        var deletedArticle = await context.Articles
+        var deletedArticle = await _contentsContext.Articles
             .IgnoreQueryFilters()
             .Include(a => a.ArticleMeta)
             .ThenInclude(am => am.ArticleTags)
@@ -55,12 +59,10 @@ public class ArticleDeleteCommandTests
     public async Task Handle_NonExistentArticle_ThrowsExceptionNotFound()
     {
         // Arrange
-        await using var context = TestUtils.CreateInMemoryDbContext();
-        var handler = new ArticleDeleteCommandHandler(context);
         var command = new ArticleDeleteCommand(999);
 
         // Act & Assert
         await Assert.ThrowsAsync<ExceptionNotFound>(() =>
-            handler.Handle(command, CancellationToken.None));
+            _handler.Handle(command, CancellationToken.None));
     }
 }

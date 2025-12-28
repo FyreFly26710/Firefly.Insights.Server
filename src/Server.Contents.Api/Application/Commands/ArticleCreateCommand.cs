@@ -1,5 +1,3 @@
-using System;
-
 namespace Server.Contents.Api.Application.Commands;
 
 public record ArticleCreateCommand(ArticleCreateRequest Request, long UserId) : IRequest<long?>;
@@ -27,6 +25,13 @@ public class ArticleCreateCommandHandler(ContentsContext _contentsContext) : IRe
                 IsHidden = command.Request.IsHidden,
             }
         };
+
+        if (command.Request.Tags is not null && command.Request.Tags.Count > 0)
+        {
+            var tags = await _contentsContext.UpsertTagsAsync(command.Request.Tags);
+            article.ArticleMeta.ArticleTags = tags.Select(t => new ArticleTag() { ArticleMetaId = article.ArticleMeta.Id, TagId = t.Id }).ToList();
+        }
+
         await _contentsContext.Articles.AddAsync(article, cancellationToken);
         await _contentsContext.SaveChangesAsync(cancellationToken);
         return article.Id;
