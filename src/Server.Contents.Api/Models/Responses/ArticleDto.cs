@@ -20,5 +20,5 @@ public class ArticleDto
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
 
-    public ICollection<string> Tags { get; set; } = [];
+    public ICollection<TagDto> Tags { get; set; } = [];
 }

@@ -1,9 +1,6 @@
-﻿using Server.Common.Types;
-using Server.Contents.Api.Models.Responses;
+﻿namespace Server.Contents.Api.Models.Entities;
 
-namespace Server.Contents.Api.Models.Entities;
-
-public partial class Article : AuditableEntity
+public class Article : AuditableEntity
 {
     public string Title { get; set; } = "";
     public string Content { get; set; } = "";

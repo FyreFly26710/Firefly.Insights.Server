@@ -1,27 +1,23 @@
-using System;
-using Server.Contents.Api.Models.Responses;
-
 namespace Server.Contents.Api.Models.Entities;
 
-public partial class Article
+public static class ArticleExtensions
 {
-    public ArticleDto ToArticleDto(string userName) => new ArticleDto()
+    public static ArticleDto ToArticleDto(this Article article, string userName) => new ArticleDto()
     {
-        ArticleId = Id,
-        Title = Title,
-        Content = Content,
-        Description = Description,
-
-        ImageUrl = ArticleMeta.ImageUrl,
-        TopicId = ArticleMeta.TopicId,
-        TopicName = ArticleMeta.Topic.Name,
-        IsTopicSummary = ArticleMeta.IsTopicSummary,
-        UserId = ArticleMeta.UserId,
+        ArticleId = article.Id,
+        Title = article.Title,
+        Content = article.Content,
+        Description = article.Description,
+        ImageUrl = article.ArticleMeta.ImageUrl,
+        TopicId = article.ArticleMeta.TopicId,
+        TopicName = article.ArticleMeta.Topic.Name,
+        IsTopicSummary = article.ArticleMeta.IsTopicSummary,
+        UserId = article.ArticleMeta.UserId,
         UserName = userName,
-        SortNumber = ArticleMeta.SortNumber,
-        IsHidden = ArticleMeta.IsHidden,
-        CreatedAt = ArticleMeta.CreatedAt,
-        UpdatedAt = ArticleMeta.UpdatedAt,
-        Tags = ArticleMeta.ArticleTags.Select(t => t.Tag.Name).ToList()
+        SortNumber = article.ArticleMeta.SortNumber,
+        IsHidden = article.ArticleMeta.IsHidden,
+        CreatedAt = article.ArticleMeta.CreatedAt,
+        UpdatedAt = article.ArticleMeta.UpdatedAt,
+        Tags = article.ArticleMeta.ArticleTags.Select(t => t.Tag.ToTagDto()).ToList()
     };
 }

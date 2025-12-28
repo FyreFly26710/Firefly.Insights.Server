@@ -1,8 +1,6 @@
-﻿using Server.Common.Types;
+﻿namespace Server.Contents.Api.Models.Entities;
 
-namespace Server.Contents.Api.Models.Entities;
-
-public partial class Category : AuditableEntity
+public class Category : AuditableEntity
 {
     public string Name { get; set; } = "";
     public string Description { get; set; } = "";

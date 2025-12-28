@@ -1,6 +1,4 @@
-﻿using Server.Common.Types;
-
-namespace Server.Contents.Api.Models.Entities;
+﻿namespace Server.Contents.Api.Models.Entities;
 
 public class ArticleTag : AuditableEntity
 {

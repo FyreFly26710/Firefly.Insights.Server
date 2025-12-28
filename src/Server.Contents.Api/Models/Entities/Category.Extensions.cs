@@ -1,19 +1,16 @@
-using System;
-using Server.Contents.Api.Models.Responses;
-
 namespace Server.Contents.Api.Models.Entities;
 
-public partial class Category
+public static class CategoryExtensions
 {
-    public CategoryDto ToCategoryDto() => new CategoryDto()
+    public static CategoryDto ToCategoryDto(this Category category) => new CategoryDto()
     {
-        CategoryId = Id,
-        Name = Name,
-        Description = Description,
-        ImageUrl = ImageUrl,
-        SortNumber = SortNumber,
-        IsHidden = IsHidden,
-        CategoryTopics = Topics.Select(t => new CategoryTopicDto()
+        CategoryId = category.Id,
+        Name = category.Name,
+        Description = category.Description,
+        ImageUrl = category.ImageUrl,
+        SortNumber = category.SortNumber,
+        IsHidden = category.IsHidden,
+        CategoryTopics = category.Topics.Select(t => new CategoryTopicDto()
         {
             TopicId = t.Id,
             Name = t.Name,
