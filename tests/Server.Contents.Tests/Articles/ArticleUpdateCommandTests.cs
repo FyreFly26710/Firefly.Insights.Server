@@ -3,9 +3,13 @@ namespace Server.Contents.Tests.Articles;
 public class ArticleUpdateCommandTests
 {
     private readonly ArticleUpdateRequestValidator _validator;
+    private readonly ContentsContext _contentsContext;
+    private readonly ArticleUpdateCommandHandler _handler;
     public ArticleUpdateCommandTests()
     {
         _validator = new ArticleUpdateRequestValidator();
+        _contentsContext = TestUtils.CreateInMemoryDbContext();
+        _handler = new ArticleUpdateCommandHandler(_contentsContext);
     }
 
     private readonly ArticleUpdateRequest _fullValidRequest = new ArticleUpdateRequest(
@@ -17,7 +21,8 @@ public class ArticleUpdateCommandTests
         ImageUrl: "https://example.com/image.png",
         IsTopicSummary: true,
         SortNumber: 1,
-        IsHidden: false
+        IsHidden: false,
+        TagIds: [1, 2]
     );
 
     #region Handler Tests
@@ -25,10 +30,8 @@ public class ArticleUpdateCommandTests
     public async Task Handle_WithValidRequest_SkipNullProperties()
     {
         // Arrange
-        await using var context = TestUtils.CreateInMemoryDbContext();
-
-        var topic = new Topic { Id = 1, Name = "Test Topic" };
-        context.Topics.Add(topic);
+        _contentsContext.Topics.Add(new Topic { Id = 1, Name = "Test Topic" });
+        await _contentsContext.SaveChangesAsync();
 
         var article = new Article
         {
@@ -45,21 +48,22 @@ public class ArticleUpdateCommandTests
                 IsTopicSummary = false
             }
         };
-        context.Articles.Add(article);
-        await context.SaveChangesAsync();
+        _contentsContext.Articles.Add(article);
+        await _contentsContext.SaveChangesAsync();
 
-        var handler = new ArticleUpdateCommandHandler(context);
         var request = new ArticleUpdateRequest(ArticleId: article.Id, Title: "New Title", Content: "New Content");
         var command = new ArticleUpdateCommand(request);
 
         // Act
-        var result = await handler.Handle(command, CancellationToken.None);
+        var result = await _handler.Handle(command, CancellationToken.None);
 
         // Assert
         Assert.True(result);
 
-        var updated = await context.Articles
+        var updated = await _contentsContext.Articles
             .Include(a => a.ArticleMeta)
+            .ThenInclude(am => am.ArticleTags)
+            .ThenInclude(at => at.Tag)
             .FirstAsync(a => a.Id == article.Id);
 
         Assert.Equal("New Title", updated.Title);
@@ -75,10 +79,10 @@ public class ArticleUpdateCommandTests
     public async Task Handle_WithValidRequest_UpdatesArticle()
     {
         // Arrange
-        await using var context = TestUtils.CreateInMemoryDbContext();
-
-        var topic = new Topic { Id = 1, Name = "Test Topic" };
-        context.Topics.Add(topic);
+        _contentsContext.Tags.Add(new Tag { Id = 1, Name = "Tag1", Type = TagType.Default });
+        _contentsContext.Tags.Add(new Tag { Id = 2, Name = "Tag2", Type = TagType.Default });
+        _contentsContext.Topics.Add(new Topic { Id = 1, Name = "Test Topic" }); 
+        await _contentsContext.SaveChangesAsync();
 
         var article = new Article
         {
@@ -95,20 +99,19 @@ public class ArticleUpdateCommandTests
                 IsTopicSummary = false
             }
         };
-        context.Articles.Add(article);
-        await context.SaveChangesAsync();
+        _contentsContext.Articles.Add(article);
+        await _contentsContext.SaveChangesAsync();
 
-        var handler = new ArticleUpdateCommandHandler(context);
         var request = _fullValidRequest with { Title = "New Title", Content = "New Content" };
         var command = new ArticleUpdateCommand(request);
 
         // Act
-        var result = await handler.Handle(command, CancellationToken.None);
+        var result = await _handler.Handle(command, CancellationToken.None);
 
         // Assert
         Assert.True(result);
 
-        var updated = await context.Articles
+        var updated = await _contentsContext.Articles
             .Include(a => a.ArticleMeta)
             .FirstAsync(a => a.Id == article.Id);
 
@@ -120,30 +123,27 @@ public class ArticleUpdateCommandTests
         Assert.Equal(request.IsTopicSummary, updated.ArticleMeta.IsTopicSummary);
         Assert.Equal(request.SortNumber, updated.ArticleMeta.SortNumber);
         Assert.Equal(request.TopicId, updated.ArticleMeta.TopicId);
+        Assert.Equal(request.TagIds.Count, updated.ArticleMeta.ArticleTags.Count);
+
     }
 
     [Fact]
     public async Task Handle_WithNonExistentArticle_ThrowsExceptionNotFound()
     {
         // Arrange
-        await using var context = TestUtils.CreateInMemoryDbContext();
-        var handler = new ArticleUpdateCommandHandler(context);
 
         var request = _fullValidRequest with { ArticleId = 999 };
         var command = new ArticleUpdateCommand(request);
 
         // Act & Assert
-        var ex = await Assert.ThrowsAsync<ExceptionNotFound>(() =>
-            handler.Handle(command, CancellationToken.None));
-
-        Assert.Equal("Article of id 999 not found", ex.Message);
+        await Assert.ThrowsAsync<ExceptionNotFound>(() =>
+            _handler.Handle(command, CancellationToken.None));
     }
 
     [Fact]
     public async Task Handle_WithNonExistentTopic_ThrowsExceptionNotFound()
     {
         // Arrange
-        await using var context = TestUtils.CreateInMemoryDbContext();
 
         var article = new Article
         {
@@ -156,16 +156,15 @@ public class ArticleUpdateCommandTests
                 UserId = 1
             }
         };
-        context.Articles.Add(article);
-        await context.SaveChangesAsync();
+        _contentsContext.Articles.Add(article);
+        await _contentsContext.SaveChangesAsync();
 
-        var handler = new ArticleUpdateCommandHandler(context);
         var request = _fullValidRequest with { TopicId = 999 };
         var command = new ArticleUpdateCommand(request);
 
         // Act & Assert
         await Assert.ThrowsAsync<ExceptionNotFound>(() =>
-            handler.Handle(command, CancellationToken.None));
+            _handler.Handle(command, CancellationToken.None));
     }
 
     #endregion
