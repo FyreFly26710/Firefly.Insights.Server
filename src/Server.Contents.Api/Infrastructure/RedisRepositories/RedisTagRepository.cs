@@ -67,4 +67,25 @@ public class RedisTagRepository : ITagRepository
 
         return result;
     }
+    public void AddRange(IEnumerable<Tag> tags)
+    {
+        // Group tags by type so we can update each Redis Hash key once
+        var groupedTags = tags.GroupBy(t => t.Type);
+
+        var batch = _redis.CreateBatch();
+        var tasks = new List<Task>();
+
+        foreach (var group in groupedTags)
+        {
+            string typeKey = $"tags:name:{group.Key}";
+
+            // Map Tags to HashEntry array (Name as field, Id as value)
+            var entries = group.Select(t => new HashEntry(t.Name, t.Id)).ToArray();
+
+            // Add to batch
+            tasks.Add(batch.HashSetAsync(typeKey, entries));
+        }
+
+        batch.Execute();
+    }
 }

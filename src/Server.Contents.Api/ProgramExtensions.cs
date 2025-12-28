@@ -56,12 +56,8 @@ public static class ProgramExtensions
     private static void SeedRedisStaticTags(IServiceCollection services)
     {
         using var provider = services.BuildServiceProvider();
-        var redis = provider.GetRequiredService<IConnectionMultiplexer>().GetDatabase();
-
-        foreach (var tag in TagTypeExtensions.GetStaticTags())
-        {
-            redis.HashSet($"tags:name:{tag.Type}", tag.Name, tag.Id, When.NotExists);
-        }
+        var tagRepository = provider.GetRequiredService<ITagRepository>();
+        tagRepository.AddRange(TagTypeExtensions.GetStaticTags());
     }
 
 

@@ -22,7 +22,7 @@ public partial class Article
         IsHidden = ArticleMeta.IsHidden,
         CreatedAt = ArticleMeta.CreatedAt,
         UpdatedAt = ArticleMeta.UpdatedAt,
-        Tags = tags
+        Tags = tags.ToList()
     };
     public ArticleDto ToArticleDto() => new ArticleDto()
     {

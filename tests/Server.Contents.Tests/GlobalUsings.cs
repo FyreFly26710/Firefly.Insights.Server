@@ -1,4 +1,7 @@
 ﻿global using Microsoft.EntityFrameworkCore;
+global using NSubstitute;
+
+
 global using Server.Common.Types;
 global using Server.Contents.Api.Application.Commands;
 global using Server.Contents.Api.Infrastructure.EfContexts;

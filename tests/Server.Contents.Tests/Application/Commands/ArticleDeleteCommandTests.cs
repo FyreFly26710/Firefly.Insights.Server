@@ -1,4 +1,4 @@
-namespace Server.Contents.Tests.Articles;
+namespace Server.Contents.Tests.Application.Commands;
 
 public class ArticleDeleteCommandTests
 {
