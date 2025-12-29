@@ -25,4 +25,5 @@ public class TopicArticleDto
     public int SortNumber { get; set; }
     public bool IsHidden { get; set; }
     public List<string> Tags { get; set; } = [];
+    public bool IsTopicSummary { get; set; }
 }

@@ -20,6 +20,7 @@ public static class TopicExtensions
             ImageUrl = a.ImageUrl,
             SortNumber = a.SortNumber,
             IsHidden = a.IsHidden,
+            IsTopicSummary = a.IsTopicSummary,
         }).ToList()
     };
 }

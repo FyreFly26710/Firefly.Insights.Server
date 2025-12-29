@@ -13,10 +13,11 @@ namespace Server.Identity.Api.Infrastructure
             context.Database.OpenConnection();
             ((NpgsqlConnection)context.Database.GetDbConnection()).ReloadTypes();
 
-            if(!context.Users.Any())
+            if (!context.Users.Any())
             {
-                var user = new User() { Id = 1, UserName = "TestUser", UserAccount = "TestAccount", UserPassword="Passord",UserRole="user" };
-                await context.Users.AddRangeAsync(user);
+                var admin = new User() { Id = 1, UserName = "TestAdmin", UserAccount = "TestAdmin", UserPassword = "Password", UserRole = "admin" };
+                var user = new User() { Id = 2, UserName = "TestUser", UserAccount = "TestAccount", UserPassword = "Password", UserRole = "user" };
+                await context.Users.AddRangeAsync(user, admin);
                 await context.SaveChangesAsync();
             }
         }
