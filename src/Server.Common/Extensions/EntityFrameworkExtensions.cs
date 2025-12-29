@@ -58,9 +58,8 @@ public static class EntityFrameworkExtensions
         where TEntity : class
         where TDto : class
     {
-        var totalCount = await query.CountAsync();
-        var data = await query.ApplyPageQuery(pageInfo).ToListAsync();
-        var dtos = data.Select(selector).ToList();
-        return new Paged<TDto>(pageInfo, totalCount, dtos);
+        var paged = await query.ToPagedAsync(pageInfo);
+        var dtos = paged.Data.Select(selector).ToList();
+        return new Paged<TDto>(pageInfo, paged.TotalCount, dtos);
     }
 }

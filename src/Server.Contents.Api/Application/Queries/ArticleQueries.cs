@@ -4,21 +4,22 @@ namespace Server.Contents.Api.Application.Queries;
 
 public class ArticleQueries(ContentsContext _contentsContext, ILogger<ArticleQueries> _logger) : IArticleQueries
 {
-    private IQueryable<Article> GetArticleNavigationQuery()
+    private IQueryable<ArticleMeta> GetArticleNavigationQuery()
     {
-        return _contentsContext.Articles.AsQueryable().AsNoTracking()
-            .Include(a => a.ArticleMeta).ThenInclude(am => am.ArticleTags).ThenInclude(at => at.Tag)
-            .Include(a => a.ArticleMeta).ThenInclude(am => am.Topic);
+        return _contentsContext.ArticleMetas.AsQueryable().AsNoTracking()
+            .Include(am => am.Article)
+            .Include(am => am.ArticleTags).ThenInclude(at => at.Tag)
+            .Include(am => am.Topic);
     }
     public async Task<ArticleDto> GetArticleById(long articleId)
     {
         var query = GetArticleNavigationQuery();
 
-        var article = await query.FirstOrDefaultAsync(a => a.Id == articleId);
-        if (article is null)
+        var articleMeta = await query.FirstOrDefaultAsync(am => am.ArticleId == articleId);
+        if (articleMeta is null)
             throw new ExceptionNotFound();
 
-        return article.ToArticleDto("Unknown");
+        return articleMeta.Article.ToArticleDto("Unknown");
     }
 
     public async Task<Paged<ArticleDto>> GetArticleList(ArticleListRequest request)
@@ -28,9 +29,23 @@ public class ArticleQueries(ContentsContext _contentsContext, ILogger<ArticleQue
         var query = GetArticleNavigationQuery();
 
         if (!string.IsNullOrEmpty(request.ArticleTitle))
-            query = query.Where(a => a.Title.Contains(request.ArticleTitle));
+        {
+            // The pattern % surrounds the search term to mimic .Contains() for case insensitive search
+            var pattern = $"%{request.ArticleTitle}%";
+            query = query.Where(am => EF.Functions.ILike(am.Article.Title, pattern));
+        }
+        if (request.TopicId is not null)
+            query = query.Where(am => am.TopicId == request.TopicId);
+        if (request.IsTopicSummary is not null)
+            query = query.Where(am => am.IsTopicSummary == request.IsTopicSummary);
+        if (request.IsHidden is not null)
+            query = query.Where(am => am.IsHidden == request.IsHidden);
+        if (request.UserId is not null)
+            query = query.Where(am => am.UserId == request.UserId);
+        if (request.Tags is not null)
+            query = query.Where(am => am.ArticleTags.Any(at => request.Tags.Contains(at.Tag.Name)));
 
-        var pagedData = await query.ToPagedDtoAsync(pagedInfo, a => a.ToArticleDto("Unknown"));
+        var pagedData = await query.ToPagedDtoAsync(pagedInfo, am => am.Article.ToArticleDto("Unknown"));
         return pagedData;
     }
 }
