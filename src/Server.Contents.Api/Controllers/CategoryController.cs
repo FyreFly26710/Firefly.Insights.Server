@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Server.Contents.Api.Controllers;
@@ -22,6 +23,7 @@ public class CategoryController(
         return Ok(categories);
     }
     [HttpPost]
+    [Authorize(Roles = "admin")]
     public async Task<ActionResult<long?>> Create(CategoryCreateRequest request)
     {
         var categoryId = await _mediator.Send(new CategoryCreateCommand(request));
@@ -30,6 +32,7 @@ public class CategoryController(
         return Ok(categoryId);
     }
     [HttpPut("{categoryId}")]
+    [Authorize(Roles = "admin")]
     public async Task<ActionResult<bool>> Update(long categoryId, [FromBody] CategoryUpdateRequest request)
     {
         request = request with { CategoryId = categoryId };
@@ -37,6 +40,7 @@ public class CategoryController(
         return Ok(result);
     }
     [HttpDelete("{categoryId}")]
+    [Authorize(Roles = "admin")]
     public async Task<ActionResult<bool>> Delete(long categoryId)
     {
         var result = await _mediator.Send(new CategoryDeleteCommand(categoryId));

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Server.Contents.Api.Controllers;
 
@@ -22,6 +23,7 @@ public class TopicController(
         return Ok(topics);
     }
     [HttpPost]
+    [Authorize(Roles = "admin")]
     public async Task<ActionResult<long?>> Create(TopicCreateRequest request)
     {
         var topicId = await _mediator.Send(new TopicCreateCommand(request));
@@ -30,6 +32,7 @@ public class TopicController(
         return Ok(topicId);
     }
     [HttpPut("{topicId}")]
+    [Authorize(Roles = "admin")]
     public async Task<ActionResult<bool>> Update(long topicId, [FromBody] TopicUpdateRequest request)
     {
         request = request with { TopicId = topicId };
@@ -37,6 +40,7 @@ public class TopicController(
         return Ok(result);
     }
     [HttpDelete("{topicId}")]
+    [Authorize(Roles = "admin")]
     public async Task<ActionResult<bool>> Delete(long topicId)
     {
         var result = await _mediator.Send(new TopicDeleteCommand(topicId));

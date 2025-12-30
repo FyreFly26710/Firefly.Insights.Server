@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 namespace Server.Contents.Api.Controllers;
 
@@ -21,12 +22,14 @@ public class ArticleController(
         return Ok(articles);
     }
     [HttpPost]
+    [Authorize(Roles = "admin")]
     public async Task<ActionResult<long?>> Create([FromBody] ArticleCreateRequest request)
     {
         var articleId = await _mediator.Send(new ArticleCreateCommand(request, 1));
         return Ok(articleId);
     }
     [HttpPut("{articleId}")]
+    [Authorize(Roles = "admin")]
     public async Task<ActionResult<bool>> Update(long articleId, [FromBody] ArticleUpdateRequest request)
     {
         request = request with { ArticleId = articleId };
@@ -34,6 +37,7 @@ public class ArticleController(
         return Ok(result);
     }
     [HttpDelete("{articleId}")]
+    [Authorize(Roles = "admin")]
     public async Task<ActionResult<bool>> Delete(long articleId)
     {
         var result = await _mediator.Send(new ArticleDeleteCommand(articleId));

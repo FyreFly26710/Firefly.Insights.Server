@@ -9,7 +9,7 @@ namespace Server.Identity.Api.Application.Services;
 public class JwtService(IOptions<JwtSettings> _jwtSettings) : IJwtService
 {
 
-    public string GenerateToken(string userId, string username)
+    public string GenerateToken(string userId, string username, string role)
     {
         var settings = _jwtSettings.Value;
         var key = Encoding.UTF8.GetBytes(settings.Key);
@@ -17,7 +17,8 @@ public class JwtService(IOptions<JwtSettings> _jwtSettings) : IJwtService
         var claims = new[]
         {
             new Claim(JwtRegisteredClaimNames.Sub, userId),
-            new Claim(JwtRegisteredClaimNames.UniqueName, username)
+            new Claim(JwtRegisteredClaimNames.UniqueName, username),
+            new Claim(ClaimTypes.Role, role)
         };
 
         var token = new JwtSecurityToken(

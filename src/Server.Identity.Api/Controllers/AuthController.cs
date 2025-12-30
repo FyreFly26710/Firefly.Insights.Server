@@ -37,7 +37,7 @@ public class AuthController(
     {
 
         var user = await _userQueries.GetUserByPassword(request.UserAccount, request.UserPassword);
-        var token = _jwtService.GenerateToken(user.UserId.ToString(), user.UserName ?? "");
+        var token = _jwtService.GenerateToken(user.UserId.ToString(), user.UserName ?? "", user.UserRole);
 
         return Ok(new LoginUserDto
         {
