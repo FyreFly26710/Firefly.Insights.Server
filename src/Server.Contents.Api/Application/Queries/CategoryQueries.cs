@@ -22,12 +22,13 @@ public class CategoryQueries(ContentsContext _contentsContext, ILogger<CategoryQ
     {
         var query = GetNavigationQuery();
         var categories = await query.ToListAsync();
+        categories = categories.OrderBy(c => c.SortNumber).ToList();
         return categories.Select(c => c.ToCategoryDto()).ToList();
     }
     public async Task<List<LookupItemDto>> GetLookupList()
     {
         var query = _contentsContext.Categories.AsQueryable().AsNoTracking();
-        var categories = await query.Select(c => new LookupItemDto(c.Id, c.Name)).ToListAsync();
+        var categories = await query.OrderBy(c => c.SortNumber).Select(c => new LookupItemDto(c.Id, c.Name)).ToListAsync();
         return categories;
     }
     public async Task<List<LookupItemDto>> GetTopicLookupList(long categoryId)
