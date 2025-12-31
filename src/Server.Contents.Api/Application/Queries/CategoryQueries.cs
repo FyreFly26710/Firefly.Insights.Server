@@ -24,4 +24,19 @@ public class CategoryQueries(ContentsContext _contentsContext, ILogger<CategoryQ
         var categories = await query.ToListAsync();
         return categories.Select(c => c.ToCategoryDto()).ToList();
     }
+    public async Task<List<LookupItemDto>> GetLookupList()
+    {
+        var query = _contentsContext.Categories.AsQueryable().AsNoTracking();
+        var categories = await query.Select(c => new LookupItemDto(c.Id, c.Name)).ToListAsync();
+        return categories;
+    }
+    public async Task<List<LookupItemDto>> GetTopicLookupList(long categoryId)
+    {
+        var query = GetNavigationQuery();
+        var category = await query.FirstOrDefaultAsync(c => c.Id == categoryId);
+        if (category is null)
+            throw new ExceptionNotFound();
+        var topics = category.Topics.OrderBy(t => t.SortNumber).Select(t => new LookupItemDto(t.Id, t.Name)).ToList();
+        return topics;
+    }
 }

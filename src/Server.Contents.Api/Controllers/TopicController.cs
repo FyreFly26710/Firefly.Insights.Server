@@ -16,12 +16,12 @@ public class TopicController(
         var topic = await _topicQueries.GetTopicById(topicId);
         return Ok(topic);
     }
-    // [HttpGet]
-    // public async Task<ActionResult<List<TopicDto>>> GetList()
-    // {
-    //     var topics = await _topicQueries.GetTopicList();
-    //     return Ok(topics);
-    // }
+    [HttpGet("lookup-list")]
+    public async Task<ActionResult<List<LookupItemDto>>> GetLookupList()
+    {
+        var lookupList = await _topicQueries.GetLookupList();
+        return Ok(lookupList);
+    }
     [HttpGet]
     public async Task<ActionResult<Paged<TopicDto>>> GetList([FromQuery] TopicListRequest request)
     {

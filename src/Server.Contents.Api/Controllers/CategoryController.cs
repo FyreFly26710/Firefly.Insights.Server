@@ -16,11 +16,24 @@ public class CategoryController(
         var category = await _categoryQueries.GetCategoryById(categoryId);
         return Ok(category);
     }
+    [HttpGet("{categoryId}/topic-lookup-list")]
+    public async Task<ActionResult<List<LookupItemDto>>> GetTopicLookupListById(long categoryId)
+    {
+        var lookupList = await _categoryQueries.GetTopicLookupList(categoryId);
+        return Ok(lookupList);
+    }
+
     [HttpGet]
     public async Task<ActionResult<List<CategoryDto>>> GetList()
     {
         var categories = await _categoryQueries.GetCategoryList();
         return Ok(categories);
+    }
+    [HttpGet("lookup-list")]
+    public async Task<ActionResult<List<LookupItemDto>>> GetLookupList()
+    {
+        var lookupList = await _categoryQueries.GetLookupList();
+        return Ok(lookupList);
     }
     [HttpPost]
     [Authorize(Roles = "admin")]

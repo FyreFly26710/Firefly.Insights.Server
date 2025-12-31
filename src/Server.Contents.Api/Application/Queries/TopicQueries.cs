@@ -46,4 +46,10 @@ public class TopicQueries(ContentsContext _contentsContext, ILogger<TopicQueries
         var pagedData = await query.ToPagedDtoAsync(pagedInfo, t => t.ToTopicDto());
         return pagedData;
     }
+    public async Task<List<LookupItemDto>> GetLookupList()
+    {
+        var query = _contentsContext.Topics.AsQueryable().AsNoTracking();
+        var topics = await query.Select(t => new LookupItemDto(t.Id, t.Name)).ToListAsync();
+        return topics;
+    }
 }

@@ -11,5 +11,14 @@ public record TopicUpdateRequest
     long? CategoryId = null,
     string? ImageUrl = null,
     int? SortNumber = null,
-    bool? IsHidden = null
+    bool? IsHidden = null,
+    List<TopicUpdateRequestArticle>? TopicArticles = null
+);
+public record TopicUpdateRequestArticle
+(
+    long ArticleId,
+    string Title, // Not used
+    int SortNumber,
+    bool IsHidden,
+    bool IsTopicSummary
 );

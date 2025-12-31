@@ -16,7 +16,7 @@ public class ContentsContextSeed : IDbSeeder<ContentsContext>
 
         if (await context.Tags.AnyAsync())
         {
-           return;
+            return;
         }
         await context.ArticleTags.ExecuteDeleteAsync();
         await context.ArticleMetas.ExecuteDeleteAsync();
@@ -25,9 +25,9 @@ public class ContentsContextSeed : IDbSeeder<ContentsContext>
         await context.Categories.ExecuteDeleteAsync();
         await context.Tags.ExecuteDeleteAsync();
 
-        var defaultTopic = new Topic() { Id = 0, Name = "Unallocated", Description = "Unallocated topics", CategoryId = 0, ImageUrl = "", SortNumber = 0, IsHidden = false };
+        var defaultTopic = new Topic() { Id = -1, Name = "Unallocated", Description = "Unallocated topics", CategoryId = -1L, ImageUrl = "", SortNumber = 0, IsHidden = false };
         await context.Topics.AddAsync(defaultTopic);
-        var defaultCategory = new Category() { Id = 0, Name = "Unallocated", Description = "Unallocated categories", ImageUrl = "", SortNumber = 0, IsHidden = false };
+        var defaultCategory = new Category() { Id = -1, Name = "Unallocated", Description = "Unallocated categories", ImageUrl = "", SortNumber = 0, IsHidden = false };
         await context.Categories.AddAsync(defaultCategory);
 
         await context.Tags.AddRangeAsync(SeedData.Tags);
