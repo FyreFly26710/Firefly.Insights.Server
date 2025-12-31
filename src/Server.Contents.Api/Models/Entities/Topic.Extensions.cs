@@ -12,6 +12,8 @@ public static class TopicExtensions
         ImageUrl = topic.ImageUrl,
         SortNumber = topic.SortNumber,
         IsHidden = topic.IsHidden,
+        CreatedAt = topic.CreatedAt,
+        UpdatedAt = topic.UpdatedAt,
         TopicArticles = topic.ArticleMetas.Select(a => new TopicArticleDto()
         {
             ArticleId = a.ArticleId,

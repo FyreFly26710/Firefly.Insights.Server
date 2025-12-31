@@ -1,4 +1,6 @@
-﻿namespace Server.Contents.Api.Application.Queries;
+﻿using Server.Common.Extensions;
+
+namespace Server.Contents.Api.Application.Queries;
 
 public class TopicQueries(ContentsContext _contentsContext, ILogger<TopicQueries> _logger) : ITopicQueries
 {
@@ -24,13 +26,24 @@ public class TopicQueries(ContentsContext _contentsContext, ILogger<TopicQueries
         topic.ArticleMetas = topic.ArticleMetas.OrderBy(am => am.SortNumber).ToList();
         return topic.ToTopicDto();
     }
-    public async Task<List<TopicDto>> GetTopicList()
+    public async Task<Paged<TopicDto>> GetTopicList(TopicListRequest request)
     {
+        PageInfo pagedInfo = request;
+
         var query = GetNavigationQuery(false);
 
-        var topics = await query.ToListAsync();
-        
-        topics = topics.OrderBy(t => t.SortNumber).ToList();
-        return topics.Select(t => t.ToTopicDto()).ToList();
+        if (!string.IsNullOrEmpty(request.TopicName))
+        {
+            // The pattern % surrounds the search term to mimic .Contains() for case insensitive search
+            var pattern = $"%{request.TopicName}%";
+            query = query.Where(t => EF.Functions.ILike(t.Name, pattern));
+        }
+        if (request.CategoryId is not null)
+            query = query.Where(t => t.CategoryId == request.CategoryId);
+        if (request.IsHidden is not null)
+            query = query.Where(t => t.IsHidden == request.IsHidden);
+
+        var pagedData = await query.ToPagedDtoAsync(pagedInfo, t => t.ToTopicDto());
+        return pagedData;
     }
 }

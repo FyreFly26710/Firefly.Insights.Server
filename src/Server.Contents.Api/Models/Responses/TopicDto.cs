@@ -12,7 +12,8 @@ public class TopicDto
     public string ImageUrl { get; set; } = "";
     public int SortNumber { get; set; }
     public bool IsHidden { get; set; }
-
+    public DateTime CreatedAt { get; set; }
+    public DateTime UpdatedAt { get; set; }
     public ICollection<TopicArticleDto>? TopicArticles { get; set; } = null;
 }
 

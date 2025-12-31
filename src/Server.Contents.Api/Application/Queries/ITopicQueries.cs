@@ -3,5 +3,5 @@
 public interface ITopicQueries
 {
     Task<TopicDto> GetTopicById(long topicId);
-    Task<List<TopicDto>> GetTopicList();
+    Task<Paged<TopicDto>> GetTopicList(TopicListRequest request);
 }

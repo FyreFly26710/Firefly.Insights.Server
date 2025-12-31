@@ -16,10 +16,16 @@ public class TopicController(
         var topic = await _topicQueries.GetTopicById(topicId);
         return Ok(topic);
     }
+    // [HttpGet]
+    // public async Task<ActionResult<List<TopicDto>>> GetList()
+    // {
+    //     var topics = await _topicQueries.GetTopicList();
+    //     return Ok(topics);
+    // }
     [HttpGet]
-    public async Task<ActionResult<List<TopicDto>>> GetList()
+    public async Task<ActionResult<Paged<TopicDto>>> GetList([FromQuery] TopicListRequest request)
     {
-        var topics = await _topicQueries.GetTopicList();
+        var topics = await _topicQueries.GetTopicList(request);
         return Ok(topics);
     }
     [HttpPost]
