@@ -14,6 +14,7 @@ public class ExecutionLogEntityTypeConfiguration : IEntityTypeConfiguration<Exec
         builder.Property(e => e.ExecutionPayloadId).IsRequired();
         builder.Property(e => e.InputTokens).IsRequired();
         builder.Property(e => e.OutputTokens).IsRequired();
+        builder.Property(e => e.ReasoningTokens).IsRequired();
         builder.Property(e => e.Cost).HasPrecision(18, 10).IsRequired();
         builder.Property(e => e.IsSuccessful).IsRequired();
         builder.Property(e => e.ErrorMessage).HasMaxLength(4096).IsRequired(false);

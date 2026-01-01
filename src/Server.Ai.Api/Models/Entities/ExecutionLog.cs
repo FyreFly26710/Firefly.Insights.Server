@@ -4,6 +4,15 @@ namespace Server.Ai.Api.Models.Entities;
 
 public class ExecutionLog : Entity
 {
+    public ExecutionLog(){}
+    public ExecutionLog(long jobLogId, DateTime executedAt, string errorMessage)
+    {
+        JobLogId = jobLogId;
+        ExecutedAt = executedAt;
+        ErrorMessage = errorMessage;
+        IsSuccessful = false;
+        Duration = TimeSpan.Zero;
+    }
     public long JobLogId { get; set; }
 
     public DateTime ExecutedAt { get; set; }
@@ -11,6 +20,7 @@ public class ExecutionLog : Entity
 
     public int InputTokens { get; set; }
     public int OutputTokens { get; set; }
+    public int ReasoningTokens { get; set; }
     public decimal Cost { get; set; }
 
     public bool IsSuccessful { get; set; }

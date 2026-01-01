@@ -3,7 +3,9 @@ using System;
 namespace Server.Ai.Api.Models.Requests;
 
 public record GenerateArticleSummaryRequest(
-    AiAgent Agent,
+    // AiAgent Agent,
+    string Provider,
+    string Model,
     long UserId,
     string UserPrompt,
 

@@ -9,7 +9,7 @@ public class ExecutionPayloadEntityTypeConfiguration : IEntityTypeConfiguration<
         builder.ToTable("ExecutionPayloads");
         builder.HasKey(e => e.Id);
         builder.Property(e => e.Id).ValueGeneratedNever();
-        builder.Property(e => e.RequestJson).HasColumnType("text").IsRequired();
-        builder.Property(e => e.ResponseJson).HasColumnType("text").IsRequired(false);
+        builder.Property(e => e.Prompt).HasColumnType("text").IsRequired();
+        builder.Property(e => e.Response).HasColumnType("text").IsRequired(false);
     }
 }

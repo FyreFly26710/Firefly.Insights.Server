@@ -10,7 +10,8 @@ public static class Prompts
     // public const string User_TopicArticleContent = "Please create a summary page that ties together all the articles in this topic, highlighting their relationships and providing a roadmap for readers.";
     // public const string User_RegenerateArticleList = "Please generate additional articles for this topic, ensuring they complement the existing articles while exploring new aspects of the subject matter.";
 
-    public static string System_ArticleList(int articleCount, string topic, string topicDescription, string category) =>
+    public static string System_ArticleList(int articleCount, string topic, string topicDescription, string category, string prompt = "") =>
+    (!string.IsNullOrWhiteSpace(prompt) ? prompt : "" + Environment.NewLine) +
     $"""
     Take a deep breath. Think step by step.
     Generate {articleCount} articles covering Topic: {topic} in Category: {category}.
@@ -31,7 +32,9 @@ public static class Prompts
     Follow the tags rules. Be very careful with description and tags.
     You do not have to provide exact number of articles. The number of articles is flexible. You can provide more or fewer articles as needed to comprehensively cover the topic.
     """
-    + Environment.NewLine + TagRules + Environment.NewLine + StructureRules;
+    + Environment.NewLine + TagRules
+    + Environment.NewLine + StructureRules
+    ;
     // public static string System_ArticleContent(string category, string topic, string topicDescription, string title, string description, List<string> tags) =>
     // $"""
     // Take a deep breath. Think step by step.

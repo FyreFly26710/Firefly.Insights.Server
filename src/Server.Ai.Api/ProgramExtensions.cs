@@ -26,7 +26,7 @@ public static class ProgramExtensions
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
         // Services
-        services.AddScoped<IAiClient, AiClient>();
+        services.AddScoped<IArticleGenerationClient, ArticleGenerationClient>();
 
         // Message Bus
         services.AddScoped<IMessageBus, MassTransitMessageBus>();
