@@ -1,7 +1,10 @@
 ﻿using FluentValidation;
 using FluentValidation.AspNetCore;
 using Server.Ai.Api.Infrastructure.AiClients;
+using Server.Ai.Api.Infrastructure.Contexts;
 using Server.Ai.Api.Infrastructure.Messaging;
+using Server.Common.Extensions;
+using Server.Common.Utils;
 
 namespace Server.Ai.Api;
 public static class ProgramExtensions
@@ -22,26 +25,33 @@ public static class ProgramExtensions
     }
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
+        // Services
         services.AddScoped<IAiClient, AiClient>();
-        // services.AddScoped<IMessageBus, MassTransitMessageBus>();
 
-        // services.AddMassTransit(x =>
-        // {
-        //     // Add consumers
-        //     x.AddConsumer<GenerateArticleSummaryConsumer>();
+        // Message Bus
+        services.AddScoped<IMessageBus, MassTransitMessageBus>();
+        services.AddMassTransit(x =>
+        {
+            // Add consumers
+            x.AddConsumer<GenerateArticleSummaryConsumer>();
 
-        //     x.UsingRabbitMq((context, cfg) =>
-        //     {
-        //         cfg.Host(configuration["RabbitMq:Host"], h =>
-        //         {
-        //             h.Username(configuration["RabbitMq:Username"] ?? "guest");
-        //             h.Password(configuration["RabbitMq:Password"] ?? "guest");
-        //         });
-        //         // global retry policy for all consumers
-        //         cfg.UseMessageRetry(r => { r.Interval(3, TimeSpan.FromMinutes(10)); });
-        //         cfg.ConfigureEndpoints(context);
-        //     });
-        // });
+            x.UsingRabbitMq((context, cfg) =>
+            {
+                cfg.Host(configuration["RabbitMq:Host"], h =>
+                {
+                    h.Username(configuration["RabbitMq:Username"] ?? "guest");
+                    h.Password(configuration["RabbitMq:Password"] ?? "guest");
+                });
+                cfg.UseMessageRetry(r => { r.Interval(3, TimeSpan.FromMinutes(10)); });
+                cfg.ConfigureEndpoints(context);
+            });
+        });
+
+        // Database
+        var connectionString = configuration.GetConnectionString("AiDb");
+        services.AddDbContext<AiContext>(options => { options.UseNpgsql(connectionString); });
+        if (EnvUtil.IsDevelopment())
+            services.AddMigration<AiContext, AiContextSeed>();
 
         return services;
     }

@@ -28,7 +28,7 @@ dotnet ef migrations add <MigrationName>
 **Example:**
 
 ```bash
-dotnet ef migrations add InitialCreate --output-dir Infrastructure/Migrations
+dotnet ef migrations add InitialCreate --output-dir Infrastructure/Contexts/Migrations
 ```
 
 **Optional flags:**
