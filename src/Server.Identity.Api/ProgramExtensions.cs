@@ -1,11 +1,15 @@
 ﻿using FluentValidation;
 using FluentValidation.AspNetCore;
+using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Server.Common.Extensions;
+using Server.Common.Messaging;
 using Server.Common.Utils;
 using Server.Identity.Api.Application.Queries;
 using Server.Identity.Api.Application.Services;
 using Server.Identity.Api.Infrastructure;
+using Server.Identity.Api.Infrastructure.Messaging;
+using Server.Messages.Identities;
 namespace Server.Identity.Api;
 public static class ProgramExtensions
 {
@@ -24,9 +28,27 @@ public static class ProgramExtensions
         services.AddScoped<IJwtService, JwtService>();
 
         return services;
-    }    
+    }
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
+        services.AddScoped<IMessageBus, MassTransitMessageBus>();
+        services.AddMassTransit(x =>
+        {
+            // Add consumers
+            x.AddConsumer<UserRequestConsumer>();
+            x.AddConsumer<UserListRequestConsumer>();
+
+            x.UsingRabbitMq((context, cfg) =>
+            {
+                cfg.Host(configuration["RabbitMq:Host"], h =>
+                {
+                    h.Username(configuration["RabbitMq:Username"] ?? "guest");
+                    h.Password(configuration["RabbitMq:Password"] ?? "guest");
+                });
+                cfg.ConfigureEndpoints(context);
+            });
+        });
+
         var connectionString = configuration.GetConnectionString("UserDb");
         services.AddDbContext<UserContext>(options =>
         {

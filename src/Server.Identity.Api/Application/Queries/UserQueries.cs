@@ -26,11 +26,11 @@ public class UserQueries(UserContext _userContext) : IUserQueries
         return user.ToUserDto();
     }
 
-    public async Task<List<UserDto>> GetUsersByIds(List<long> userIds)
-    {
-        var users = await _userContext.Users.Where(u => userIds.Contains(u.Id)).ToListAsync();
-        var userDtos = users.Select(u => u.ToUserDto()).ToList();
-        return userDtos;
-    }
+    // public async Task<List<UserDto>> GetUsersByIds(List<long> userIds)
+    // {
+    //     var users = await _userContext.Users.Where(u => userIds.Contains(u.Id)).ToListAsync();
+    //     var userDtos = users.Select(u => u.ToUserDto()).ToList();
+    //     return userDtos;
+    // }
 }
 

@@ -1,8 +1,8 @@
 using System;
 using MassTransit;
-using Server.Ai.Api.Application.Services;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace Server.Ai.Api.Infrastructure.Messaging;
+namespace Server.Common.Messaging;
 
 public class MassTransitMessageBus : IMessageBus
 {
@@ -20,12 +20,14 @@ public class MassTransitMessageBus : IMessageBus
     }
     public async Task<TResponse> RequestAsync<TRequest, TResponse>(
         TRequest request,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default,
+        TimeSpan? timeout = null)
         where TRequest : class
         where TResponse : class
     {
         var requestClient = _serviceProvider.GetRequiredService<IRequestClient<TRequest>>();
-        var response = await requestClient.GetResponse<TResponse>(request, cancellationToken);
+        var timeoutValue = timeout ?? TimeSpan.FromSeconds(30);
+        var response = await requestClient.GetResponse<TResponse>(request, cancellationToken, RequestTimeout.After(s: (int)timeoutValue.TotalSeconds));
         return response.Message;
     }
 }

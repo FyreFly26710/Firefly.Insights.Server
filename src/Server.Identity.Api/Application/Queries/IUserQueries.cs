@@ -5,6 +5,6 @@ public interface IUserQueries
 {
     Task<UserDto> GetUserByPassword(string userAccount, string password);
     Task<UserDto> GetUserById(long userId);
-    Task<List<UserDto>> GetUsersByIds(List<long> userIds);
+    // Task<List<UserDto>> GetUsersByIds(List<long> userIds);
 
 }

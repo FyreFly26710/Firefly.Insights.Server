@@ -51,7 +51,7 @@ public class GenerateArticleSummaryCommandValidator : AbstractValidator<Generate
     {
         RuleFor(x => x.Request.Provider).NotEmpty();
         RuleFor(x => x.Request.Model).NotEmpty();
-        RuleFor(x => x.Request.UserId).NotEmpty();
+        // RuleFor(x => x.Request.UserId).NotEmpty();
         RuleFor(x => x.Request.ArticleCount).GreaterThan(0).LessThanOrEqualTo(30);
         RuleFor(x => x.Request.Topic).NotEmpty().MaximumLength(128);
         RuleFor(x => x.Request.TopicDescription).NotEmpty().MaximumLength(512);

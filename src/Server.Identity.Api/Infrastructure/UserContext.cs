@@ -1,7 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Server.Identity.Api.Models.Entities;
-
-namespace Server.Identity.Api.Infrastructure;
+﻿namespace Server.Identity.Api.Infrastructure;
 public class UserContext : DbContext
 {
     public UserContext(DbContextOptions<UserContext> options, IConfiguration configuration) : base(options)

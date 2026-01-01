@@ -1,7 +1,6 @@
-﻿using FluentValidation;
-using FluentValidation.AspNetCore;
+﻿using FluentValidation.AspNetCore;
+using Server.Ai.Api.Application.Queries;
 using Server.Ai.Api.Infrastructure.AiClients;
-using Server.Ai.Api.Infrastructure.Contexts;
 using Server.Ai.Api.Infrastructure.Messaging;
 using Server.Common.Extensions;
 using Server.Common.Utils;
@@ -20,6 +19,10 @@ public static class ProgramExtensions
             cfg.RegisterServicesFromAssemblyContaining(typeof(IAssemblyMarker));
         });
 
+        services.AddScoped<IJobLogQueries, JobLogQueries>();
+        services.AddScoped<IExecutionLogQueries, ExecutionLogQueries>();
+        services.AddScoped<IExecutionPayloadQueries, ExecutionPayloadQueries>();
+
 
         return services;
     }
@@ -34,6 +37,8 @@ public static class ProgramExtensions
         {
             // Add consumers
             x.AddConsumer<GenerateArticleSummaryConsumer>();
+            x.AddRequestClient<UserRequestMessage>();
+            x.AddRequestClient<UserListRequestMessage>();
 
             x.UsingRabbitMq((context, cfg) =>
             {
@@ -42,7 +47,7 @@ public static class ProgramExtensions
                     h.Username(configuration["RabbitMq:Username"] ?? "guest");
                     h.Password(configuration["RabbitMq:Password"] ?? "guest");
                 });
-                cfg.UseMessageRetry(r => { r.Interval(3, TimeSpan.FromMinutes(10)); });
+                // cfg.UseMessageRetry(r => { r.Interval(3, TimeSpan.FromMinutes(10)); });
                 cfg.ConfigureEndpoints(context);
             });
         });

@@ -7,7 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Contents\" />
+     	  <PackageReference Include="MassTransit" Version="8.5.7" />
+
   </ItemGroup>
+  
 
 </Project>
