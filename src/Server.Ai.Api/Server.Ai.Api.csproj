@@ -13,16 +13,22 @@
   <ItemGroup>
 	  <PackageReference Include="FluentValidation" Version="12.1.0" />
 	  <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.1" />
+	  <PackageReference Include="GeminiDotnet.Extensions.AI" Version="0.18.1" />
+	  <PackageReference Include="MassTransit" Version="8.5.7" />
+	  <PackageReference Include="MassTransit.RabbitMQ" Version="8.5.7" />
 	  <PackageReference Include="MediatR" Version="13.1.0" />
 	  <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.0">
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 	  </PackageReference>
+	  <PackageReference Include="Microsoft.Extensions.AI.OpenAI" Version="10.1.1-preview.1.25612.2" />
 	  <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.0" />
+	  <PackageReference Include="OllamaSharp" Version="5.4.12" />
 	  <PackageReference Include="Swashbuckle.AspNetCore" Version="10.0.1" />  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Server.Common\Server.Common.csproj" />
+    <ProjectReference Include="..\Server.Messages\Server.Messages.csproj" />
   </ItemGroup>
 
 	

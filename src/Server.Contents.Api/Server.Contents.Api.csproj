@@ -22,9 +22,11 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\Server.Common\Server.Common.csproj" />
+		<ProjectReference Include="..\Server.Messages\Server.Messages.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Folder Include="Infrastructure\Messaging\" />
 	  <Folder Include="Infrastructure\Migrations\" />
 	</ItemGroup>
 
