@@ -3,6 +3,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Server.Common.Configurations;
+using Server.Common.Utils;
+using System.Diagnostics;
 using System.Text;
 
 namespace Server.Common.Extensions
@@ -11,6 +13,9 @@ namespace Server.Common.Extensions
     {
         public static IServiceCollection AddJwt(this IServiceCollection services, IConfiguration configuration)
         {
+            var machineId = configuration.GetValue<long>("Snowflake:MachineId");
+            SnowflakeId.Initialize(machineId);
+
             services.Configure<JwtSettings>(configuration.GetSection("Jwt"));
 
             var jwtSettings = configuration.GetSection("Jwt").Get<JwtSettings>() ?? new JwtSettings();

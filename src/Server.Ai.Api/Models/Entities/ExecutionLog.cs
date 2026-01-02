@@ -5,13 +5,18 @@ namespace Server.Ai.Api.Models.Entities;
 public class ExecutionLog : Entity
 {
     public ExecutionLog(){}
-    public ExecutionLog(long jobLogId, DateTime executedAt, string errorMessage)
+    public ExecutionLog(long jobLogId, DateTime executedAt, string errorMessage, string prompt)
     {
         JobLogId = jobLogId;
         ExecutedAt = executedAt;
         ErrorMessage = errorMessage;
         IsSuccessful = false;
         Duration = TimeSpan.Zero;
+        ExecutionPayload = new ExecutionPayload
+        {
+            Prompt = prompt,
+            Response = null
+        };
     }
     public long JobLogId { get; set; }
 

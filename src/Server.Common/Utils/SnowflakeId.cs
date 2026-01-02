@@ -8,9 +8,16 @@ public static class SnowflakeId
     // (1000ms / (2^TimeStampPrecision)) * (2^SequenceBits) => id generated per second  => 1000/(2^5) * (2^6) = 2000 ids per second
     // avaialble bits for timestamp = 53 - MachineIdBits - SequenceBits = 44 bits
     // 41 bits, 1ms per tick lasts for 69 years
-    private const int MachineIdBits = 1; // single machine
+    private const int MachineIdBits = 4; // 2^4 = 16 machines
     private const int SequenceBits = 6; // 2^6-1 = 63 ids per period
     private const int TimeStampPrecision = 5; // 2^5 = 32 ms a period
+    public static void Initialize(long machineId)
+    {
+        if (machineId < 0 || machineId >= (1L << MachineIdBits))
+            throw new ArgumentOutOfRangeException(nameof(machineId), $"Machine ID must be between 0 and {(1L << MachineIdBits) - 1}");
+
+        _machineId = machineId;
+    }
 
     private const long MaxSequence = (1L << SequenceBits) - 1;
     private static long _lastTimestamp = -1L;

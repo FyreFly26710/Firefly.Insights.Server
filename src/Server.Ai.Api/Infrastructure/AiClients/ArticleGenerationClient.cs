@@ -62,7 +62,7 @@ public class ArticleGenerationClient
         catch (Exception ex)
         {
 
-            var executionLog = new ExecutionLog(jobLogId, DateTime.UtcNow, ex.Message);
+            var executionLog = new ExecutionLog(jobLogId, DateTime.UtcNow, ex.Message, prompt);
             _aiContext.ExecutionLogs.Add(executionLog);
             await _aiContext.SaveChangesAsync(cancellationToken);
             throw;
