@@ -52,7 +52,7 @@ public class GenerateArticleSummaryConsumer(
                     var articleJob = new JobLog
                     {
                         UserId = message.UserId,
-                        JobType = AiJobType.ArticleGeneration,
+                        JobType = AiJobType.Article_Generation,
                         AiModelId = job.AiModelId,
                         Status = AiGenerationJobStatus.Pending
                     };
@@ -60,6 +60,11 @@ public class GenerateArticleSummaryConsumer(
 
                     sagaArticles.Add(new ArticleJobItem(articleJob.Id, summary));
                 }
+
+                job.Status = AiGenerationJobStatus.Completed;
+                job.CompletedAt = DateTime.UtcNow;
+                await _aiContext.SaveChangesAsync(context.CancellationToken);
+
                 // Publish the saga
                 await context.Publish(new StartArticleBatchGeneration
                 {
@@ -70,15 +75,6 @@ public class GenerateArticleSummaryConsumer(
                     AiModelId = job.AiModelId,
                     Articles = sagaArticles
                 });
-
-                job.Status = AiGenerationJobStatus.Completed;
-                job.CompletedAt = DateTime.UtcNow;
-                await _aiContext.SaveChangesAsync(context.CancellationToken);
-
-                // // publish the GenerateArticleListMessage
-                // var followUpMessage = new GenerateArticleListMessage(job.Id, topicId);
-                // await _messageBus.PublishAsync(followUpMessage, context.CancellationToken);
-                // return;
             }
 
         }

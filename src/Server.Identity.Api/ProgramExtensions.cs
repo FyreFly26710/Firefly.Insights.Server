@@ -37,6 +37,7 @@ public static class ProgramExtensions
             // Add consumers
             x.AddConsumer<UserRequestConsumer>();
             x.AddConsumer<UserListRequestConsumer>();
+            x.AddConsumer<GetAgentRequestConsumer>();
 
             x.UsingRabbitMq((context, cfg) =>
             {

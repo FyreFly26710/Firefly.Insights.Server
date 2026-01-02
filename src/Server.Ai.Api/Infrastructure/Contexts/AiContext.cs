@@ -11,7 +11,7 @@ public class AiContext : DbContext
     public DbSet<ExecutionPayload> ExecutionPayloads { get; set; }
     public DbSet<AiChatConversation> ChatConversations { get; set; }
     public DbSet<AiChatMessage> ChatMessages { get; set; }
-
+    public DbSet<ArticleJob> ArticleJobs { get; set; }
     public AiContext(DbContextOptions<AiContext> options) : base(options)
     {
     }
@@ -25,7 +25,7 @@ public class AiContext : DbContext
         builder.ApplyConfiguration(new ExecutionPayloadEntityTypeConfiguration());
         builder.ApplyConfiguration(new AiChatConversationEntityTypeConfiguration());
         builder.ApplyConfiguration(new AiChatMessageEntityTypeConfiguration());
-
+        builder.ApplyConfiguration(new ArticleJobEntityTypeConfiguration());
 
     }
 }

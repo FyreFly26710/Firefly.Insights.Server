@@ -46,6 +46,7 @@ public static class ProgramExtensions
             x.AddRequestClient<GetTopicRequestMessage>();
             x.AddRequestClient<UserRequestMessage>();
             x.AddRequestClient<UserListRequestMessage>();
+            x.AddRequestClient<GetAgentRequestMessage>();
 
             // Add saga state machine
             x.AddSagaStateMachine<ArticleGenerationSaga, ArticleGenerationSagaState>()

@@ -31,8 +31,8 @@ public enum AiGenerationJobStatus
 }
 public enum AiJobType
 {
-    ArticleSummary,
-    ArticleGeneration,
-    TopicSummaryGeneration,
+    Articles_Summary,
+    Article_Generation,
+    Topic_Article_Generation,
     Other
 }

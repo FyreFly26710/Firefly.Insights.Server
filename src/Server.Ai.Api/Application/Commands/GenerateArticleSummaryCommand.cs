@@ -21,7 +21,7 @@ public class GenerateArticleSummaryCommandHandler(ILogger<GenerateArticleSummary
         var job = new JobLog
         {
             UserId = request.UserId,
-            JobType = AiJobType.ArticleSummary,
+            JobType = AiJobType.Articles_Summary,
             Status = AiGenerationJobStatus.Pending,
             CreatedAt = DateTime.UtcNow,
             AiModelId = model.Id,

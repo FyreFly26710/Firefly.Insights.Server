@@ -146,7 +146,7 @@ public static class Prompts
     1. Start with a comprehensive summary paragraph explaining the topic as a whole.
     2. After the summary, provide a brief explanation of each article in the topic. Articles should be sorted by SortNumber.
     3. For each article, format as follows:
-       - Begin with the article title as a link in markdown format: [Article Title](/topic/{topicId}/article/articleId)
+       - Begin with the article title as a link in markdown format: [Article Title](/topics/{topicId}/articles/articleId)
          (Replace "Article Title" with the actual title and "articleId" with the actual article ID)
        - Follow with a concise 2-3 sentence summary of what the article covers
        - Make the summary informative enough that readers can decide if they want to read the full article

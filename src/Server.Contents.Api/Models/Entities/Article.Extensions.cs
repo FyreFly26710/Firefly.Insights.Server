@@ -1,8 +1,10 @@
+using Server.Messages.Identities;
+
 namespace Server.Contents.Api.Models.Entities;
 
 public static class ArticleExtensions
 {
-    public static ArticleDto ToArticleDto(this Article article, string userName) => new ArticleDto()
+    public static ArticleDto ToArticleDto(this Article article, UserTo userTo) => new ArticleDto()
     {
         ArticleId = article.Id,
         Title = article.Title,
@@ -13,7 +15,8 @@ public static class ArticleExtensions
         TopicName = article.ArticleMeta.Topic.Name,
         IsTopicSummary = article.ArticleMeta.IsTopicSummary,
         UserId = article.ArticleMeta.UserId,
-        UserName = userName,
+        UserName = userTo.UserName,
+        UserAvatar = userTo.UserAvatar,
         SortNumber = article.ArticleMeta.SortNumber,
         IsHidden = article.ArticleMeta.IsHidden,
         CreatedAt = article.ArticleMeta.CreatedAt,

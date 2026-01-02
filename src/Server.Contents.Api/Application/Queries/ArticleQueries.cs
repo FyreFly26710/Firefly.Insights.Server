@@ -1,8 +1,10 @@
 using Server.Common.Extensions;
+using Server.Common.Messaging;
+using Server.Messages.Identities;
 
 namespace Server.Contents.Api.Application.Queries;
 
-public class ArticleQueries(ContentsContext _contentsContext, ILogger<ArticleQueries> _logger) : IArticleQueries
+public class ArticleQueries(ContentsContext _contentsContext, ILogger<ArticleQueries> _logger, IMessageBus _messageBus) : IArticleQueries
 {
     private IQueryable<ArticleMeta> GetArticleNavigationQuery()
     {
@@ -19,7 +21,8 @@ public class ArticleQueries(ContentsContext _contentsContext, ILogger<ArticleQue
         if (articleMeta is null)
             throw new ExceptionNotFound();
 
-        return articleMeta.Article.ToArticleDto("Unknown");
+        var userResultMessage = await _messageBus.RequestAsync<UserRequestMessage, UserRequestMessageResponse>(new UserRequestMessage(articleMeta.UserId));
+        return articleMeta.Article.ToArticleDto(userResultMessage.UserTo);
     }
 
     public async Task<Paged<ArticleDto>> GetArticleList(ArticleListRequest request)
@@ -45,7 +48,11 @@ public class ArticleQueries(ContentsContext _contentsContext, ILogger<ArticleQue
         if (request.Tags is not null)
             query = query.Where(am => am.ArticleTags.Any(at => request.Tags.Contains(at.Tag.Name)));
 
-        var pagedData = await query.ToPagedDtoAsync(pagedInfo, am => am.Article.ToArticleDto("Unknown"));
+        var userIds = query.Select(am => am.UserId).Distinct().ToList();
+        var userRequestMessages = await _messageBus.RequestAsync<UserListRequestMessage, UserListRequestMessageResponse>(new UserListRequestMessage(userIds));
+        var userTos = userRequestMessages.UserTos;
+
+        var pagedData = await query.ToPagedDtoAsync(pagedInfo, am => am.Article.ToArticleDto(userTos.FirstOrDefault(u => u.UserId == am.UserId) ?? new UserTo(am.UserId)));
         return pagedData;
     }
 }

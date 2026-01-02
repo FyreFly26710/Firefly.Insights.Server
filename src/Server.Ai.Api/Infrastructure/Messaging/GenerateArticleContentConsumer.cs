@@ -21,8 +21,9 @@ public class GenerateArticleContentConsumer
         var jobLogId = message.JobLogId;
         // TODO: Add job follow up
         // _aiContext.JobFollowUps.Add(new JobFollowUp { ParentJobLogId = parentJobLogId, JobLogId = jobLogId });
-
-        var job = await _aiContext.JobLogs.FindAsync(jobLogId);
+        var jobQuery = _aiContext.JobLogs.AsQueryable();
+        jobQuery = jobQuery.Include(j => j.AiModel);
+        var job = await jobQuery.FirstOrDefaultAsync(j => j.Id == jobLogId);
         job!.Status = AiGenerationJobStatus.Running;
         job.StartedAt = DateTime.UtcNow;
         await _aiContext.SaveChangesAsync(context.CancellationToken);
@@ -32,16 +33,23 @@ public class GenerateArticleContentConsumer
         var topicSummaryResponse = await _messageBus.RequestAsync<GetTopicRequestMessage, GetTopicRequestMessageResponse>(topicSummaryRequestMessage, context.CancellationToken);
         var topic = topicSummaryResponse.Topic;
 
+        // get agent
+        var getAgentRequestMessage = new GetAgentRequestMessage(job.AiModel.Model);
+        var getAgentResponse = await _messageBus.RequestAsync<GetAgentRequestMessage, GetAgentRequestMessageResponse>(getAgentRequestMessage, context.CancellationToken);
+        var agent = getAgentResponse.UserTo;
         try
         {
             // Generate article content
             var articleContent = await _articleGenerationClient.GenerateArticleContentAsync(job.Id, job.AiModelId, article, topic, context.CancellationToken);
             // Create article
-            var createArticleRequestMessage = new CreateArticleRequestMessage(article.Title, topicId, userId, articleContent, article.Description, article.SortNumber, article.SkillLevelTag, article.FocusAreaTag, article.ArticleStyleTag, article.TechStackTag, article.ToneTag);
-            await _messageBus.PublishAsync(createArticleRequestMessage, context.CancellationToken);
+            var createArticleRequestMessage = new CreateArticleRequestMessage(article.Title, topicId, agent.UserId, articleContent, article.Description, article.SortNumber, article.SkillLevelTag, article.FocusAreaTag, article.ArticleStyleTag, article.TechStackTag, article.ToneTag);
+            var createArticleResponse = await _messageBus.RequestAsync<CreateArticleRequestMessage, CreateArticleRequestMessageResponse>(createArticleRequestMessage, context.CancellationToken);
 
             // Publish the event
             await context.Publish(new ArticleContentGenerated(message.CorrelationId, job.Id));
+
+            var articleJob = new ArticleJob { JobLogId = job.Id, ArticleId = createArticleResponse.ArticleId };
+            _aiContext.ArticleJobs.Add(articleJob);
 
             job.Status = AiGenerationJobStatus.Completed;
             job.CompletedAt = DateTime.UtcNow;

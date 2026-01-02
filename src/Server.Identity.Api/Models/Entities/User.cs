@@ -11,7 +11,7 @@ public partial class User : AuditableEntity
     public string? UserAvatar { get; set; }
     public string? UserProfile { get; set; }
     /// <summary>
-    /// User role: admin, user, editor 
+    /// User role: admin, user, editor, agent
     /// </summary>
     public string UserRole { get; set; } = string.Empty;
 }

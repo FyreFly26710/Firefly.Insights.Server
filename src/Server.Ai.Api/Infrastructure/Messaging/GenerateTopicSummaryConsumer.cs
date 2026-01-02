@@ -13,13 +13,15 @@ public class GenerateTopicSummaryConsumer(ILogger<GenerateTopicSummaryConsumer> 
     public async Task Consume(ConsumeContext<GenerateTopicSummaryCommand> context)
     {
         var message = context.Message;
-        var parentJob = await _aiContext.JobLogs.FindAsync(message.ParentJobId);
+        var parentJobQuery = _aiContext.JobLogs.AsQueryable().AsNoTracking();
+        parentJobQuery = parentJobQuery.Include(j => j.AiModel);
+        var parentJob = await parentJobQuery.FirstOrDefaultAsync(j => j.Id == message.ParentJobId);
         if (parentJob == null) return; // do nothing
-        
+
         var topicSummaryJob = new JobLog()
         {
             UserId = parentJob.UserId,
-            JobType = AiJobType.TopicSummaryGeneration,
+            JobType = AiJobType.Topic_Article_Generation,
             AiModelId = parentJob.AiModelId,
             Status = AiGenerationJobStatus.Running,
             CreatedAt = DateTime.UtcNow,
@@ -30,6 +32,11 @@ public class GenerateTopicSummaryConsumer(ILogger<GenerateTopicSummaryConsumer> 
 
         try
         {
+            // get agent
+            var getAgentRequestMessage = new GetAgentRequestMessage(parentJob.AiModel.Model);
+            var getAgentResponse = await _messageBus.RequestAsync<GetAgentRequestMessage, GetAgentRequestMessageResponse>(getAgentRequestMessage, context.CancellationToken);
+            var agent = getAgentResponse.UserTo;
+
             // get topic
             var topicSummaryRequestMessage = new GetTopicRequestMessage(message.TopicId, true);
             var topicSummaryResponse = await _messageBus.RequestAsync<GetTopicRequestMessage, GetTopicRequestMessageResponse>(topicSummaryRequestMessage, context.CancellationToken);
@@ -37,7 +44,7 @@ public class GenerateTopicSummaryConsumer(ILogger<GenerateTopicSummaryConsumer> 
             // Generate topic summary
             var articleContent = await _articleGenerationClient.GenerateTopicSummaryAsync(topicSummaryJob.Id, topicSummaryJob.AiModelId, topicSummaryResponse.Topic, context.CancellationToken);
             // Create article
-            var createArticleRequestMessage = new CreateArticleRequestMessage("Summary Article", message.TopicId, 0, articleContent);
+            var createArticleRequestMessage = new CreateArticleRequestMessage("Summary Article", message.TopicId, agent.UserId, articleContent, IsTopicSummary: true);
             await _messageBus.RequestAsync<CreateArticleRequestMessage, CreateArticleRequestMessageResponse>(createArticleRequestMessage, context.CancellationToken);
             topicSummaryJob.Status = AiGenerationJobStatus.Completed;
             topicSummaryJob.CompletedAt = DateTime.UtcNow;

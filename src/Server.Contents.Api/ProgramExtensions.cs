@@ -10,6 +10,7 @@ using Server.Contents.Api.Application.Queries;
 using Server.Contents.Api.Infrastructure;
 using Server.Contents.Api.Infrastructure.Messaging;
 using Server.Messages.Contents;
+using Server.Messages.Identities;
 namespace Server.Contents.Api;
 public static class ProgramExtensions
 {
@@ -43,6 +44,9 @@ public static class ProgramExtensions
             x.AddConsumer<CreateTopicRequestConsumer>();
             x.AddConsumer<GetTopicRequestConsumer>();
             x.AddConsumer<CreateArticleRequestConsumer>();
+
+            x.AddRequestClient<UserListRequestMessage>();
+            x.AddRequestClient<UserRequestMessage>();
 
             x.UsingRabbitMq((context, cfg) =>
             {

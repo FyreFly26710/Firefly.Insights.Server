@@ -31,10 +31,10 @@ public class ContentsContextSeed : IDbSeeder<ContentsContext>
         await context.Categories.AddAsync(defaultCategory);
 
         await context.Tags.AddRangeAsync(SeedData.Tags);
-        await context.Categories.AddRangeAsync(SeedData.Categories);
-        await context.Topics.AddRangeAsync(SeedData.Topics);
-        await context.ArticleMetas.AddRangeAsync(SeedData.BuildArticleMetas(200));
-        await context.ArticleMetas.AddRangeAsync(SeedData.BuildTopicSummary());
+        // await context.Categories.AddRangeAsync(SeedData.Categories);
+        // await context.Topics.AddRangeAsync(SeedData.Topics);
+        // await context.ArticleMetas.AddRangeAsync(SeedData.BuildArticleMetas(200));
+        // await context.ArticleMetas.AddRangeAsync(SeedData.BuildTopicSummary());
 
         await context.SaveChangesAsync();
 
@@ -61,8 +61,8 @@ public class SeedData
         new Tag() { Id = 13, Name = "Technical", Type = TagType.Tone},
         new Tag() { Id = 14, Name = "Code-heavy", Type = TagType.Tone},
 
-        new Tag() { Id = 15, Name = "Performance Optimization", Type = TagType.FocusArea},
-        new Tag() { Id = 16, Name = "C#", Type = TagType.TechStack},
+        //new Tag() { Id = 15, Name = "Performance Optimization", Type = TagType.FocusArea},
+        //new Tag() { Id = 16, Name = "C#", Type = TagType.TechStack},
     ];
     public static List<Category> Categories = [
         new Category() { Id = 1, Name = "Category 1", Description = "Description 1", ImageUrl = "", SortNumber = 1, IsHidden = false},

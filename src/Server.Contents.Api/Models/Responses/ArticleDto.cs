@@ -15,6 +15,7 @@ public class ArticleDto
     public bool IsTopicSummary { get; set; }
     public long UserId { get; set; }
     public string UserName { get; set; } = "";
+    public string UserAvatar { get; set; } = "";
     public int SortNumber { get; set; }
     public bool IsHidden { get; set; }
     public DateTime CreatedAt { get; set; }

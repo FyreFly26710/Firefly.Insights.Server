@@ -16,7 +16,7 @@ public record CreateArticleRequestMessage
     string ArticleStyleTag = "",
     string TechStackTag = "",
     string ToneTag = "",
-    bool IsTopicSummary = true
+    bool IsTopicSummary = false
     ) : Request<CreateArticleRequestMessageResponse>;
 
 public record CreateArticleRequestMessageResponse(long ArticleId);
