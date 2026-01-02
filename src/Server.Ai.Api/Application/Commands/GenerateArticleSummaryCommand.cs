@@ -33,12 +33,13 @@ public class GenerateArticleSummaryCommandHandler(ILogger<GenerateArticleSummary
         var message = new GenerateArticleSummaryMessage(
             job.Id,
             request.UserId,
-            model.Id,
+            // model.Id,
             request.UserPrompt,
             request.ArticleCount,
             request.Topic,
             request.TopicDescription,
-            request.Category);
+            request.Category,
+            request.CategoryId);
         await _messageBus.PublishAsync(message, cancellationToken);
         return true;
     }
@@ -55,6 +56,5 @@ public class GenerateArticleSummaryCommandValidator : AbstractValidator<Generate
         RuleFor(x => x.Request.ArticleCount).GreaterThan(0).LessThanOrEqualTo(30);
         RuleFor(x => x.Request.Topic).NotEmpty().MaximumLength(128);
         RuleFor(x => x.Request.TopicDescription).NotEmpty().MaximumLength(512);
-        RuleFor(x => x.Request.Category).NotEmpty().MaximumLength(128);
     }
 }

@@ -6,7 +6,7 @@ public class JobLog : Entity
     public long UserId { get; set; }
     public AiJobType JobType { get; set; } = AiJobType.Other;
 
-    public long? AiModelId { get; set; }
+    public long AiModelId { get; set; }
 
     public AiGenerationJobStatus Status { get; set; } = AiGenerationJobStatus.Pending;
 
@@ -19,9 +19,9 @@ public class JobLog : Entity
 
     public ExecutionLog? ExecutionLog { get; set; }
     public AiModel? AiModel { get; set; }
+    public ICollection<JobFollowUp>? FollowUps { get; set; } = null;
+
 }
-
-
 public enum AiGenerationJobStatus
 {
     Pending,
@@ -33,5 +33,6 @@ public enum AiJobType
 {
     ArticleSummary,
     ArticleGeneration,
-    Other,
+    TopicSummaryGeneration,
+    Other
 }

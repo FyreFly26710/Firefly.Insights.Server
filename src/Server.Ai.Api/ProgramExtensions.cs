@@ -2,8 +2,10 @@
 using Server.Ai.Api.Application.Queries;
 using Server.Ai.Api.Infrastructure.AiClients;
 using Server.Ai.Api.Infrastructure.Messaging;
+using Server.Ai.Api.Infrastructure.StateMachines;
 using Server.Common.Extensions;
 using Server.Common.Utils;
+using Server.Messages.Contents;
 
 namespace Server.Ai.Api;
 public static class ProgramExtensions
@@ -37,8 +39,17 @@ public static class ProgramExtensions
         {
             // Add consumers
             x.AddConsumer<GenerateArticleSummaryConsumer>();
+            x.AddConsumer<GenerateArticleContentConsumer>();
+            x.AddConsumer<GenerateTopicSummaryConsumer>();
+            x.AddRequestClient<CreateTopicRequestMessage>();
+            x.AddRequestClient<CreateArticleRequestMessage>();
+            x.AddRequestClient<GetTopicRequestMessage>();
             x.AddRequestClient<UserRequestMessage>();
             x.AddRequestClient<UserListRequestMessage>();
+
+            // Add saga state machine
+            x.AddSagaStateMachine<ArticleGenerationSaga, ArticleGenerationSagaState>()
+                .InMemoryRepository();
 
             x.UsingRabbitMq((context, cfg) =>
             {

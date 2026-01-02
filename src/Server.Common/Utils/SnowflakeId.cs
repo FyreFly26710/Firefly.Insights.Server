@@ -53,7 +53,7 @@ public static class SnowflakeId
                    _sequence;
         }
     }
-    private static readonly long _epoch = new DateTimeOffset(2025, 11, 1, 0, 0, 0, TimeSpan.Zero).ToUnixTimeMilliseconds();
+    private static readonly long _epoch = new DateTimeOffset(2026, 1, 1, 0, 0, 0, TimeSpan.Zero).ToUnixTimeMilliseconds();
     private static long GetCurrentTimestamp()
     {
         var timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() - _epoch;

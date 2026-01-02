@@ -4,6 +4,23 @@ namespace Server.Contents.Api.Infrastructure;
 
 public static class ContentsContextTagExtensions
 {
+    public static async Task<Tag?> UpsertTagAsync(this ContentsContext context, string name, TagType type = TagType.Default)
+    {
+        if (string.IsNullOrEmpty(name)) return null;
+        var tag = await context.Tags.FirstOrDefaultAsync(t => t.Name == name && t.Type == type);
+        if (tag is not null) return tag;
+        tag = new Tag { Name = name, Type = type };
+        context.Tags.Add(tag);
+        try
+        {
+            await context.SaveChangesAsync();
+        }
+        catch (DbUpdateException)
+        {
+            tag = await context.Tags.FirstAsync(t => t.Name == name && t.Type == type);
+        }
+        return tag;
+    }
     public static async Task<List<Tag>> UpsertTagsAsync(this ContentsContext context, IEnumerable<string> names, TagType type = TagType.Default)
     {
         var nameList = names.Distinct().ToList();
