@@ -41,6 +41,7 @@ public class ArticleGenerationSaga : MassTransitStateMachine<ArticleGenerationSa
                             {
                                 CorrelationId = ctx.Saga.CorrelationId,
                                 JobLogId = articleItem.JobLogId,
+                                ParentJobLogId = ctx.Saga.ParentJobId,
                                 UserId = ctx.Message.UserId,
                                 AiModelId = ctx.Message.AiModelId,
                                 TopicId = ctx.Message.TopicId,

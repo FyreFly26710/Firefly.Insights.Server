@@ -24,7 +24,7 @@ public static class ProgramExtensions
         services.AddScoped<IJobLogQueries, JobLogQueries>();
         services.AddScoped<IExecutionLogQueries, ExecutionLogQueries>();
         services.AddScoped<IExecutionPayloadQueries, ExecutionPayloadQueries>();
-
+        services.AddScoped<IAiModelQueries, AiModelQueries>();
 
         return services;
     }

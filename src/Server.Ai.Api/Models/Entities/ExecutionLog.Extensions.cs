@@ -16,6 +16,6 @@ public static class ExecutionLogExtensions
         Cost = executionLog.Cost,
         IsSuccessful = executionLog.IsSuccessful,
         ErrorMessage = executionLog.ErrorMessage,
-        Duration = executionLog.Duration,
+        DurationSeconds = (int)executionLog.Duration.TotalSeconds,
     };
 }

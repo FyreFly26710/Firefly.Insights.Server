@@ -10,7 +10,7 @@ public class ArticleGenerationController(
     ILogger<ArticleGenerationController> _logger) : ControllerBase
 {
     [HttpPost("article-summary")]
-    public async Task<ActionResult<string>> GenerateArticleSummary([FromBody] GenerateArticleSummaryRequest request)
+    public async Task<ActionResult<bool>> GenerateArticleSummary([FromBody] GenerateArticleSummaryRequest request)
     {
         var command = new GenerateArticleSummaryCommand(request);
         var result = await _mediator.Send(command);

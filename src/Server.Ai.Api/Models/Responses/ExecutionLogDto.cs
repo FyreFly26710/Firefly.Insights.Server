@@ -18,5 +18,5 @@ public record ExecutionLogDto
     public bool IsSuccessful { get; set; }
     public string? ErrorMessage { get; set; }
 
-    public TimeSpan Duration { get; set; }
+    public int DurationSeconds { get; set; }
 }
