@@ -10,8 +10,9 @@ public record GenerateArticleSummaryRequest(
 
     int ArticleCount,
     // Assume the category is already created in the database
-    long CategoryId, 
-    string Category, 
+    long CategoryId,
+    string Category,
     string Topic,
-    string TopicDescription
+    string TopicDescription,
+    string TopicUrl
     );

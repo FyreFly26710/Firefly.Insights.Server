@@ -39,7 +39,8 @@ public class GenerateArticleSummaryCommandHandler(ILogger<GenerateArticleSummary
             request.Topic,
             request.TopicDescription,
             request.Category,
-            request.CategoryId);
+            request.CategoryId,
+            request.TopicUrl);
         await _messageBus.PublishAsync(message, cancellationToken);
         return true;
     }

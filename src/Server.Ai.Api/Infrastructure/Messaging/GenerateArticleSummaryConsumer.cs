@@ -20,24 +20,15 @@ public class GenerateArticleSummaryConsumer(
     public async Task Consume(ConsumeContext<GenerateArticleSummaryMessage> context)
     {
         var message = context.Message;
-        var jobId = message.JobId;
-        var userId = message.UserId;
-        // var aiModelId = message.AiModelId;
-        var articleCount = message.ArticleCount;
-        var topic = message.Topic;
-        var topicDescription = message.TopicDescription;
-        var category = message.Category;
-        var userPrompt = message.Prompt;
-        var categoryId = message.CategoryId;
 
-        var job = await _aiContext.JobLogs.FindAsync(jobId);
+        var job = await _aiContext.JobLogs.FindAsync(message.JobId);
         job!.Status = AiGenerationJobStatus.Running;
         job.StartedAt = DateTime.UtcNow;
         await _aiContext.SaveChangesAsync(context.CancellationToken);
         try
         {
             // generate the article summary list
-            var responseMessage = await _articleGenerationClient.GenerateArticleSummaryListAsync(jobId, job.AiModelId, articleCount, topic, topicDescription, category, userPrompt, context.CancellationToken);
+            var responseMessage = await _articleGenerationClient.GenerateArticleSummaryListAsync(message.JobId, job.AiModelId, message.ArticleCount, message.Topic, message.TopicDescription, message.Category, message.Prompt, context.CancellationToken);
             var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
             var articleList = JsonSerializer.Deserialize<GenerationArticleList>(responseMessage, options);
 
@@ -52,7 +43,7 @@ public class GenerateArticleSummaryConsumer(
             else
             {
                 // add topic id to article list
-                var createTopicMessage = new CreateTopicRequestMessage(categoryId, topic, topicDescription);
+                var createTopicMessage = new CreateTopicRequestMessage(message.CategoryId, message.Topic, message.TopicDescription, message.TopicUrl);
                 var createTopicResponse = await _messageBus.RequestAsync<CreateTopicRequestMessage, CreateTopicRequestMessageResponse>(createTopicMessage, context.CancellationToken);
 
                 var sagaArticles = new List<ArticleJobItem>();
@@ -60,7 +51,7 @@ public class GenerateArticleSummaryConsumer(
                 {
                     var articleJob = new JobLog
                     {
-                        UserId = userId,
+                        UserId = message.UserId,
                         JobType = AiJobType.ArticleGeneration,
                         AiModelId = job.AiModelId,
                         Status = AiGenerationJobStatus.Pending
@@ -73,9 +64,9 @@ public class GenerateArticleSummaryConsumer(
                 await context.Publish(new StartArticleBatchGeneration
                 {
                     CorrelationId = Guid.NewGuid(),
-                    ParentJobId = jobId,
+                    ParentJobId = message.JobId,
                     TopicId = createTopicResponse.TopicId,
-                    UserId = userId,
+                    UserId = message.UserId,
                     AiModelId = job.AiModelId,
                     Articles = sagaArticles
                 });

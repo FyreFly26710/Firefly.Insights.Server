@@ -11,5 +11,6 @@ public record GenerateArticleSummaryMessage(
     string Topic,
     string TopicDescription,
     string Category,
-    long CategoryId
+    long CategoryId,
+    string TopicUrl
 );

@@ -5,12 +5,6 @@ namespace Server.Ai.Api.Infrastructure.AiClients;
 
 public static class Prompts
 {
-
-    // public const string User_ArticleList = "Please generate a well-structured list of articles covering the specified topic. Each article should have a unique focus while maintaining cohesiveness across the collection.";
-    // public const string User_ArticleContent = "Please write a comprehensive article based on the provided title and description. Include relevant examples and follow the specified tags for style and tone.";
-    // public const string User_TopicArticleContent = "Please create a summary page that ties together all the articles in this topic, highlighting their relationships and providing a roadmap for readers.";
-    // public const string User_RegenerateArticleList = "Please generate additional articles for this topic, ensuring they complement the existing articles while exploring new aspects of the subject matter.";
-
     public static string System_ArticleList(int articleCount, string topic, string topicDescription, string category, string prompt = "") =>
     (!string.IsNullOrWhiteSpace(prompt) ? prompt : "" + Environment.NewLine) +
     $"""

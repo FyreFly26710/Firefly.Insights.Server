@@ -20,10 +20,11 @@ public class CreateTopicRequestConsumer(ContentsContext _contentsContext, ILogge
                 CategoryId = message.CategoryId,
                 SortNumber = sortNumber,
                 IsHidden = false,
+                ImageUrl = message.TopicUrl,
             };
             _contentsContext.Topics.Add(topic);
             await _contentsContext.SaveChangesAsync(context.CancellationToken);
-            
+
             var response = new CreateTopicRequestMessageResponse(topic.Id);
             await context.RespondAsync(response);
         }
