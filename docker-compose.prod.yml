@@ -54,15 +54,16 @@ services:
       - "21000:21000" # Gateway Port
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:21000;http://+:32000;http://+:33000;http://+:34000      
       - RabbitMq__Host=rabbitmq
       # Database Connection Strings (All point to the postgres container)
-      - ConnectionStrings__UserDb=Host=postgres;Port=5432;Database=insightdb;Username=postgres;Password=postgres;Trust Server Certificate=True;
-      - ConnectionStrings__ContentDb=Host=postgres;Port=5432;Database=insightdb;Username=postgres;Password=postgres;Trust Server Certificate=True;
-      - ConnectionStrings__AiDb=Host=postgres;Port=5432;Database=insightdb;Username=postgres;Password=postgres;Trust Server Certificate=True;
+      - ConnectionStrings__UserDb=Host=postgres;Port=5432;Database=insightdb;Username=postgres;Password=postgres;
+      - ConnectionStrings__ContentDb=Host=postgres;Port=5432;Database=insightdb;Username=postgres;Password=postgres;
+      - ConnectionStrings__AiDb=Host=postgres;Port=5432;Database=insightdb;Username=postgres;Password=postgres;
       
-      - Clusters__0__Address=http://localhost:32000
-      - Clusters__1__Address=http://localhost:33000
-      - Clusters__2__Address=http://localhost:34000
+      - Clusters__identityCluster__Address=http://localhost:32000
+      - Clusters__contentsCluster__Address=http://localhost:33000
+      - Clusters__aiCluster__Address=http://localhost:34000
     depends_on:
       postgres:
         condition: service_healthy
