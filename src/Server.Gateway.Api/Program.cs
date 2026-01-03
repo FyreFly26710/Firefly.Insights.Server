@@ -86,28 +86,23 @@ static IReadOnlyList<RouteConfig> GetRoutes() =>
 
 static IReadOnlyList<ClusterConfig> GetClusters(IConfiguration configuration)
 {
-    var clusters = configuration.GetSection("Clusters").Get<List<ClusterConf>>();
+    var clustersDict = configuration.GetSection("Clusters").Get<Dictionary<string, ClusterConf>>();
 
-    if (clusters == null || clusters.Count == 0)
+    if (clustersDict == null || clustersDict.Count == 0)
     {
-        Console.WriteLine("No cluster configurations found in the configuration.");
         throw new InvalidOperationException("No cluster configurations found in the configuration.");
     }
 
-    var clusterConfigs = clusters.Select(config => new ClusterConfig
+    return clustersDict.Select(kvp => new ClusterConfig
     {
-        ClusterId = config.ClusterId,
+        // Use the Key from the dictionary as the ClusterId
+        ClusterId = kvp.Key,
         Destinations = new Dictionary<string, DestinationConfig>
         {
-            { "destination1", new DestinationConfig { Address = config.Address } }
+            { "destination1", new DestinationConfig { Address = kvp.Value.Address } }
         },
         HttpRequest = new ForwarderRequestConfig { ActivityTimeout = TimeSpan.FromMinutes(10) }
     }).ToList();
-    //foreach (var cluster in clusterConfigs)
-    //{
-    //    Console.WriteLine($"Cluster {cluster.ClusterId} timeout: {cluster.HttpRequest?.ActivityTimeout}");
-    //}
-    return clusterConfigs;
 }
 
 class ClusterConf

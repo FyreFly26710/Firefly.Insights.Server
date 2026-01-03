@@ -1,6 +1,7 @@
 ﻿namespace Server.Common.Utils;
 public static class EnvUtil
 {
-    public static bool IsDevelopment() => !IsProduction();
+    public static bool IsDevelopment() => true;
+    //public static bool IsDevelopment() => !IsProduction();
     public static bool IsProduction() => Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Production";
 }
