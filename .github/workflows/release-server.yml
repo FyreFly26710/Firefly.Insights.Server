@@ -87,17 +87,18 @@ jobs:
 
       - name: Remote Deploy
         run: |
-          ssh -o StrictHostKeyChecking=no cf-mac-server << 'EOF'
+          ssh -o StrictHostKeyChecking=no cf-mac-server << EOF
             # 1. Create directory if it doesn't exist
             mkdir -p /Users/liqiangwang/Repo/Deploy/FireflyInsights
             cd /Users/liqiangwang/Repo/Deploy/FireflyInsights
 
-            # 2. Get the latest compose file from your GitHub repository
-            # This ensures the server always matches your Git config
-            curl -o docker-compose.prod.yml https://raw.githubusercontent.com/${{ github.repository }}/${{ github.ref_name }}/docker-compose.prod.yml
+            # 2. Authenticated curl for Private Repos
+            curl -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+                 -o docker-compose.prod.yml \
+                 "https://raw.githubusercontent.com/${{ github.repository }}/${{ github.ref_name }}/docker-compose.prod.yml"
             
             # 3. Update the containers
-            export PATH=/usr/local/bin:/opt/homebrew/bin:$PATH
+            export PATH=/usr/local/bin:/opt/homebrew/bin:\$PATH
             docker compose -f docker-compose.prod.yml pull
             docker compose -f docker-compose.prod.yml up -d --remove-orphans
           EOF
