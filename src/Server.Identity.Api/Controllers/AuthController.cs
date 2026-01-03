@@ -1,4 +1,6 @@
-﻿using MediatR;
+using System.Text;
+using System.Text.Json;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Server.Common.Types;
@@ -16,6 +18,7 @@ namespace Server.Identity.Api.Controllers;
 public class AuthController(
     IUserQueries _userQueries,
     IJwtService _jwtService,
+    IOAuthService _oAuthService,
     IMediator _mediator,
     ILogger<AuthController> _logger)
     : ControllerBase
@@ -64,28 +67,40 @@ public class AuthController(
             throw new ExceptionBadRequest("Invalid user ID in token.");
         }
     }
-    //[HttpGet("signin-google")]
-    //public async Task<IActionResult> SignInGoogle([FromQuery] string code)
-    //{
-    //    if (string.IsNullOrEmpty(code)) throw new ApiException(ErrorCode.PARAMS_ERROR, "Authorization code is missing.");
+    [HttpGet("signin-google")]
+    public async Task<ActionResult<LoginUserDto>> SignInGoogle([FromQuery] string code, [FromQuery] string state)
+    {
+        if (string.IsNullOrEmpty(code)) throw new ExceptionBadRequest("Authorization code is missing.");
+        
+        var decodedState = Encoding.UTF8.GetString(Convert.FromBase64String(state));
+        var stateData = JsonSerializer.Deserialize<Dictionary<string, string>>(decodedState);
+        string origin = stateData?["origin"] ?? "*";
+        string apiUrl = stateData?["apiUrl"] ?? "";
 
-    //    var tokenResponse = await _oAuthService.GetGmailToken(code);
-    //    if (string.IsNullOrEmpty(tokenResponse.AccessToken))
-    //        throw new ApiException(ErrorCode.OPERATION_ERROR, "Failed to get access token from Google.");
+        var tokenResponse = await _oAuthService.GetGmailToken(code, apiUrl);
+        if (string.IsNullOrEmpty(tokenResponse.AccessToken))
+            throw new ExceptionBadRequest("Failed to get access token from Google.");
 
-    //    var userInfo = await _oAuthService.GetUserInfoFromGmailToken(tokenResponse.AccessToken);
-    //    if (string.IsNullOrEmpty(userInfo.Email))
-    //        throw new ApiException(ErrorCode.OPERATION_ERROR, "Failed to get user email from Google.");
+        var userInfo = await _oAuthService.GetUserInfoFromGmailToken(tokenResponse.AccessToken);
+        var user = await _userQueries.GetUserByEmail(userInfo.Email);
+        var token = _jwtService.GenerateToken(user.UserId.ToString(), user.UserName ?? "", user.UserRole);
 
-    //    var user = await _userService.GetUserByEmail(userInfo.Email);
-    //    if (user == null)
-    //        throw new ApiException(ErrorCode.OPERATION_ERROR, "User not found with provided email.");
+        string script = $@"
+        <html>
+        <body>
+            <script>
+                window.opener.postMessage({{ 
+                    type: 'GOOGLE_AUTH_SUCCESS', 
+                    token: '{token}' 
+                }}, '{origin}');
+                
+                window.close();
+            </script>
+            <p>Authentication successful! Closing window...</p>
+        </body>
+        </html>";
 
-    //    await _userService.SignInUser(user, HttpContext);
-
-    //    // Redirect to home
-    //    string? homePage = _config["Domain:Home"];
-    //    return Redirect(homePage ?? "/");
-    //}
+        return Content(script, "text/html");
+    }
 }
 

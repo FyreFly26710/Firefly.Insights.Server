@@ -26,11 +26,15 @@ public class UserQueries(UserContext _userContext) : IUserQueries
         return user.ToUserDto();
     }
 
-    // public async Task<List<UserDto>> GetUsersByIds(List<long> userIds)
-    // {
-    //     var users = await _userContext.Users.Where(u => userIds.Contains(u.Id)).ToListAsync();
-    //     var userDtos = users.Select(u => u.ToUserDto()).ToList();
-    //     return userDtos;
-    // }
+    public async Task<UserDto> GetUserByEmail(string email)
+    {
+        if (string.IsNullOrWhiteSpace(email.Trim()))
+            throw new ArgumentException("Email cannot be null or empty", nameof(email));
+
+        var user = await _userContext.Users.FirstOrDefaultAsync(u => u.UserEmail == email);
+        if (user == null)
+            throw new ExceptionNotFound($"User with email {email} not found");
+        return user.ToUserDto();
+    }
 }
 

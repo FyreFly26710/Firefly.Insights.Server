@@ -15,7 +15,7 @@ namespace Server.Identity.Api.Infrastructure
 
             if (!context.Users.Any())
             {
-                var admin = new User() { Id = 1, UserName = "TestAdmin", UserAccount = "TestAdmin", UserPassword = "Password", UserRole = "admin" };
+                var admin = new User() { Id = 1, UserName = "Firefly", UserAccount = "Firefly", UserPassword = "Password", UserRole = "admin", UserEmail = "lee.wan1204@gmail.com" };
                 var user = new User() { Id = 2, UserName = "TestUser", UserAccount = "TestAccount", UserPassword = "Password", UserRole = "user" };
                 var agents = GetAgents();
                 await context.Users.AddRangeAsync(user, admin);

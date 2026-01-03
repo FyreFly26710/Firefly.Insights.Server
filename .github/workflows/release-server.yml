@@ -61,44 +61,44 @@ jobs:
             firefly26710/firefly-insights-server:latest
             firefly26710/firefly-insights-server:${{ needs.check-commit.outputs.version }}
 
-  deploy:
-    needs: [check-commit, build-and-push-server]
-    if: needs.check-commit.outputs.build_app == 'true'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Install cloudflared
-        run: |
-          curl -fsSL https://pkg.cloudflare.com/cloudflared/latest/download/cloudflared-linux-amd64 -o cloudflared
-          chmod +x cloudflared
-          sudo mv cloudflared /usr/local/bin/
+  # deploy:
+  #   needs: [check-commit, build-and-push-server]
+  #   if: needs.check-commit.outputs.build_app == 'true'
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Install cloudflared
+  #       run: |
+  #         curl -fsSL https://pkg.cloudflare.com/cloudflared/latest/download/cloudflared-linux-amd64 -o cloudflared
+  #         chmod +x cloudflared
+  #         sudo mv cloudflared /usr/local/bin/
 
-      - name: Install SSH key
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
+  #     - name: Install SSH key
+  #       run: |
+  #         mkdir -p ~/.ssh
+  #         echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+  #         chmod 600 ~/.ssh/id_rsa
 
-      - name: Configure SSH
-        run: |
-          echo "Host cf-mac-server
-            HostName ${{ secrets.SSH_HOST }}
-            User ${{ secrets.SSH_USERNAME }}
-            ProxyCommand cloudflared access ssh --hostname %h" >> ~/.ssh/config
+  #     - name: Configure SSH
+  #       run: |
+  #         echo "Host cf-mac-server
+  #           HostName ${{ secrets.SSH_HOST }}
+  #           User ${{ secrets.SSH_USERNAME }}
+  #           ProxyCommand cloudflared access ssh --hostname %h" >> ~/.ssh/config
 
-      - name: Remote Deploy
-        run: |
-          ssh -o StrictHostKeyChecking=no cf-mac-server << EOF
-            # 1. Create directory if it doesn't exist
-            mkdir -p /Users/liqiangwang/Repo/Deploy/FireflyInsights
-            cd /Users/liqiangwang/Repo/Deploy/FireflyInsights
+  #     - name: Remote Deploy
+  #       run: |
+  #         ssh -o StrictHostKeyChecking=no cf-mac-server << EOF
+  #           # 1. Create directory if it doesn't exist
+  #           mkdir -p /Users/liqiangwang/Repo/Deploy/FireflyInsights
+  #           cd /Users/liqiangwang/Repo/Deploy/FireflyInsights
 
-            # 2. Authenticated curl for Private Repos
-            curl -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-                 -o docker-compose.prod.yml \
-                 "https://raw.githubusercontent.com/${{ github.repository }}/${{ github.ref_name }}/docker-compose.prod.yml"
+  #           # 2. Authenticated curl for Private Repos
+  #           curl -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+  #                -o docker-compose.prod.yml \
+  #                "https://raw.githubusercontent.com/${{ github.repository }}/${{ github.ref_name }}/docker-compose.prod.yml"
             
-            # 3. Update the containers
-            export PATH=/usr/local/bin:/opt/homebrew/bin:\$PATH
-            docker compose -f docker-compose.prod.yml pull
-            docker compose -f docker-compose.prod.yml up -d --remove-orphans
-          EOF
+  #           # 3. Update the containers
+  #           export PATH=/usr/local/bin:/opt/homebrew/bin:\$PATH
+  #           docker compose -f docker-compose.prod.yml pull
+  #           docker compose -f docker-compose.prod.yml up -d --remove-orphans
+  #         EOF

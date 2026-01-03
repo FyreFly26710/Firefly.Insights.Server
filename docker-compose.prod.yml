@@ -51,12 +51,12 @@ services:
     image: firefly26710/firefly-insights-server:latest
     restart: always
     ports:
-      - "21000:21000" # Gateway Port
+      - "31000:31000"
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
-      - ASPNETCORE_URLS=http://+:21000;http://+:32000;http://+:33000;http://+:34000      
+      - ASPNETCORE_URLS=http://+:31000;http://+:32000;http://+:33000;http://+:34000      
       - RabbitMq__Host=rabbitmq
-      # Database Connection Strings (All point to the postgres container)
+
       - ConnectionStrings__UserDb=Host=postgres;Port=5432;Database=insightdb;Username=postgres;Password=postgres;
       - ConnectionStrings__ContentDb=Host=postgres;Port=5432;Database=insightdb;Username=postgres;Password=postgres;
       - ConnectionStrings__AiDb=Host=postgres;Port=5432;Database=insightdb;Username=postgres;Password=postgres;
@@ -64,6 +64,9 @@ services:
       - Clusters__identityCluster__Address=http://localhost:32000
       - Clusters__contentsCluster__Address=http://localhost:33000
       - Clusters__aiCluster__Address=http://localhost:34000
+
+      - GmailOAuth__ClientId=${GOOGLE_CLIENT_ID}
+      - GmailOAuth__ClientSecret=${GOOGLE_CLIENT_SECRET}
     depends_on:
       postgres:
         condition: service_healthy

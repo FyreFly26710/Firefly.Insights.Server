@@ -9,6 +9,7 @@ using Server.Identity.Api.Application.Queries;
 using Server.Identity.Api.Application.Services;
 using Server.Identity.Api.Infrastructure;
 using Server.Identity.Api.Infrastructure.Messaging;
+using Server.Identity.Api.Infrastructure.Services;
 using Server.Messages.Identities;
 namespace Server.Identity.Api;
 public static class ProgramExtensions
@@ -25,13 +26,16 @@ public static class ProgramExtensions
         });
 
         services.AddScoped<IUserQueries, UserQueries>();
-        services.AddScoped<IJwtService, JwtService>();
 
         return services;
     }
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
+        services.AddScoped<IOAuthService, OAuthService>();
+        services.AddScoped<IJwtService, JwtService>();
+
         services.AddScoped<IMessageBus, MassTransitMessageBus>();
+
         services.AddMassTransit(x =>
         {
             // Add consumers

@@ -67,7 +67,7 @@ public static class ProgramExtensions
         // Database
         var connectionString = configuration.GetConnectionString("AiDb");
         services.AddDbContext<AiContext>(options => { options.UseNpgsql(connectionString); });
-        //if (EnvUtil.IsDevelopment())
+        if (EnvUtil.IsDevelopment())
             services.AddMigration<AiContext, AiContextSeed>();
 
         return services;
