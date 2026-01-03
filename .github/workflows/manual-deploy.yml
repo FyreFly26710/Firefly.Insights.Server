@@ -1,0 +1,43 @@
+name: Manual Test Deploy
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test-ssh-connection:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install cloudflared
+        run: |
+          curl -L https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.deb -o cloudflared.deb
+          sudo dpkg -i cloudflared.deb
+
+      - name: Install SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+
+      - name: Configure SSH
+        run: |
+          echo "Host cf-mac-server
+            HostName ${{ secrets.SSH_HOST }}
+            User ${{ secrets.SSH_USERNAME }}
+            ProxyCommand /usr/bin/cloudflared access ssh --hostname %h" >> ~/.ssh/config
+
+      - name: Remote Deploy
+        run: |
+          ssh -o StrictHostKeyChecking=no cf-mac-server << 'EOF'
+            # 1. Create directory if it doesn't exist
+            mkdir -p /Users/liqiangwang/Repo/Deploy/FireflyInsights
+            cd /Users/liqiangwang/Repo/Deploy/FireflyInsights
+
+            # 2. Get the latest compose file from your GitHub repository
+            # This ensures the server always matches your Git config
+            curl -o docker-compose.prod.yml https://raw.githubusercontent.com/${{ github.repository }}/${{ github.ref_name }}/docker-compose.prod.yml
+            
+            # 3. Update the containers
+            export PATH=/usr/local/bin:/opt/homebrew/bin:$PATH
+            docker compose -f docker-compose.prod.yml pull
+            docker compose -f docker-compose.prod.yml up -d --remove-orphans
+          EOF
