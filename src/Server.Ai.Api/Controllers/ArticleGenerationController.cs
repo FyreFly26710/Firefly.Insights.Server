@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Server.Ai.Api.Models.Requests;
 
@@ -10,6 +11,7 @@ public class ArticleGenerationController(
     ILogger<ArticleGenerationController> _logger) : ControllerBase
 {
     [HttpPost("article-summary")]
+    [Authorize(Roles = "admin")]
     public async Task<ActionResult<bool>> GenerateArticleSummary([FromBody] GenerateArticleSummaryRequest request)
     {
         var command = new GenerateArticleSummaryCommand(request);

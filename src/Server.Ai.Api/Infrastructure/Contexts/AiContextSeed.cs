@@ -6,6 +6,11 @@ namespace Server.Ai.Api.Infrastructure.Contexts;
 
 public class AiContextSeed : IDbSeeder<AiContext>
 {
+    private readonly IConfiguration _configuration;
+    public AiContextSeed(IConfiguration configuration)
+    {
+        _configuration = configuration;
+    }
     public async Task SeedAsync(AiContext context)
     {
         context.Database.OpenConnection();
@@ -14,7 +19,7 @@ public class AiContextSeed : IDbSeeder<AiContext>
         {
             return;
         }
-        await context.AiModels.AddRangeAsync(AiModelsSeed.GetAiModels());
+        await context.AiModels.AddRangeAsync(AiModelsSeed.GetAiModels(_configuration));
         await context.SaveChangesAsync();
     }
 

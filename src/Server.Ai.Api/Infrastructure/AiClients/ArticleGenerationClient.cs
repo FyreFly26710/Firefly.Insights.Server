@@ -8,47 +8,46 @@ using Server.Messages.Contents;
 namespace Server.Ai.Api.Infrastructure.AiClients;
 
 public class ArticleGenerationClient
-    (ILogger<ArticleGenerationClient> _logger, IConfiguration _configuration, AiContext _aiContext)
+    (ILogger<ArticleGenerationClient> _logger, AiContext _aiContext)
     : IArticleGenerationClient
 {
     public async Task<string> GenerateArticleContentAsync(long jobLogId, long aiModelId, GenerationArticleSummary articleSummary, TopicTo topic, CancellationToken cancellationToken = default)
     {
-        var model = _aiContext.AiModels.Find(aiModelId);
-
         List<string> tags = [articleSummary.SkillLevelTag, articleSummary.FocusAreaTag, articleSummary.ArticleStyleTag, articleSummary.TechStackTag, articleSummary.ToneTag];
         var prompt = Prompts.System_ArticleContent(topic.CategoryName, topic.Name, topic.Description, articleSummary.Title, articleSummary.Description, tags);
         List<ChatMessage> messages = [new(ChatRole.User, prompt)];
 
-        var response = await ExecuteAiAgentAsync(jobLogId, model, prompt, messages, new ChatOptions(), cancellationToken);
+        var response = await ExecuteAiAgentAsync(jobLogId, aiModelId, prompt, messages, new ChatOptions(), cancellationToken);
         return response;
     }
     public async Task<string> GenerateArticleSummaryListAsync(long jobLogId, long aiModelId, int articleCount, string topic, string topicDescription, string category, string userPrompt, CancellationToken cancellationToken = default)
     {
-        var model = _aiContext.AiModels.Find(aiModelId);
         ChatOptions chatOptions = new() { ResponseFormat = ChatResponseFormat.ForJsonSchema<GenerationArticleList>() };
 
         var fullPrompt = Prompts.System_ArticleList(articleCount, topic, topicDescription, category, userPrompt);
         List<ChatMessage> messages = [new(ChatRole.User, fullPrompt)];
 
-        var response = await ExecuteAiAgentAsync(jobLogId, model, fullPrompt, messages, chatOptions, cancellationToken);
+        var response = await ExecuteAiAgentAsync(jobLogId, aiModelId, fullPrompt, messages, chatOptions, cancellationToken);
         return response;
 
     }
     public async Task<string> GenerateTopicSummaryAsync(long jobLogId, long aiModelId, TopicTo topic, CancellationToken cancellationToken = default)
     {
-        var model = _aiContext.AiModels.Find(aiModelId);
-
         var prompt = Prompts.System_TopicSummary(topic.CategoryName, topic.Name, topic.Description, topic.TopicId, topic.TopicArticles);
         List<ChatMessage> messages = [new(ChatRole.User, prompt)];
-        var response = await ExecuteAiAgentAsync(jobLogId, model, prompt, messages, new ChatOptions(), cancellationToken);
+        var response = await ExecuteAiAgentAsync(jobLogId, aiModelId, prompt, messages, new ChatOptions(), cancellationToken);
         return response;
     }
 
-    private async Task<string> ExecuteAiAgentAsync(long jobLogId, AiModel model, string prompt, List<ChatMessage> messages, ChatOptions chatOptions, CancellationToken cancellationToken)
+    private async Task<string> ExecuteAiAgentAsync(long jobLogId, long aiModelId, string prompt, List<ChatMessage> messages, ChatOptions chatOptions, CancellationToken cancellationToken)
     {
-        IChatClient chatClient = GetChatClient(model.Provider, model.ModelId);
         try
         {
+            var model = _aiContext.AiModels.Where(x => x.Id == aiModelId && x.IsActive).FirstOrDefault();
+            if (model == null)
+                throw new ExceptionNotFound($"AiModel with id {aiModelId} not found or is not active");
+            IChatClient chatClient = GetChatClient(model.Provider, model.ModelId, model.ApiKey);
+            
             var startTime = DateTime.UtcNow;
             var response = await chatClient.GetResponseAsync(messages, chatOptions, cancellationToken);
             var endTime = DateTime.UtcNow;
@@ -93,16 +92,16 @@ public class ArticleGenerationClient
         return executionLog;
     }
 
-    private IChatClient GetChatClient(string provider, string modelId)
+    private IChatClient GetChatClient(string provider, string modelId, string apiKey)
     {
         return provider switch
         {
             "Gemini" => new GeminiChatClient(new GeminiClientOptions
             {
-                ApiKey = _configuration.GetValue<string>("Gemini:ApiKey") ?? throw new InvalidOperationException("Gemini:ApiKey is not set"),
+                ApiKey = apiKey,
                 ModelId = modelId
             }),
-            "OpenAI" => new OpenAI.Chat.ChatClient(modelId, _configuration.GetValue<string>("OpenAi:ApiKey")).AsIChatClient(),
+            "OpenAI" => new OpenAI.Chat.ChatClient(modelId, apiKey).AsIChatClient(),
             _ => throw new NotSupportedException($"Provider {provider} is not implemented"),
         };
     }

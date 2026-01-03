@@ -13,5 +13,9 @@ public class AiModelEntityTypeConfiguration : IEntityTypeConfiguration<AiModel>
         builder.Property(e => e.InputPrice).HasPrecision(5, 2).IsRequired();
         builder.Property(e => e.OutputPrice).HasPrecision(5, 2).IsRequired();
         builder.Property(e => e.IsActive).IsRequired();
+        builder.Property(e => e.ApiKey).HasMaxLength(1024).IsRequired();
+
+        // Use unique model as user account in identity api
+        builder.HasIndex(e => e.Model).IsUnique();
     }
 }
