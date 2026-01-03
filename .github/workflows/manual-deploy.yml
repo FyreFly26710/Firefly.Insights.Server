@@ -17,13 +17,24 @@ jobs:
           mkdir -p ~/.ssh
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
+          
+      - name: Configure SSH
+        run: |
+          # Ensure no leading spaces are written to the config file
+          cat <<EOF > ~/.ssh/config
+          Host cf-mac-server
+            HostName api.firefly-ai.co.uk
+            User liqiangwang
+            IdentityFile ~/.ssh/id_rsa
+            ProxyCommand /usr/bin/cloudflared access ssh --hostname %h
+          EOF
 
       - name: Remote Deploy
         env:
           GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
           GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
         run: |
-          ssh -o StrictHostKeyChecking=no cf-mac-server << EOF
+          ssh -tt -o StrictHostKeyChecking=no cf-mac-server << 'EOF'
             cd /Users/liqiangwang/Repo/Deploy/FireflyInsights
 
             curl -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
@@ -33,7 +44,7 @@ jobs:
             export GOOGLE_CLIENT_ID="${GOOGLE_CLIENT_ID}"
             export GOOGLE_CLIENT_SECRET="${GOOGLE_CLIENT_SECRET}"
 
-            export PATH=/usr/local/bin:/opt/homebrew/bin:\$PATH
+            export PATH=/usr/local/bin:/opt/homebrew/bin:$PATH
             docker compose -f docker-compose.prod.yml pull
             docker compose -f docker-compose.prod.yml up -d --remove-orphans
           EOF
