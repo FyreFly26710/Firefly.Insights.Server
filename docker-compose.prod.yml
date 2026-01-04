@@ -66,6 +66,8 @@ services:
       - Clusters__contentsCluster__Address=http://127.0.0.1:33000
       - Clusters__aiCluster__Address=http://127.0.0.1:34000
 
+      - Origin__ClientOrigins=${CLIENT_ORIGINS}
+
       - GmailOAuth__ClientId=${GOOGLE_CLIENT_ID}
       - GmailOAuth__ClientSecret=${GOOGLE_CLIENT_SECRET}
     depends_on:

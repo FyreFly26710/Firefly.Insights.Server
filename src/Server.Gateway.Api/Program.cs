@@ -5,9 +5,7 @@ using Yarp.ReverseProxy.Transforms;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var origins = "http://localhost:5173";
-//if (EnvUtil.IsProduction())
-//    origins = "";
+var origins = builder.Configuration.GetSection("Origin:ClientOrigins").Get<string>();
 
 builder.Services.AddCors(options =>
 {
@@ -40,22 +38,6 @@ builder.WebHost.ConfigureKestrel(options =>
 });
 
 var app = builder.Build();
-
-//// Log routes configuration
-//Console.WriteLine("\n=== Route Configuration ===");
-//foreach (var route in GetRoutes())
-//{
-//    Console.WriteLine($"Route: {route.RouteId} -> {route.ClusterId} (Path: {route.Match.Path})");
-//}
-
-//// Log timeout values
-//Console.WriteLine("\n=== Timeout Settings ===");
-//var clusters = GetClusters(builder.Configuration);
-//foreach (var cluster in clusters)
-//{
-//    Console.WriteLine($"Cluster {cluster.ClusterId}:");
-//    Console.WriteLine($"  Activity Timeout: {cluster.HttpRequest?.ActivityTimeout}");
-//}
 
 app.MapReverseProxy();
 app.UseCors();

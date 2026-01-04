@@ -26,6 +26,7 @@ jobs:
         env:
           GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
           GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          CLIENT_ORIGINS: ${{ secrets.CLIENT_ORIGINS }}
         run: |
           ssh -o StrictHostKeyChecking=no cf-mac-server << EOF
             mkdir -p /Users/liqiangwang/Repo/Deploy/FireflyInsights
@@ -37,7 +38,8 @@ jobs:
             
             export GOOGLE_CLIENT_ID="$GOOGLE_CLIENT_ID"
             export GOOGLE_CLIENT_SECRET="$GOOGLE_CLIENT_SECRET"
-
+            export CLIENT_ORIGINS="$CLIENT_ORIGINS"
+            
             export PATH=/usr/local/bin:/opt/homebrew/bin:\$PATH
             docker compose -f docker-compose.prod.yml pull
             docker compose -f docker-compose.prod.yml up -d --remove-orphans
