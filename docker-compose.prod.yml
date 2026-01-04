@@ -1,7 +1,6 @@
 # docker compose -f docker-compose.prod.yml up -d
 
 services:
-  # --- Infrastructure ---
   postgres:
     image: postgres:15
     restart: always
