@@ -51,6 +51,9 @@ services:
     restart: always
     ports:
       - "21000:21000"
+      - "32000:32000"
+      - "33000:33000"
+      - "34000:34000"
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - RabbitMq__Host=rabbitmq
@@ -59,9 +62,9 @@ services:
       - ConnectionStrings__ContentDb=Host=postgres;Port=5432;Database=insightdb;Username=postgres;Password=postgres;
       - ConnectionStrings__AiDb=Host=postgres;Port=5432;Database=insightdb;Username=postgres;Password=postgres;
       
-      - Clusters__identityCluster__Address=http://localhost:32000
-      - Clusters__contentsCluster__Address=http://localhost:33000
-      - Clusters__aiCluster__Address=http://localhost:34000
+      - Clusters__identityCluster__Address=http://127.0.0.1:32000
+      - Clusters__contentsCluster__Address=http://127.0.0.1:33000
+      - Clusters__aiCluster__Address=http://127.0.0.1:34000
 
       - GmailOAuth__ClientId=${GOOGLE_CLIENT_ID}
       - GmailOAuth__ClientSecret=${GOOGLE_CLIENT_SECRET}

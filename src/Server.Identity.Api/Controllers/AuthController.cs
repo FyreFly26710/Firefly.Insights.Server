@@ -74,7 +74,8 @@ public class AuthController(
         
         var decodedState = Encoding.UTF8.GetString(Convert.FromBase64String(state));
         var stateData = JsonSerializer.Deserialize<Dictionary<string, string>>(decodedState);
-        string origin = stateData?["origin"] ?? "*";
+        string rawOrigin = stateData?["origin"] ?? "*";
+        string origin = System.Net.WebUtility.UrlDecode(rawOrigin);
         string apiUrl = stateData?["apiUrl"] ?? "";
 
         var tokenResponse = await _oAuthService.GetGmailToken(code, apiUrl);
