@@ -61,44 +61,48 @@ jobs:
             firefly26710/firefly-insights-server:latest
             firefly26710/firefly-insights-server:${{ needs.check-commit.outputs.version }}
 
-  # deploy:
-  #   needs: [check-commit, build-and-push-server]
-  #   if: needs.check-commit.outputs.build_app == 'true'
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Install cloudflared
-  #       run: |
-  #         curl -fsSL https://pkg.cloudflare.com/cloudflared/latest/download/cloudflared-linux-amd64 -o cloudflared
-  #         chmod +x cloudflared
-  #         sudo mv cloudflared /usr/local/bin/
+  deploy:
+    needs: [check-commit, build-and-push-server]
+    if: needs.check-commit.outputs.build_app == 'true'
+    runs-on: ubuntu-latest
+    env:
+      GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+      GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+    steps:
+      - name: Install cloudflared
+        run: |
+          curl -L https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.deb -o cloudflared.deb
+          sudo dpkg -i cloudflared.deb
 
-  #     - name: Install SSH key
-  #       run: |
-  #         mkdir -p ~/.ssh
-  #         echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-  #         chmod 600 ~/.ssh/id_rsa
+      - name: Install SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
 
-  #     - name: Configure SSH
-  #       run: |
-  #         echo "Host cf-mac-server
-  #           HostName ${{ secrets.SSH_HOST }}
-  #           User ${{ secrets.SSH_USERNAME }}
-  #           ProxyCommand cloudflared access ssh --hostname %h" >> ~/.ssh/config
+      - name: Configure SSH
+        run: |
+          echo "Host cf-mac-server
+            HostName ${{ secrets.SSH_HOST }}
+            User ${{ secrets.SSH_USERNAME }}
+            ProxyCommand /usr/bin/cloudflared access ssh --hostname %h" >> ~/.ssh/config
 
-  #     - name: Remote Deploy
-  #       run: |
-  #         ssh -o StrictHostKeyChecking=no cf-mac-server << EOF
-  #           # 1. Create directory if it doesn't exist
-  #           mkdir -p /Users/liqiangwang/Repo/Deploy/FireflyInsights
-  #           cd /Users/liqiangwang/Repo/Deploy/FireflyInsights
-
-  #           # 2. Authenticated curl for Private Repos
-  #           curl -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-  #                -o docker-compose.prod.yml \
-  #                "https://raw.githubusercontent.com/${{ github.repository }}/${{ github.ref_name }}/docker-compose.prod.yml"
+      - name: Remote Deploy
+        run: |
+          ssh -o StrictHostKeyChecking=no cf-mac-server << EOF
+            mkdir -p /Users/liqiangwang/Repo/Deploy/FireflyInsights
+            cd /Users/liqiangwang/Repo/Deploy/FireflyInsights
             
-  #           # 3. Update the containers
-  #           export PATH=/usr/local/bin:/opt/homebrew/bin:\$PATH
-  #           docker compose -f docker-compose.prod.yml pull
-  #           docker compose -f docker-compose.prod.yml up -d --remove-orphans
-  #         EOF
+            # Download the latest compose file
+            curl -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+                 -L -o docker-compose.prod.yml \
+                 "https://raw.githubusercontent.com/${{ github.repository }}/${{ github.ref_name }}/docker-compose.prod.yml"
+            
+            # Create a .env file on the Mac to store secrets securely
+            echo "GOOGLE_CLIENT_ID=$GOOGLE_CLIENT_ID" > .env
+            echo "GOOGLE_CLIENT_SECRET=$GOOGLE_CLIENT_SECRET" >> .env
+
+            export PATH=/usr/local/bin:/opt/homebrew/bin:\$PATH
+            docker compose -f docker-compose.prod.yml pull
+            docker compose -f docker-compose.prod.yml up -d --remove-orphans
+          EOF
