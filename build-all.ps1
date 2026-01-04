@@ -6,29 +6,27 @@ $FullImageTag = "${DockerHubUser}/${ImageName}:latest"
 # 1. Check if Docker is running
 docker ps >$null 2>&1
 if ($LASTEXITCODE -ne 0) {
-    Write-Error "Docker is not running. Please start Docker Desktop and try again."
+    Write-Error "Docker is not running. Please start Docker Desktop."
     exit
 }
 
-Write-Host "--- Starting MVP All-in-One Build ---" -ForegroundColor Cyan
+Write-Host "--- Starting Multi-Platform Build (Windows + Mac) ---" -ForegroundColor Cyan
 
-# 2. Login to Docker Hub
-Write-Host "Logging into Docker Hub..." -ForegroundColor Gray
-docker login
+# 2. Ensure Buildx builder is ready
+Write-Host "Setting up multi-platform builder..." -ForegroundColor Gray
+docker buildx create --name firefly-builder --use 2>$null
+docker buildx inspect --bootstrap
 
-# 3. Build the single consolidated image
-Write-Host "`nBuilding Image: $FullImageTag" -ForegroundColor Green
+# 3. Build and Push for both architectures
+Write-Host "`nBuilding and Pushing: $FullImageTag" -ForegroundColor Green
+Write-Host "Targeting: linux/amd64 and linux/arm64" -ForegroundColor Gray
 
-# Use --no-cache if you want to be 100% sure it's a fresh MVP build
-docker build -t "$FullImageTag" .
+# Note: buildx build --push combines the build and push steps
+docker buildx build --platform linux/amd64,linux/arm64 -t "$FullImageTag" --push .
 
 if ($LASTEXITCODE -ne 0) {
-    Write-Error "Build failed. Check the Dockerfile output above."
+    Write-Error "Multi-platform build failed."
     exit $LASTEXITCODE
 }
 
-# 4. Push the image
-Write-Host "`nPushing $FullImageTag to Docker Hub..." -ForegroundColor Yellow
-docker push "$FullImageTag"
-
-Write-Host "`nDone! Deployment Image: $FullImageTag" -ForegroundColor Green
+Write-Host "`nDone!" -ForegroundColor Green
