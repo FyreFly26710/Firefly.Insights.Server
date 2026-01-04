@@ -51,7 +51,7 @@ services:
     image: firefly26710/firefly-insights-server:latest
     restart: always
     ports:
-      - "31000:31000"
+      - "21000:21000"
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - RabbitMq__Host=rabbitmq
