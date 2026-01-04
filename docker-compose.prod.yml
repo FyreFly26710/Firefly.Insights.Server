@@ -54,7 +54,6 @@ services:
       - "31000:31000"
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
-      - ASPNETCORE_URLS=http://+:31000;http://+:32000;http://+:33000;http://+:34000      
       - RabbitMq__Host=rabbitmq
 
       - ConnectionStrings__UserDb=Host=postgres;Port=5432;Database=insightdb;Username=postgres;Password=postgres;

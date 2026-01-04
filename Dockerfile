@@ -20,11 +20,11 @@ WORKDIR /app
 # Copy the build output
 COPY --from=build /app/publish .
 
-EXPOSE 21000
+EXPOSE 31000
 
 # Launch all 4 services
 ENTRYPOINT ["sh", "-c", "\
 dotnet /app/Server.Identity.Api.dll --urls http://0.0.0.0:32000 & \
 dotnet /app/Server.Contents.Api.dll --urls http://0.0.0.0:33000 & \
 dotnet /app/Server.Ai.Api.dll --urls http://0.0.0.0:34000 & \
-dotnet /app/Server.Gateway.Api.dll --urls http://0.0.0.0:21000"]
+dotnet /app/Server.Gateway.Api.dll --urls http://0.0.0.0:31000"]
