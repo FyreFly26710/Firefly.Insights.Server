@@ -1,10 +1,12 @@
 using Server.Ai.Api.Infrastructure.Contexts.EntityTypeConfigurations;
+using Server.Common.Extensions;
 
 namespace Server.Ai.Api.Infrastructure.Contexts;
 
 public class AiContext : DbContext
 {
     public DbSet<AiModel> AiModels { get; set; }
+    public DbSet<AiProvider> AiProviders { get; set; }
     public DbSet<JobLog> JobLogs { get; set; }
     public DbSet<ExecutionLog> ExecutionLogs { get; set; }
     public DbSet<JobFollowUp> JobFollowUps { get; set; }
@@ -17,8 +19,10 @@ public class AiContext : DbContext
     }
     protected override void OnModelCreating(ModelBuilder builder)
     {
-        builder.HasDefaultSchema("ai");
+        builder.ApplySoftDeleteQueryFilter();
+        builder.HasDefaultSchema("insights");
         builder.ApplyConfiguration(new AiModelEntityTypeConfiguration());
+        builder.ApplyConfiguration(new AiProviderEntityTypeConfiguration());
         builder.ApplyConfiguration(new JobLogEntityTypeConfiguration());
         builder.ApplyConfiguration(new ExecutionLogEntityTypeConfiguration());
         builder.ApplyConfiguration(new JobFollowUpEntityTypeConfiguration());

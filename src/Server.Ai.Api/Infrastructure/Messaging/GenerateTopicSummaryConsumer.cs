@@ -33,8 +33,8 @@ public class GenerateTopicSummaryConsumer(ILogger<GenerateTopicSummaryConsumer> 
         try
         {
             // get agent
-            var getAgentRequestMessage = new GetAgentRequestMessage(parentJob.AiModel.Model);
-            var getAgentResponse = await _messageBus.RequestAsync<GetAgentRequestMessage, GetAgentRequestMessageResponse>(getAgentRequestMessage, context.CancellationToken);
+            var getAgentRequestMessage = new UserRequestMessage(parentJob.AiModelId);
+            var getAgentResponse = await _messageBus.RequestAsync<UserRequestMessage, UserRequestMessageResponse>(getAgentRequestMessage, context.CancellationToken);
             var agent = getAgentResponse.UserTo;
 
             // get topic

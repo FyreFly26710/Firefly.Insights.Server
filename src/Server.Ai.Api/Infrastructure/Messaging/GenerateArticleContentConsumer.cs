@@ -34,8 +34,8 @@ public class GenerateArticleContentConsumer
         var topic = topicSummaryResponse.Topic;
 
         // get agent
-        var getAgentRequestMessage = new GetAgentRequestMessage(job.AiModel.Model);
-        var getAgentResponse = await _messageBus.RequestAsync<GetAgentRequestMessage, GetAgentRequestMessageResponse>(getAgentRequestMessage, context.CancellationToken);
+        var getAgentRequestMessage = new UserRequestMessage(job.AiModelId);
+        var getAgentResponse = await _messageBus.RequestAsync<UserRequestMessage, UserRequestMessageResponse>(getAgentRequestMessage, context.CancellationToken);
         var agent = getAgentResponse.UserTo;
         try
         {

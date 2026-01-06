@@ -7,9 +7,11 @@ namespace Server.Ai.Api.Infrastructure.Contexts;
 public class AiContextSeed : IDbSeeder<AiContext>
 {
     private readonly IConfiguration _configuration;
-    public AiContextSeed(IConfiguration configuration)
+    private readonly IMessageBus _messageBus;
+    public AiContextSeed(IConfiguration configuration, IMessageBus messageBus)
     {
         _configuration = configuration;
+        _messageBus = messageBus;
     }
     public async Task SeedAsync(AiContext context)
     {
@@ -19,7 +21,15 @@ public class AiContextSeed : IDbSeeder<AiContext>
         {
             return;
         }
-        await context.AiModels.AddRangeAsync(AiModelsSeed.GetAiModels(_configuration));
+        var models = AiModelsSeed.GetAiModels(_configuration);
+
+        var users = new List<UserTo>();
+        foreach (var model in models)
+        {
+            users.Add(new UserTo(model.Id, model.DisplayName, model.Avatar, "agent", model.Id.ToString()));
+        }
+        await _messageBus.PublishAsync(new CreateUsersMessage(users));
+        context.AiModels.AddRange(models);
         await context.SaveChangesAsync();
     }
 

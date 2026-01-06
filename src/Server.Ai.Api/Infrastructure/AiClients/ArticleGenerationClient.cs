@@ -43,10 +43,10 @@ public class ArticleGenerationClient
     {
         try
         {
-            var model = _aiContext.AiModels.Where(x => x.Id == aiModelId && x.IsActive).FirstOrDefault();
+            var model = await _aiContext.AiModels.Include(x => x.AiProvider).FirstOrDefaultAsync(x => x.Id == aiModelId && x.IsActive, cancellationToken);
             if (model == null)
                 throw new ExceptionNotFound($"AiModel with id {aiModelId} not found or is not active");
-            IChatClient chatClient = GetChatClient(model.Provider, model.ModelId, model.ApiKey);
+            IChatClient chatClient = GetChatClient(model.AiProvider.Name, model.ModelId, model.AiProvider.ApiKey);
             
             var startTime = DateTime.UtcNow;
             var response = await chatClient.GetResponseAsync(messages, chatOptions, cancellationToken);

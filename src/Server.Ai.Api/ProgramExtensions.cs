@@ -25,7 +25,8 @@ public static class ProgramExtensions
         services.AddScoped<IExecutionLogQueries, ExecutionLogQueries>();
         services.AddScoped<IExecutionPayloadQueries, ExecutionPayloadQueries>();
         services.AddScoped<IAiModelQueries, AiModelQueries>();
-
+        services.AddScoped<IAiProviderQueries, AiProviderQueries>();
+        
         return services;
     }
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
@@ -46,7 +47,6 @@ public static class ProgramExtensions
             x.AddRequestClient<GetTopicRequestMessage>();
             x.AddRequestClient<UserRequestMessage>();
             x.AddRequestClient<UserListRequestMessage>();
-            x.AddRequestClient<GetAgentRequestMessage>();
 
             // Add saga state machine
             x.AddSagaStateMachine<ArticleGenerationSaga, ArticleGenerationSagaState>()

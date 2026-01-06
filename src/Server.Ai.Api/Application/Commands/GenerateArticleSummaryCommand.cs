@@ -14,9 +14,9 @@ public class GenerateArticleSummaryCommandHandler(ILogger<GenerateArticleSummary
     public async Task<bool> Handle(GenerateArticleSummaryCommand command, CancellationToken cancellationToken)
     {
         var request = command.Request;
-        var model = _aiContext.AiModels.FirstOrDefault(x => x.Provider == request.Provider && x.Model == request.Model);
-        if (model == null)
-            throw new ExceptionNotFound($"Provider {request.Provider} and model {request.Model} is not supported");
+        var model = await _aiContext.AiModels.Include(x => x.AiProvider).FirstOrDefaultAsync(x => x.Id == request.AiModelId, cancellationToken);
+        if (model is null)
+            throw new ExceptionNotFound($"AI model of id {request.AiModelId} not found");
 
         var job = new JobLog
         {
@@ -51,8 +51,8 @@ public class GenerateArticleSummaryCommandValidator : AbstractValidator<Generate
 {
     public GenerateArticleSummaryCommandValidator()
     {
-        RuleFor(x => x.Request.Provider).NotEmpty();
-        RuleFor(x => x.Request.Model).NotEmpty();
+        // RuleFor(x => x.Request.Provider).NotEmpty();
+        // RuleFor(x => x.Request.Model).NotEmpty();
         // RuleFor(x => x.Request.UserId).NotEmpty();
         RuleFor(x => x.Request.ArticleCount).GreaterThan(0).LessThanOrEqualTo(30);
         RuleFor(x => x.Request.Topic).NotEmpty().MaximumLength(128);

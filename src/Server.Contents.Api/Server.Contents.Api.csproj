@@ -25,8 +25,5 @@
 		<ProjectReference Include="..\Server.Messages\Server.Messages.csproj" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <Folder Include="Infrastructure\Migrations\" />
-	</ItemGroup>
 
 </Project>

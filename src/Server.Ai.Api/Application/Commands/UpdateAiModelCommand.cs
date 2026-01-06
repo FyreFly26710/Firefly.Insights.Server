@@ -9,18 +9,22 @@ public class UpdateAiModelCommandHandler(AiContext _aiContext, IMessageBus _mess
         var model = await _aiContext.AiModels.FindAsync(command.AiModelId, cancellationToken);
         if (model is null)
             throw new ExceptionNotFound($"AI model of id {command.AiModelId} not found");
-        model.Provider = request.Provider ?? model.Provider;
+
+        // model.Provider = request.Provider ?? model.Provider;
         model.Model = request.Model ?? model.Model;
         model.ModelId = request.ModelId ?? model.ModelId;
         model.InputPrice = request.InputPrice ?? model.InputPrice;
         model.OutputPrice = request.OutputPrice ?? model.OutputPrice;
         model.IsActive = request.IsActive ?? model.IsActive;
-        model.ApiKey = request.ApiKey ?? model.ApiKey;
+        model.DisplayName = request.DisplayName ?? model.DisplayName;
+        model.Avatar = request.Avatar ?? model.Avatar;
+        model.Description = request.Description ?? model.Description;
+        // model.ApiKey = request.ApiKey ?? model.ApiKey;
         await _aiContext.SaveChangesAsync(cancellationToken);
 
-        if (request.AgentName is not null || request.AgentAvatarUrl is not null)
+        if (request.DisplayName is not null || request.Avatar is not null)
         {
-            await _messageBus.PublishAsync(new UpdateAgentMessage(model.Model, request.AgentName, request.AgentAvatarUrl), cancellationToken);
+            await _messageBus.PublishAsync(new UpdateUserMessage(model.Id, request.DisplayName, request.Avatar), cancellationToken);
         }
         return true;
     }
@@ -29,12 +33,14 @@ public class UpdateAiModelRequestValidator : AbstractValidator<UpdateAiModelRequ
 {
     public UpdateAiModelRequestValidator()
     {
-        RuleFor(x => x.Provider).MaximumLength(128);
+        // RuleFor(x => x.AiProviderId).GreaterThan(0).WithMessage("AI provider ID is required.");
         RuleFor(x => x.Model).MaximumLength(128);
         RuleFor(x => x.ModelId).MaximumLength(128);
-        RuleFor(x => x.ApiKey).MaximumLength(1024);
-        RuleFor(x => x.AgentName).MaximumLength(128);
-        RuleFor(x => x.AgentAvatarUrl).MaximumLength(256);
-
+        // RuleFor(x => x.InputPrice).GreaterThan(0).WithMessage("Input price is required.");
+        // RuleFor(x => x.OutputPrice).GreaterThan(0).WithMessage("Output price is required.");
+        // RuleFor(x => x.IsActive).IsInEnum().WithMessage("Is active is required.");
+        RuleFor(x => x.DisplayName).MaximumLength(128);
+        RuleFor(x => x.Avatar).MaximumLength(1024);
+        RuleFor(x => x.Description).MaximumLength(1024);
     }
 }

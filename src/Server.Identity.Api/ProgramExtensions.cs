@@ -41,10 +41,9 @@ public static class ProgramExtensions
             // Add consumers
             x.AddConsumer<UserRequestConsumer>();
             x.AddConsumer<UserListRequestConsumer>();
-            x.AddConsumer<GetAgentRequestConsumer>();
-            x.AddConsumer<CreateAgentConsumer>();
-            x.AddConsumer<UpdateAgentConsumer>();
-            x.AddConsumer<DeleteAgentConsumer>();
+            x.AddConsumer<AgentListRequestConsumer>();
+            x.AddConsumer<CreateUsersConsumer>();
+            x.AddConsumer<UpdateUserConsumer>();
 
             x.UsingRabbitMq((context, cfg) =>
             {

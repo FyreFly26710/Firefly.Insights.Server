@@ -7,15 +7,16 @@ public class AiModelEntityTypeConfiguration : IEntityTypeConfiguration<AiModel>
         builder.ToTable("AiModels");
         builder.HasKey(e => e.Id);
         builder.Property(e => e.Id).ValueGeneratedNever();
-        builder.Property(e => e.Provider).HasMaxLength(128).IsRequired();
+        builder.Property(e => e.DisplayName).HasMaxLength(128).IsRequired();
+        builder.Property(e => e.Avatar).HasMaxLength(1024).IsRequired();
+        builder.Property(e => e.Description).HasMaxLength(1024);
         builder.Property(e => e.Model).HasMaxLength(128).IsRequired();
         builder.Property(e => e.ModelId).HasMaxLength(128).IsRequired();
         builder.Property(e => e.InputPrice).HasPrecision(5, 2).IsRequired();
         builder.Property(e => e.OutputPrice).HasPrecision(5, 2).IsRequired();
         builder.Property(e => e.IsActive).IsRequired();
-        builder.Property(e => e.ApiKey).HasMaxLength(1024).IsRequired();
-
+        builder.HasOne(e => e.AiProvider).WithMany().HasForeignKey(e => e.AiProviderId);
         // Use unique model as user account in identity api
-        builder.HasIndex(e => e.Model).IsUnique();
+        builder.HasIndex(e => e.ModelId).IsUnique();
     }
 }

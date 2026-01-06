@@ -20,5 +20,9 @@ public partial class User
             UpdateTime = UpdatedAt,
         };
     }
+    public UserTo ToUserTo()
+    {
+        return new UserTo(Id, UserName ?? "", UserAvatar ?? "", UserRole);
+    }
 
 }
