@@ -9,6 +9,7 @@ public static class AiModelExtensions
     {
         AiModelId = aiModel.Id,
         Provider = aiModel.AiProvider.Name,
+        AiProviderId = aiModel.AiProviderId,
         Model = aiModel.Model,
         ModelId = aiModel.ModelId,
         InputPrice = aiModel.InputPrice,

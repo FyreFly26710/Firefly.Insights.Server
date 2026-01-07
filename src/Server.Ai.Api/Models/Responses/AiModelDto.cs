@@ -7,6 +7,7 @@ public record AiModelDto
 {
     public long AiModelId { get; set; }
     public string Provider { get; set; } = string.Empty;
+    public long AiProviderId { get; set; } = 0;
     public string Model { get; set; } = string.Empty;
     public string ModelId { get; set; } = string.Empty;
     public decimal InputPrice { get; set; } = 0;

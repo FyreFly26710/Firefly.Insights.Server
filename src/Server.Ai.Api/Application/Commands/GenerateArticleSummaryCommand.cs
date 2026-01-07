@@ -13,6 +13,7 @@ public class GenerateArticleSummaryCommandHandler(ILogger<GenerateArticleSummary
 {
     public async Task<bool> Handle(GenerateArticleSummaryCommand command, CancellationToken cancellationToken)
     {
+        var userId = 1;
         var request = command.Request;
         var model = await _aiContext.AiModels.Include(x => x.AiProvider).FirstOrDefaultAsync(x => x.Id == request.AiModelId, cancellationToken);
         if (model is null)
@@ -20,7 +21,7 @@ public class GenerateArticleSummaryCommandHandler(ILogger<GenerateArticleSummary
 
         var job = new JobLog
         {
-            UserId = request.UserId,
+            UserId = userId,
             JobType = AiJobType.Articles_Summary,
             Status = AiGenerationJobStatus.Pending,
             CreatedAt = DateTime.UtcNow,
@@ -32,7 +33,7 @@ public class GenerateArticleSummaryCommandHandler(ILogger<GenerateArticleSummary
 
         var message = new GenerateArticleSummaryMessage(
             job.Id,
-            request.UserId,
+            userId,
             // model.Id,
             request.UserPrompt,
             request.ArticleCount,

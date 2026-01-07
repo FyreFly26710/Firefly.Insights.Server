@@ -9,7 +9,7 @@ public class JobLogQueries(AiContext _aiContext, IMessageBus _messageBus) : IJob
     {
         var query = _aiContext.JobLogs.AsQueryable().AsNoTracking();
         query = query.Include(j => j.ExecutionLog);
-        query = query.Include(j => j.AiModel);
+        query = query.Include(j => j.AiModel).ThenInclude(m => m.AiProvider);
         return query;
     }
     public async Task<Paged<JobLogDto>> GetJobLogsAsync(JobLogListRequest request, CancellationToken cancellationToken = default)

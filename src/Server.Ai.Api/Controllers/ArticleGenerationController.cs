@@ -14,6 +14,7 @@ public class ArticleGenerationController(
     [Authorize(Roles = "admin")]
     public async Task<ActionResult<bool>> GenerateArticleSummary([FromBody] GenerateArticleSummaryRequest request)
     {
+        // to do, get user id from token    
         var command = new GenerateArticleSummaryCommand(request);
         var result = await _mediator.Send(command);
         return Ok(true);

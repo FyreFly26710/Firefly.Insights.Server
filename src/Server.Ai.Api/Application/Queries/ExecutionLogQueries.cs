@@ -8,7 +8,7 @@ public class ExecutionLogQueries(AiContext _aiContext, IMessageBus _messageBus) 
     private IQueryable<ExecutionLog> GetQuery()
     {
         var query = _aiContext.ExecutionLogs.AsQueryable().AsNoTracking();
-        query = query.Include(e => e.JobLog).ThenInclude(j => j.AiModel);
+        query = query.Include(e => e.JobLog).ThenInclude(j => j.AiModel).ThenInclude(m => m.AiProvider);
         // query = query.Include(e => e.ExecutionPayload);
         return query;
     }
