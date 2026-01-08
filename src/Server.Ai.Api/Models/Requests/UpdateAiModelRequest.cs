@@ -5,6 +5,7 @@ namespace Server.Ai.Api.Models.Requests;
 public class UpdateAiModelRequest
 {
     // public string? Provider { get; set; }
+    public long? AiProviderId { get; set; }
     public string? Model { get; set; }
     public string? ModelId { get; set; }
     public decimal? InputPrice { get; set; }

@@ -11,6 +11,7 @@ public class UpdateAiModelCommandHandler(AiContext _aiContext, IMessageBus _mess
             throw new ExceptionNotFound($"AI model of id {command.AiModelId} not found");
 
         // model.Provider = request.Provider ?? model.Provider;
+        model.AiProviderId = request.AiProviderId ?? model.AiProviderId;
         model.Model = request.Model ?? model.Model;
         model.ModelId = request.ModelId ?? model.ModelId;
         model.InputPrice = request.InputPrice ?? model.InputPrice;

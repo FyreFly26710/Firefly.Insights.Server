@@ -1,4 +1,5 @@
 using System;
+using DeepSeek.Core.Adapters;
 using GeminiDotnet;
 using GeminiDotnet.Extensions.AI;
 using Microsoft.Extensions.AI;
@@ -51,6 +52,9 @@ public class ArticleGenerationClient
                 throw new ExceptionNotFound($"AiModel with id {aiModelId} not found or is not active");
             IChatClient chatClient = GetChatClient(model.AiProvider.Name, model.ModelId, model.AiProvider.ApiKey);
             
+            chatOptions.ModelId = model.ModelId;
+            chatOptions.MaxOutputTokens = 10000;
+
             var startTime = DateTime.UtcNow;
             var response = await chatClient.GetResponseAsync(messages, chatOptions, cancellationToken);
             var endTime = DateTime.UtcNow;
@@ -105,6 +109,7 @@ public class ArticleGenerationClient
                 ModelId = modelId
             }),
             "OpenAI" => new OpenAI.Chat.ChatClient(modelId, apiKey).AsIChatClient(),
+            "DeepSeek" => new DeepSeekChatClient(apiKey),
             _ => throw new NotSupportedException($"Provider {provider} is not implemented"),
         };
     }
