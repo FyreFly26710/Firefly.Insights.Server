@@ -31,10 +31,10 @@ public class ContentsContextSeed : IDbSeeder<ContentsContext>
         await context.Categories.AddAsync(defaultCategory);
 
         await context.Tags.AddRangeAsync(SeedData.Tags);
-        // await context.Categories.AddRangeAsync(SeedData.Categories);
-        // await context.Topics.AddRangeAsync(SeedData.Topics);
-        // await context.ArticleMetas.AddRangeAsync(SeedData.BuildArticleMetas(200));
-        // await context.ArticleMetas.AddRangeAsync(SeedData.BuildTopicSummary());
+        await context.Categories.AddRangeAsync(SeedData.Categories);
+        await context.Topics.AddRangeAsync(SeedData.Topics);
+        await context.ArticleMetas.AddRangeAsync(SeedData.BuildArticleMetas(200));
+        await context.ArticleMetas.AddRangeAsync(SeedData.BuildTopicSummary());
 
         await context.SaveChangesAsync();
 

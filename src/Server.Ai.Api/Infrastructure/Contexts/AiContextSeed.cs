@@ -18,19 +18,14 @@ public class AiContextSeed : IDbSeeder<AiContext>
         context.Database.OpenConnection();
         ((NpgsqlConnection)context.Database.GetDbConnection()).ReloadTypes();
         if (await context.AiModels.AnyAsync())
-        {
             return;
-        }
+        
         var models = AiModelsSeed.GetAiModels(_configuration);
-
-        var users = new List<UserTo>();
-        foreach (var model in models)
-        {
-            users.Add(new UserTo(model.Id, model.DisplayName, model.Avatar, "agent", model.Id.ToString()));
-        }
-        await _messageBus.PublishAsync(new CreateUsersMessage(users));
         context.AiModels.AddRange(models);
         await context.SaveChangesAsync();
+
+        var users = models.Select(model => new UserTo(model.Id, model.DisplayName, model.Avatar, "agent", model.Id.ToString())).ToList();
+        await _messageBus.PublishAsync(new CreateUsersMessage(users));
     }
 
 }
