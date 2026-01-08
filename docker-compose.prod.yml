@@ -58,9 +58,9 @@ services:
       - ASPNETCORE_ENVIRONMENT=Production
       - RabbitMq__Host=rabbitmq
 
-      - ConnectionStrings__UserDb=Host=postgres;Port=5432;Database=insightdb;Username=postgres;Password=postgres;
-      - ConnectionStrings__ContentDb=Host=postgres;Port=5432;Database=insightdb;Username=postgres;Password=postgres;
-      - ConnectionStrings__AiDb=Host=postgres;Port=5432;Database=insightdb;Username=postgres;Password=postgres;
+      - ConnectionStrings__UserDb=Host=postgres;Port=5432;Database=identitydb;Username=postgres;Password=postgres;
+      - ConnectionStrings__ContentDb=Host=postgres;Port=5432;Database=contentsdb;Username=postgres;Password=postgres;
+      - ConnectionStrings__AiDb=Host=postgres;Port=5432;Database=aidb;Username=postgres;Password=postgres;
       
       - Clusters__identityCluster__Address=http://127.0.0.1:32000
       - Clusters__contentsCluster__Address=http://127.0.0.1:33000

@@ -36,9 +36,9 @@ jobs:
                  -L -o docker-compose.prod.yml \
                  "https://raw.githubusercontent.com/${{ github.repository }}/${{ github.ref_name }}/docker-compose.prod.yml"
             
-            export GOOGLE_CLIENT_ID="$GOOGLE_CLIENT_ID"
-            export GOOGLE_CLIENT_SECRET="$GOOGLE_CLIENT_SECRET"
-            export CLIENT_ORIGINS="$CLIENT_ORIGINS"
+            echo "GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}" >> .env
+            echo "GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}" >> .env
+            echo "CLIENT_ORIGINS=${{ secrets.CLIENT_ORIGINS }}" >> .env
             
             export PATH=/usr/local/bin:/opt/homebrew/bin:\$PATH
             docker compose -f docker-compose.prod.yml pull
