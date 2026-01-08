@@ -33,6 +33,9 @@ public class ArticleGenerationClient
     }
     public async Task<string> GenerateTopicSummaryAsync(long jobLogId, long aiModelId, TopicTo topic, CancellationToken cancellationToken = default)
     {
+        if (topic.TopicArticles == null || !topic.TopicArticles.Any())
+            return "No articles available for this topic.";
+
         var prompt = Prompts.System_TopicSummary(topic.CategoryName, topic.Name, topic.Description, topic.TopicId, topic.TopicArticles);
         List<ChatMessage> messages = [new(ChatRole.User, prompt)];
         var response = await ExecuteAiAgentAsync(jobLogId, aiModelId, prompt, messages, new ChatOptions(), cancellationToken);
