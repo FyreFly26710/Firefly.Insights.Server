@@ -1,10 +1,10 @@
-name: Manual Test Deploy
+name: Manual Deploy Server
 
 on:
   workflow_dispatch:
 
 jobs:
-  test-ssh-connection:
+  manual-deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Install cloudflared
@@ -23,20 +23,16 @@ jobs:
             User ${{ secrets.SSH_USERNAME }}
             ProxyCommand /usr/bin/cloudflared access ssh --hostname %h" >> ~/.ssh/config
       - name: Remote Deploy
-        env:
-          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
-          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
-          CLIENT_ORIGINS: ${{ secrets.CLIENT_ORIGINS }}
         run: |
           ssh -o StrictHostKeyChecking=no cf-mac-server << EOF
             mkdir -p /Users/liqiangwang/Repo/Deploy/FireflyInsights
             cd /Users/liqiangwang/Repo/Deploy/FireflyInsights
             
             curl -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-                 -L -o docker-compose.prod.yml \
-                 "https://raw.githubusercontent.com/${{ github.repository }}/${{ github.ref_name }}/docker-compose.prod.yml"
+                  -L -o docker-compose.prod.yml \
+                  "https://raw.githubusercontent.com/${{ github.repository }}/${{ github.ref_name }}/docker-compose.prod.yml"
             
-            echo "GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}" >> .env
+            echo "GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}" > .env
             echo "GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}" >> .env
             echo "CLIENT_ORIGINS=${{ secrets.CLIENT_ORIGINS }}" >> .env
             
