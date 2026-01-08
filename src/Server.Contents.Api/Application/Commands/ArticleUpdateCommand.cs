@@ -46,13 +46,6 @@ public class ArticleUpdateRequestValidator : AbstractValidator<ArticleUpdateRequ
     {
         RuleFor(x => x.Title)
             .NotEmpty().WithMessage("Title is required.")
-            .MaximumLength(128).WithMessage("Title cannot exceed 128 characters.")
             .When(x => x.Title is not null);
-        RuleFor(x => x.Description)
-            .MaximumLength(256).WithMessage("Description cannot exceed 256 characters.");
-        RuleFor(x => x.ImageUrl)
-            .MaximumLength(256).WithMessage("Image URL cannot exceed 256 characters.")
-            .Must(uri => string.IsNullOrEmpty(uri) || Uri.IsWellFormedUriString(uri, UriKind.Absolute))
-            .WithMessage("Image URL must be a valid URL.");
     }
 }

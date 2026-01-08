@@ -49,14 +49,7 @@ public class CategoryUpdateRequestValidator : AbstractValidator<CategoryUpdateRe
     {
         RuleFor(x => x.Name)
             .NotEmpty().WithMessage("Category name is required.")
-            .MaximumLength(128).WithMessage("Category name cannot exceed 128 characters.");
+            .When(x => x.Name is not null);
 
-        RuleFor(x => x.Description)
-            .MaximumLength(256).WithMessage("Description cannot exceed 256 characters.");
-
-        RuleFor(x => x.ImageUrl)
-            .MaximumLength(256).WithMessage("Image URL cannot exceed 256 characters.")
-            .Must(uri => string.IsNullOrEmpty(uri) || Uri.IsWellFormedUriString(uri, UriKind.Absolute))
-            .WithMessage("Image URL must be a valid URL.");
     }
 }

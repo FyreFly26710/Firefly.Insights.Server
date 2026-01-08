@@ -31,7 +31,7 @@ public class CreateTopicRequestConsumer(ContentsContext _contentsContext, ILogge
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error creating topic {TopicName}", message.Topic);
-            await context.RespondAsync(new CreateTopicRequestMessageResponse(-1));
+            throw;
         }
     }
 }

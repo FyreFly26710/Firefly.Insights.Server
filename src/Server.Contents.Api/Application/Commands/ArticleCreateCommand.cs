@@ -43,14 +43,7 @@ public class ArticleCreateRequestValidator : AbstractValidator<ArticleCreateRequ
     public ArticleCreateRequestValidator()
     {
         RuleFor(x => x.Title)
-            .NotEmpty().WithMessage("Title is required.")
-            .MaximumLength(128).WithMessage("Title cannot exceed 128 characters.");
-        RuleFor(x => x.Description)
-            .MaximumLength(256).WithMessage("Description cannot exceed 256 characters.");
-        RuleFor(x => x.ImageUrl)
-            .MaximumLength(256).WithMessage("Image URL cannot exceed 256 characters.")
-            .Must(uri => string.IsNullOrEmpty(uri) || Uri.IsWellFormedUriString(uri, UriKind.Absolute))
-            .WithMessage("Image URL must be a valid URL.");
+            .NotEmpty().WithMessage("Title is required.");
         RuleFor(x => x.TopicId)
             .NotEmpty().WithMessage("Topic ID is required.");
     }

@@ -28,15 +28,7 @@ public class TopicCreateRequestValidator : AbstractValidator<TopicCreateRequest>
     public TopicCreateRequestValidator()
     {
         RuleFor(x => x.Name)
-            .NotEmpty().WithMessage("Topic name is required.")
-            .MaximumLength(128).WithMessage("Topic name cannot exceed 128 characters.");
+            .NotEmpty().WithMessage("Topic name is required.");
 
-        RuleFor(x => x.Description)
-            .MaximumLength(256).WithMessage("Description cannot exceed 256 characters.");
-
-        RuleFor(x => x.ImageUrl)
-            .MaximumLength(256).WithMessage("Image URL cannot exceed 256 characters.")
-            .Must(uri => string.IsNullOrEmpty(uri) || Uri.IsWellFormedUriString(uri, UriKind.Absolute))
-            .WithMessage("Image URL must be a valid URL.");
     }
 }

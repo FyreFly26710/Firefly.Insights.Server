@@ -35,7 +35,7 @@ public class ContentsContext : DbContext
             entity.Property(t => t.Id).ValueGeneratedNever();
             entity.Property(t => t.Name).HasMaxLength(256).IsRequired();
             entity.Property(t => t.Description).HasMaxLength(1024).IsRequired();
-            entity.Property(t => t.ImageUrl).HasMaxLength(512);
+            // entity.Property(t => t.ImageUrl).HasMaxLength(512);
 
             entity.HasOne(t => t.Category).WithMany(c => c.Topics).HasForeignKey(t => t.CategoryId).OnDelete(DeleteBehavior.NoAction);
         });
@@ -61,7 +61,7 @@ public class ContentsContext : DbContext
             entity.Property(c => c.Id).ValueGeneratedNever();
             entity.Property(c => c.Name).HasMaxLength(256).IsRequired();
             entity.Property(c => c.Description).HasMaxLength(512).IsRequired();
-            entity.Property(c => c.ImageUrl).HasMaxLength(512).IsRequired();
+            // entity.Property(c => c.ImageUrl).HasMaxLength(512).IsRequired();
         });
     }
 
@@ -82,7 +82,7 @@ public class ContentsContext : DbContext
         {
             entity.ToTable("ArticleMetas");
             entity.Property(am => am.Id).ValueGeneratedNever();
-            entity.Property(am => am.ImageUrl).HasMaxLength(512).IsRequired();
+            // entity.Property(am => am.ImageUrl).HasMaxLength(512).IsRequired();
 
             entity.HasOne(am => am.Article).WithOne(a => a.ArticleMeta).HasForeignKey<ArticleMeta>(a => a.ArticleId).OnDelete(DeleteBehavior.Cascade);
             entity.HasOne(am => am.Topic).WithMany(a => a.ArticleMetas).HasForeignKey(a => a.TopicId).OnDelete(DeleteBehavior.NoAction);
