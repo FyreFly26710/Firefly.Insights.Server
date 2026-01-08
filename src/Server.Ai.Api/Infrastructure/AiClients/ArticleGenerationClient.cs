@@ -1,8 +1,8 @@
 using System;
-using DeepSeek.Core.Adapters;
 using GeminiDotnet;
 using GeminiDotnet.Extensions.AI;
 using Microsoft.Extensions.AI;
+using Server.Ai.DeepSeek;
 using Server.Messages.Ais;
 using Server.Messages.Contents;
 
@@ -51,9 +51,9 @@ public class ArticleGenerationClient
             if (model == null)
                 throw new ExceptionNotFound($"AiModel with id {aiModelId} not found or is not active");
             IChatClient chatClient = GetChatClient(model.AiProvider.Name, model.ModelId, model.AiProvider.ApiKey);
-            
+
             chatOptions.ModelId = model.ModelId;
-            chatOptions.MaxOutputTokens = 10000;
+            chatOptions.MaxOutputTokens = 8192;
 
             var startTime = DateTime.UtcNow;
             var response = await chatClient.GetResponseAsync(messages, chatOptions, cancellationToken);

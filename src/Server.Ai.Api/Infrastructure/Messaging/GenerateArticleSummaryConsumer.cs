@@ -1,5 +1,6 @@
 using System;
 using System.Text.Json;
+using Server.Ai.Api.Infrastructure.AiClients;
 using Server.Ai.Api.Infrastructure.StateMachines;
 using Server.Messages.Ais;
 using Server.Messages.Contents;
@@ -30,6 +31,11 @@ public class GenerateArticleSummaryConsumer(
             // generate the article summary list
             var responseMessage = await _articleGenerationClient.GenerateArticleSummaryListAsync(message.JobId, job.AiModelId, message.ArticleCount, message.Topic, message.TopicDescription, message.Category, message.Prompt, context.CancellationToken);
             var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+            if (ResponseUtils.CodeBlockFound(responseMessage))
+            {
+                _logger.LogWarning("Code block found in response message, removing it. JobId: {JobId}", message.JobId);
+                responseMessage = ResponseUtils.RemoveCodeBlock(responseMessage);
+            }
             var articleList = JsonSerializer.Deserialize<GenerationArticleList>(responseMessage, options);
 
             if (articleList == null)
@@ -86,4 +92,5 @@ public class GenerateArticleSummaryConsumer(
             await _aiContext.SaveChangesAsync(context.CancellationToken);
         }
     }
+
 }
