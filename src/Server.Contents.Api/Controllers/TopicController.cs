@@ -28,6 +28,12 @@ public class TopicController(
         var topics = await _topicQueries.GetTopicList(request);
         return Ok(topics);
     }
+    [HttpGet("{topicId}/summary-article-id")]
+    public async Task<ActionResult<long>> GetSummaryArticleId(long topicId)
+    {
+        var articleId = await _topicQueries.GetSummaryArticleId(topicId);
+        return Ok(articleId);
+    }
     [HttpPost]
     [Authorize(Roles = "admin")]
     public async Task<ActionResult<long?>> Create(TopicCreateRequest request)

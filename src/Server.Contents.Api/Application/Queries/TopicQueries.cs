@@ -52,4 +52,23 @@ public class TopicQueries(ContentsContext _contentsContext, ILogger<TopicQueries
         var topics = await query.Select(t => new LookupItemDto(t.Id, t.Name)).ToListAsync();
         return topics;
     }
+
+    public async Task<long> GetSummaryArticleId(long topicId)
+    {
+        var query = GetNavigationQuery(true);
+        var topic = await query.FirstOrDefaultAsync(t => t.Id == topicId);
+        if (topic is null)
+            throw new ExceptionNotFound();
+        // if no articles are found, return 0
+        if (!topic.ArticleMetas.Any())
+            return 0;
+
+        // return the summary article if found
+        var summaryArticle = topic.ArticleMetas.FirstOrDefault(am => am.IsTopicSummary);
+        if (summaryArticle is not null)
+            return summaryArticle.ArticleId;
+
+        // return the first article
+        return topic.ArticleMetas.OrderBy(am => am.SortNumber).First().ArticleId;
+    }
 }
