@@ -1,9 +1,11 @@
-using Microsoft.AspNetCore.Http.Timeouts;
+using Server.Gateway.Api;
 using Yarp.ReverseProxy.Configuration;
 using Yarp.ReverseProxy.Forwarder;
 using Yarp.ReverseProxy.Transforms;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.AddDefaultLogging(builder.Configuration);
 
 var origins = builder.Configuration.GetSection("Origin:ClientOrigins").Get<string>();
 

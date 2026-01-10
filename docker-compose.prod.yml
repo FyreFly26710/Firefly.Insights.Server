@@ -57,6 +57,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - RabbitMq__Host=rabbitmq
+      - Serilog__SeqUrl=http://seq:5341
 
       - ConnectionStrings__UserDb=Host=postgres;Port=5432;Database=identitydb;Username=postgres;Password=postgres;
       - ConnectionStrings__ContentDb=Host=postgres;Port=5432;Database=contentsdb;Username=postgres;Password=postgres;
@@ -75,6 +76,18 @@ services:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
+    networks:
+      - firefly-net
+
+  seq:
+    image: datalust/seq:latest
+    container_name: seq
+    environment:
+      - ACCEPT_EULA=Y
+      - SEQ_FIRSTRUN_ADMINPASSWORD=password123
+    ports:
+      - "5341:5341"
+      - "8082:80"
     networks:
       - firefly-net
 

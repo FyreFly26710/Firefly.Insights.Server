@@ -6,7 +6,8 @@ using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddJwt(builder.Configuration);
+builder.AddDefaultLogging(builder.Configuration);
+builder.Services.AddDefaultServices(builder.Configuration);
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddApplicationServices(builder.Configuration);
 

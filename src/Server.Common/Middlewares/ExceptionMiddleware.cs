@@ -23,13 +23,11 @@ public class ExceptionMiddleware
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Unhandled exception");
-
-            await HandleExceptionAsync(context, ex);
+            HandleException(context, ex);
         }
     }
 
-    private static Task HandleExceptionAsync(HttpContext context, Exception ex)
+    private void HandleException(HttpContext context, Exception ex)
     {
         int statusCode;
         string message;
@@ -38,11 +36,13 @@ public class ExceptionMiddleware
         {
             statusCode = he.StatusCode;
             message = he.Message;
+            _logger.LogWarning(ex, "Handled exception: {Message}", message);
         }
         else
         {
             statusCode = StatusCodes.Status500InternalServerError;
             message = $"An unhandled server error occurred: {ex.Message}";
+            _logger.LogError(ex, "Unhandled exception: {Message}", message);
         }
 
         var error = new ErrorObj
@@ -56,7 +56,7 @@ public class ExceptionMiddleware
 
         var result = JsonSerializer.Serialize(error);
 
-        return context.Response.WriteAsync(result);
+        context.Response.WriteAsync(result);
     }
     class ErrorObj
     {

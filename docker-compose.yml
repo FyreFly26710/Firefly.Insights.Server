@@ -50,6 +50,17 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+  seq:
+    image: datalust/seq:latest
+    container_name: seq
+    environment:
+      - ACCEPT_EULA=Y
+      - SEQ_FIRSTRUN_ADMINPASSWORD=password
+    ports:
+      - "5341:5341"
+      - "8082:80"
+    networks:
+      - firefly-insights-network
 
 networks:
   firefly-insights-network:
