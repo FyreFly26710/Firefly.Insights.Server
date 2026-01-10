@@ -1,7 +1,3 @@
-using System;
-using MassTransit.Mediator;
-using Server.Messages.Identities;
-
 namespace Server.Identity.Api.Infrastructure.Messaging;
 
 public class AgentListRequestConsumer(UserContext _userContext) : IConsumer<AgentListRequestMessage>

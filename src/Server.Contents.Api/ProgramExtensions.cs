@@ -2,6 +2,7 @@
 using FluentValidation.AspNetCore;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
+using Server.Common.Behaviours;
 using Server.Common.Extensions;
 using Server.Common.Messaging;
 using Server.Common.Utils;
@@ -23,6 +24,7 @@ public static class ProgramExtensions
         services.AddMediatR(cfg =>
         {
             cfg.RegisterServicesFromAssemblyContaining(typeof(IAssemblyMarker));
+            cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
         });
 
         // this line seems to be unnecessary, because the validation is done at controller level

@@ -1,8 +1,8 @@
 ﻿using FluentValidation.AspNetCore;
-using Server.Ai.Api.Application.Queries;
 using Server.Ai.Api.Infrastructure.AiClients;
 using Server.Ai.Api.Infrastructure.Messaging;
 using Server.Ai.Api.Infrastructure.StateMachines;
+using Server.Common.Behaviours;
 using Server.Common.Extensions;
 using Server.Common.Utils;
 using Server.Messages.Contents;
@@ -19,6 +19,7 @@ public static class ProgramExtensions
         services.AddMediatR(cfg =>
         {
             cfg.RegisterServicesFromAssemblyContaining(typeof(IAssemblyMarker));
+            cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
         });
 
         services.AddScoped<IJobLogQueries, JobLogQueries>();
@@ -26,7 +27,7 @@ public static class ProgramExtensions
         services.AddScoped<IExecutionPayloadQueries, ExecutionPayloadQueries>();
         services.AddScoped<IAiModelQueries, AiModelQueries>();
         services.AddScoped<IAiProviderQueries, AiProviderQueries>();
-        
+
         return services;
     }
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)

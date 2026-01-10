@@ -4,9 +4,10 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.Extensions.Options;
 using Server.Common.Configurations;
+using Server.Common.Types;
 
 namespace Server.Identity.Api.Application.Services;
-public class JwtService(IOptions<JwtSettings> _jwtSettings) : IJwtService
+public class JwtService(IOptions<JwtSettings> _jwtSettings, ILogger<JwtService> _logger) : IJwtService
 {
 
     public string GenerateToken(string userId, string username, string role)
@@ -33,22 +34,11 @@ public class JwtService(IOptions<JwtSettings> _jwtSettings) : IJwtService
     }
     public string? GetUserId(string token)
     {
-        if (string.IsNullOrEmpty(token))
-            return null;
+        if (string.IsNullOrEmpty(token)) throw new ExceptionBadRequest("Token is required");
 
-        var handler = new JwtSecurityTokenHandler();
-        JwtSecurityToken jwtToken;
-
-        try
-        {
-            jwtToken = handler.ReadJwtToken(token);
-        }
-        catch
-        {
-            return null; // Invalid token
-        }
-
+        var jwtToken = new JwtSecurityTokenHandler().ReadJwtToken(token);
         var userIdClaim = jwtToken.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Sub);
         return userIdClaim?.Value;
+
     }
 }

@@ -7,10 +7,6 @@ using Server.Messages.Contents;
 
 namespace Server.Ai.Api.Infrastructure.Messaging;
 
-// Consume the GenerateArticleSummaryMessage
-// Update the job log status to Running
-// Generate the article summary list
-// Update the job log status to Completed
 public class GenerateArticleSummaryConsumer(
     ILogger<GenerateArticleSummaryConsumer> _logger,
     IArticleGenerationClient _articleGenerationClient,
@@ -23,7 +19,12 @@ public class GenerateArticleSummaryConsumer(
         var message = context.Message;
 
         var job = await _aiContext.JobLogs.FindAsync(message.JobId);
-        job!.Status = AiGenerationJobStatus.Running;
+        if (job == null)
+        {
+            _logger.LogCritical("Stopping the Job. Job log not found. JobLogId: {JobLogId}", message.JobId);
+            return;
+        }
+        job.Status = AiGenerationJobStatus.Running;
         job.StartedAt = DateTime.UtcNow;
         await _aiContext.SaveChangesAsync(context.CancellationToken);
         try
@@ -39,53 +40,49 @@ public class GenerateArticleSummaryConsumer(
             var articleList = JsonSerializer.Deserialize<GenerationArticleList>(responseMessage, options);
 
             if (articleList == null)
+                throw new Exception("Parsing the article list response failed");
+
+            // add topic id to article list
+            var createTopicMessage = new CreateTopicRequestMessage(message.CategoryId, message.Topic, message.TopicDescription, message.TopicUrl);
+            var createTopicResponse = await _messageBus.RequestAsync<CreateTopicRequestMessage, CreateTopicRequestMessageResponse>(createTopicMessage, context.CancellationToken);
+            if (createTopicResponse.TopicId <= 0)
+                throw new Exception("Creating the topic failed");
+
+            var sagaArticles = new List<ArticleJobItem>();
+            foreach (var summary in articleList.Articles)
             {
-                job.Status = AiGenerationJobStatus.Failed;
-                job.CompletedAt = DateTime.UtcNow;
-                job.FailureReason = "Invalid agent response message";
-                await _aiContext.SaveChangesAsync(context.CancellationToken);
-                return;
-            }
-            else
-            {
-                // add topic id to article list
-                var createTopicMessage = new CreateTopicRequestMessage(message.CategoryId, message.Topic, message.TopicDescription, message.TopicUrl);
-                var createTopicResponse = await _messageBus.RequestAsync<CreateTopicRequestMessage, CreateTopicRequestMessageResponse>(createTopicMessage, context.CancellationToken);
-
-                var sagaArticles = new List<ArticleJobItem>();
-                foreach (var summary in articleList.Articles)
+                var articleJob = new JobLog
                 {
-                    var articleJob = new JobLog
-                    {
-                        UserId = message.UserId,
-                        JobType = AiJobType.Article_Generation,
-                        AiModelId = job.AiModelId,
-                        Status = AiGenerationJobStatus.Pending
-                    };
-                    _aiContext.JobLogs.Add(articleJob);
-
-                    sagaArticles.Add(new ArticleJobItem(articleJob.Id, summary));
-                }
-
-                job.Status = AiGenerationJobStatus.Completed;
-                job.CompletedAt = DateTime.UtcNow;
-                await _aiContext.SaveChangesAsync(context.CancellationToken);
-
-                // Publish the saga
-                await context.Publish(new StartArticleBatchGeneration
-                {
-                    CorrelationId = Guid.NewGuid(),
-                    ParentJobId = message.JobId,
-                    TopicId = createTopicResponse.TopicId,
                     UserId = message.UserId,
+                    JobType = AiJobType.Article_Generation,
                     AiModelId = job.AiModelId,
-                    Articles = sagaArticles
-                });
+                    Status = AiGenerationJobStatus.Pending
+                };
+                _aiContext.JobLogs.Add(articleJob);
+
+                sagaArticles.Add(new ArticleJobItem(articleJob.Id, summary));
             }
+
+            job.Status = AiGenerationJobStatus.Completed;
+            job.CompletedAt = DateTime.UtcNow;
+            await _aiContext.SaveChangesAsync(context.CancellationToken);
+
+            // Publish the saga
+            _logger.LogInformation("Publishing the start article batch generation message. JobLogId: {JobLogId}, TopicId: {TopicId}", message.JobId, createTopicResponse.TopicId);
+            await context.Publish(new StartArticleBatchGeneration
+            {
+                CorrelationId = Guid.NewGuid(),
+                ParentJobId = message.JobId,
+                TopicId = createTopicResponse.TopicId,
+                UserId = message.UserId,
+                AiModelId = job.AiModelId,
+                Articles = sagaArticles
+            });
 
         }
         catch (Exception ex)
         {
+            _logger.LogError(ex, "Error generating article summary. JobLogId: {JobLogId}", message.JobId);
             job.Status = AiGenerationJobStatus.Failed;
             job.CompletedAt = DateTime.UtcNow;
             job.FailureReason = ex.Message;

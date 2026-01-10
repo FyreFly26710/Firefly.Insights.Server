@@ -1,6 +1,4 @@
 ﻿using MediatR;
-using Server.Identity.Api.Infrastructure;
-using Server.Identity.Api.Models.Entities;
 
 namespace Server.Identity.Api.Application.Commands;
 public class RegisterUserCommandHandler(UserContext _userContext)

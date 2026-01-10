@@ -1,16 +1,15 @@
 ﻿using FluentValidation;
 using FluentValidation.AspNetCore;
-using MassTransit;
-using Microsoft.EntityFrameworkCore;
+using MediatR;
+using Server.Common.Behaviours;
 using Server.Common.Extensions;
 using Server.Common.Messaging;
 using Server.Common.Utils;
 using Server.Identity.Api.Application.Queries;
 using Server.Identity.Api.Application.Services;
-using Server.Identity.Api.Infrastructure;
 using Server.Identity.Api.Infrastructure.Messaging;
 using Server.Identity.Api.Infrastructure.Services;
-using Server.Messages.Identities;
+
 namespace Server.Identity.Api;
 public static class ProgramExtensions
 {
@@ -23,6 +22,7 @@ public static class ProgramExtensions
         services.AddMediatR(cfg =>
         {
             cfg.RegisterServicesFromAssemblyContaining(typeof(IAssemblyMarker));
+            cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
         });
 
         services.AddScoped<IUserQueries, UserQueries>();

@@ -1,6 +1,6 @@
 namespace Server.Identity.Api.Infrastructure.Messaging;
 
-public class UserRequestConsumer(UserContext _userContext) : IConsumer<UserRequestMessage>
+public class UserRequestConsumer(UserContext _userContext, ILogger<UserRequestConsumer> _logger) : IConsumer<UserRequestMessage>
 {
     public async Task Consume(ConsumeContext<UserRequestMessage> context)
     {
@@ -13,6 +13,7 @@ public class UserRequestConsumer(UserContext _userContext) : IConsumer<UserReque
         }
         else
         {
+            _logger.LogError("User of id {UserId} not found", message.UserId);
             var userTo = new UserTo(message.UserId, string.Empty, string.Empty, string.Empty);
             await context.RespondAsync(new UserRequestMessageResponse(userTo));
         }

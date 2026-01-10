@@ -3,7 +3,7 @@ using Server.Identity.Api.Models.Constants;
 
 namespace Server.Identity.Api.Infrastructure.Messaging;
 
-public class CreateUsersConsumer(UserContext _userContext) : IConsumer<CreateUsersMessage>
+public class CreateUsersConsumer(UserContext _userContext, ILogger<CreateUsersConsumer> _logger) : IConsumer<CreateUsersMessage>
 {
     public async Task Consume(ConsumeContext<CreateUsersMessage> context)
     {
@@ -17,6 +17,8 @@ public class CreateUsersConsumer(UserContext _userContext) : IConsumer<CreateUse
             .Select(u => u.Id)
             .ToListAsync();
 
+        _logger.LogInformation("Ids already exist: {ExistingIds}", existingIds);
+
         var existingIdsSet = new HashSet<long>(existingIds);
 
         var newUsers = incomingUsers
@@ -26,13 +28,12 @@ public class CreateUsersConsumer(UserContext _userContext) : IConsumer<CreateUse
                 Id = u.UserId,
                 UserName = u.UserName,
                 UserAccount = u.UserAccount,
-                UserPassword = Passwords.DefaultPassword, 
+                UserPassword = Passwords.DefaultPassword,
                 UserAvatar = u.UserAvatar,
                 UserRole = u.UserRole
             })
             .ToList();
 
-        // 4. Add and Save only if there are new users
         if (newUsers.Any())
         {
             await _userContext.Users.AddRangeAsync(newUsers);

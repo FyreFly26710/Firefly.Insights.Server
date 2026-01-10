@@ -44,12 +44,15 @@ namespace Server.Common.Extensions
                 .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
                 .MinimumLevel.Override("Microsoft.EntityFrameworkCore.Database.Command", LogEventLevel.Warning)
                 .MinimumLevel.Override("Microsoft.Hosting.Lifetime", LogEventLevel.Information);
-                
+
             var seqUrl = configuration.GetValue<string>("Serilog:SeqUrl") ?? "http://localhost:5341";
             loggerConfiguration.WriteTo.Seq(seqUrl);
 
             if (EnvUtil.IsDevelopment())
             {
+                loggerConfiguration.MinimumLevel.Override("MassTransit", LogEventLevel.Debug);
+                loggerConfiguration.MinimumLevel.Override("Yarp", LogEventLevel.Debug);
+                
                 const string customTemplate = "{Timestamp: HH:mm:ss} [{Level:u3}] {SourceContext} {NewLine} {Message:lj}{NewLine}{Exception}";
                 loggerConfiguration.WriteTo.Console(theme: AnsiConsoleTheme.Literate, outputTemplate: customTemplate);
             }

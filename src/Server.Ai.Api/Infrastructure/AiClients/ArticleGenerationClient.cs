@@ -48,7 +48,7 @@ public class ArticleGenerationClient
         try
         {
             var model = await _aiContext.AiModels.Include(x => x.AiProvider).FirstOrDefaultAsync(x => x.Id == aiModelId && x.IsActive, cancellationToken);
-            if (model == null)
+            if (model == null || model.AiProvider == null)
                 throw new ExceptionNotFound($"AiModel with id {aiModelId} not found or is not active");
             IChatClient chatClient = GetChatClient(model.AiProvider.Name, model.ModelId, model.AiProvider.ApiKey);
 
@@ -56,17 +56,19 @@ public class ArticleGenerationClient
             chatOptions.MaxOutputTokens = 8192;
 
             var startTime = DateTime.UtcNow;
+            _logger.LogInformation("Executing AI agent. JobLogId: {JobLogId}, ModelId: {ModelId}", jobLogId, model.ModelId);
             var response = await chatClient.GetResponseAsync(messages, chatOptions, cancellationToken);
             var endTime = DateTime.UtcNow;
-
             ExecutionLog executionLog = CreateExecutionLog(jobLogId, model, prompt, startTime, response, endTime);
+            _logger.LogInformation("AI agent executed. JobLogId: {JobLogId}, ModelId: {ModelId}, Duration: {Duration}, OutputTokens: {OutputTokens}", jobLogId, model.ModelId, executionLog.Duration, executionLog.OutputTokens);
 
             _aiContext.ExecutionLogs.Add(executionLog);
             await _aiContext.SaveChangesAsync(cancellationToken);
-            return executionLog.ExecutionPayload!.Response!;
+            return executionLog.ExecutionPayload?.Response ?? string.Empty;
         }
         catch (Exception ex)
         {
+            _logger.LogError(ex, "Error executing AI agent. JobLogId: {JobLogId}, Prompt: {Prompt}", jobLogId, prompt);
 
             var executionLog = new ExecutionLog(jobLogId, DateTime.UtcNow, ex.Message, prompt);
             _aiContext.ExecutionLogs.Add(executionLog);

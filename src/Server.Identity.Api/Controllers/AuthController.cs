@@ -71,7 +71,7 @@ public class AuthController(
     public async Task<ActionResult<LoginUserDto>> SignInGoogle([FromQuery] string code, [FromQuery] string state)
     {
         if (string.IsNullOrEmpty(code)) throw new ExceptionBadRequest("Authorization code is missing.");
-        
+
         var decodedState = Encoding.UTF8.GetString(Convert.FromBase64String(state));
         var stateData = JsonSerializer.Deserialize<Dictionary<string, string>>(decodedState);
         string rawOrigin = stateData?["origin"] ?? "*";
@@ -83,6 +83,9 @@ public class AuthController(
             throw new ExceptionBadRequest("Failed to get access token from Google.");
 
         var userInfo = await _oAuthService.GetUserInfoFromGmailToken(tokenResponse.AccessToken);
+        if (string.IsNullOrEmpty(userInfo.Email))
+            throw new ExceptionBadRequest("Failed to get user email from Google.");
+
         var user = await _userQueries.GetUserByEmail(userInfo.Email);
         var token = _jwtService.GenerateToken(user.UserId.ToString(), user.UserName ?? "", user.UserRole);
 

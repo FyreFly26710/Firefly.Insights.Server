@@ -20,11 +20,12 @@ public static class ProgramExtensions
 
         loggerConfiguration.WriteTo.Seq("http://localhost:5341");
 
+        loggerConfiguration.MinimumLevel.Override("Microsoft", LogEventLevel.Warning);
+
         if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
         {
-            loggerConfiguration.MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
-                .MinimumLevel.Override("Microsoft.EntityFrameworkCore.Database.Command", LogEventLevel.Warning);
-
+            loggerConfiguration.MinimumLevel.Override("Yarp", LogEventLevel.Debug);
+            
             const string customTemplate = "{Timestamp: HH:mm:ss} [{Level:u3}] {SourceContext} {NewLine} {Message:lj}{NewLine}{Exception}";
             loggerConfiguration.WriteTo.Console(
                 theme: AnsiConsoleTheme.Literate,

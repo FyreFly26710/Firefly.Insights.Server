@@ -16,7 +16,11 @@ public class GenerateTopicSummaryConsumer(ILogger<GenerateTopicSummaryConsumer> 
         var parentJobQuery = _aiContext.JobLogs.AsQueryable().AsNoTracking();
         parentJobQuery = parentJobQuery.Include(j => j.AiModel);
         var parentJob = await parentJobQuery.FirstOrDefaultAsync(j => j.Id == message.ParentJobId);
-        if (parentJob == null) return; // do nothing
+        if (parentJob == null)
+        {
+            _logger.LogCritical("Stopping the Job. Parent job log not found. JobLogId: {JobLogId}", message.ParentJobId);
+            return;
+        }
 
         var topicSummaryJob = new JobLog()
         {
@@ -29,7 +33,6 @@ public class GenerateTopicSummaryConsumer(ILogger<GenerateTopicSummaryConsumer> 
         };
         _aiContext.JobLogs.Add(topicSummaryJob);
         await _aiContext.SaveChangesAsync(context.CancellationToken);
-
         try
         {
             // get agent
@@ -40,12 +43,19 @@ public class GenerateTopicSummaryConsumer(ILogger<GenerateTopicSummaryConsumer> 
             // get topic
             var topicSummaryRequestMessage = new GetTopicRequestMessage(message.TopicId, true);
             var topicSummaryResponse = await _messageBus.RequestAsync<GetTopicRequestMessage, GetTopicRequestMessageResponse>(topicSummaryRequestMessage, context.CancellationToken);
-
+            if (topicSummaryResponse.Topic.TopicId != message.TopicId)
+            {
+                _logger.LogError("Stopping the Job. Topic mismatch. JobLogId: {JobLogId}, TopicId: {TopicId}, TopicName: {TopicName}, Returned TopicId: {ReturnedTopicId}", topicSummaryJob.Id, message.TopicId, topicSummaryResponse.Topic.Name, topicSummaryResponse.Topic.TopicId);
+                throw new Exception("Topic mismatch");
+            }
             // Generate topic summary
             var articleContent = await _articleGenerationClient.GenerateTopicSummaryAsync(topicSummaryJob.Id, topicSummaryJob.AiModelId, topicSummaryResponse.Topic, context.CancellationToken);
             // Create article
             var createArticleRequestMessage = new CreateArticleRequestMessage("Summary Article", message.TopicId, agent.UserId, articleContent, IsTopicSummary: true);
-            await _messageBus.RequestAsync<CreateArticleRequestMessage, CreateArticleRequestMessageResponse>(createArticleRequestMessage, context.CancellationToken);
+            var createArticleResponse = await _messageBus.RequestAsync<CreateArticleRequestMessage, CreateArticleRequestMessageResponse>(createArticleRequestMessage, context.CancellationToken);
+            if (createArticleResponse.ArticleId <= 0)
+                throw new Exception("Creating the topic summary article failed");
+
             topicSummaryJob.Status = AiGenerationJobStatus.Completed;
             topicSummaryJob.CompletedAt = DateTime.UtcNow;
             await _aiContext.SaveChangesAsync(context.CancellationToken);
