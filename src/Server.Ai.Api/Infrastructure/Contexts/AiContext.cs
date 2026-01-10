@@ -19,7 +19,7 @@ public class AiContext : DbContext
     }
     protected override void OnModelCreating(ModelBuilder builder)
     {
-        builder.ApplySoftDeleteQueryFilter();
+        // builder.ApplySoftDeleteQueryFilter();
         builder.HasDefaultSchema("insights");
         builder.ApplyConfiguration(new AiModelEntityTypeConfiguration());
         builder.ApplyConfiguration(new AiProviderEntityTypeConfiguration());

@@ -31,6 +31,7 @@ public class GenerateArticleSummaryCommandHandler(ILogger<GenerateArticleSummary
         _aiContext.JobLogs.Add(job);
         await _aiContext.SaveChangesAsync(cancellationToken);
 
+        _logger.LogInformation("Initializing article summary job. JobLogId: {JobLogId}", job.Id);
         var message = new GenerateArticleSummaryMessage(
             job.Id,
             userId,

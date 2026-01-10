@@ -52,7 +52,6 @@ namespace Server.Common.Extensions
             {
                 loggerConfiguration.MinimumLevel.Override("MassTransit", LogEventLevel.Debug);
                 loggerConfiguration.MinimumLevel.Override("Yarp", LogEventLevel.Debug);
-                
                 const string customTemplate = "{Timestamp: HH:mm:ss} [{Level:u3}] {SourceContext} {NewLine} {Message:lj}{NewLine}{Exception}";
                 loggerConfiguration.WriteTo.Console(theme: AnsiConsoleTheme.Literate, outputTemplate: customTemplate);
             }

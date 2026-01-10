@@ -3,7 +3,7 @@ using System;
 namespace Server.Ai.Api.Application.Commands;
 
 public record CreateAiModelCommand(CreateAiModelRequest Request) : IRequest<bool>;
-public class CreateAiModelCommandHandler(AiContext _aiContext, IMessageBus _messageBus) : IRequestHandler<CreateAiModelCommand, bool>
+public class CreateAiModelCommandHandler(AiContext _aiContext, IMessageBus _messageBus, ILogger<CreateAiModelCommandHandler> _logger) : IRequestHandler<CreateAiModelCommand, bool>
 {
     public async Task<bool> Handle(CreateAiModelCommand command, CancellationToken cancellationToken)
     {
@@ -23,7 +23,7 @@ public class CreateAiModelCommandHandler(AiContext _aiContext, IMessageBus _mess
         };
         _aiContext.AiModels.Add(model);
         await _aiContext.SaveChangesAsync(cancellationToken);
-
+        _logger.LogInformation("Dispatching message to create ai model user. AiModelId: {AiModelId}", model.Id);
         await _messageBus.PublishAsync(new CreateUsersMessage(new List<UserTo> { new UserTo(model.Id, model.DisplayName, model.Avatar, "agent", model.Id.ToString()) }), cancellationToken);
         return true;
     }

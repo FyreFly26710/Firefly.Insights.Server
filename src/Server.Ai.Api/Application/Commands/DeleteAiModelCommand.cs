@@ -11,10 +11,8 @@ public class DeleteAiModelCommandHandler(AiContext _aiContext, IMessageBus _mess
         if (model is null)
             return true;
             
-        model.IsDeleted = true;
-        model.UpdatedAt = DateTime.UtcNow;
+        _aiContext.AiModels.Remove(model);
         await _aiContext.SaveChangesAsync(cancellationToken);
-        // await _messageBus.PublishAsync(new DeleteAgentMessage(model.UserId), cancellationToken);
         return true;
     }
 

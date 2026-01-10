@@ -2,7 +2,7 @@ using System;
 
 namespace Server.Ai.Api.Models.Entities;
 
-public class AiModel : AuditableEntity
+public class AiModel : Entity
 {
     public long AiProviderId { get; set; }
     public string DisplayName { get; set; } = string.Empty;

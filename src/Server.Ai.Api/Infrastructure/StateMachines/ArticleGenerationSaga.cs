@@ -22,6 +22,7 @@ public class ArticleGenerationSaga : MassTransitStateMachine<ArticleGenerationSa
 
         Initially(
             When(BatchStarted)
+                .Then(ctx => logger.LogInformation("Starting article batch generation. JobLogId: {JobLogId}", ctx.Message.ParentJobId))
                 .Then(ctx =>
                 {
                     // Initialize State
@@ -50,6 +51,7 @@ public class ArticleGenerationSaga : MassTransitStateMachine<ArticleGenerationSa
 
                             await Task.WhenAll(tasks);
                         })
+                        .Then(ctx => logger.LogInformation("Article batch generation started. JobLogId: {JobLogId}", ctx.Saga.ParentJobId))
                 .TransitionTo(GeneratingArticles)
         );
         During(GeneratingArticles,
@@ -60,7 +62,7 @@ public class ArticleGenerationSaga : MassTransitStateMachine<ArticleGenerationSa
                     // Batch is finished - we know at least ONE succeeded because we are in When(ArticleGenerated)
                     activity => activity.TransitionTo(GeneratingSummary)
                         .Publish(ctx => new GenerateTopicSummaryCommand(ctx.Saga.CorrelationId, ctx.Saga.ParentJobId, ctx.Saga.TopicId))
-                ),
+                ).Then(ctx => logger.LogInformation("Generating topic summary. JobLogId: {JobLogId}", ctx.Saga.ParentJobId)),
 
             When(ArticleFailed)
                 .Then(ctx => ctx.Saga.FailedCount++)

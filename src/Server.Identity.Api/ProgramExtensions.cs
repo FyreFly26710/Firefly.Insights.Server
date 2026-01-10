@@ -47,7 +47,7 @@ public static class ProgramExtensions
 
             x.UsingRabbitMq((context, cfg) =>
             {
-                cfg.Host(configuration["RabbitMq:Host"], h =>
+                cfg.Host(configuration["RabbitMq:Host"] ?? "localhost", h =>
                 {
                     h.Username(configuration["RabbitMq:Username"] ?? "guest");
                     h.Password(configuration["RabbitMq:Password"] ?? "guest");

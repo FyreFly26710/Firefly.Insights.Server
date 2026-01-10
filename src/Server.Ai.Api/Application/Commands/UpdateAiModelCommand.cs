@@ -1,7 +1,7 @@
 namespace Server.Ai.Api.Application.Commands;
 
 public record UpdateAiModelCommand(UpdateAiModelRequest Request, long AiModelId) : IRequest<bool>;
-public class UpdateAiModelCommandHandler(AiContext _aiContext, IMessageBus _messageBus) : IRequestHandler<UpdateAiModelCommand, bool>
+public class UpdateAiModelCommandHandler(AiContext _aiContext, IMessageBus _messageBus, ILogger<UpdateAiModelCommandHandler> _logger) : IRequestHandler<UpdateAiModelCommand, bool>
 {
     public async Task<bool> Handle(UpdateAiModelCommand command, CancellationToken cancellationToken)
     {
@@ -25,6 +25,7 @@ public class UpdateAiModelCommandHandler(AiContext _aiContext, IMessageBus _mess
 
         if (request.DisplayName is not null || request.Avatar is not null)
         {
+            _logger.LogInformation("Dispatching message to update ai model user. AiModelId: {AiModelId}", model.Id);
             await _messageBus.PublishAsync(new UpdateUserMessage(model.Id, request.DisplayName, request.Avatar), cancellationToken);
         }
         return true;
