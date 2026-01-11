@@ -1,4 +1,5 @@
 using System;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Server.Ai.Api.Controllers;
@@ -16,6 +17,7 @@ public class AiProvidersController(IAiProviderQueries _aiProviderQueries, ILogge
     }
 
     [HttpPut("{id}")]
+    [Authorize(Roles = "admin")]
     public async Task<IActionResult> Update(long id, [FromBody] UpdateAiProviderRequest request)
     {
         var result = await _mediator.Send(new UpdateAiProviderCommand(request, id));
