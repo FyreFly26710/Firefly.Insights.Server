@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Server.Ai.Api.Infrastructure.Contexts;
@@ -11,9 +12,11 @@ using Server.Ai.Api.Infrastructure.Contexts;
 namespace Server.Ai.Api.Migrations
 {
     [DbContext(typeof(AiContext))]
-    partial class AiContextModelSnapshot : ModelSnapshot
+    [Migration("20260111145023_updatePending")]
+    partial class updatePending
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
