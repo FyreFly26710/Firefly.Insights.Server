@@ -67,8 +67,11 @@ namespace Server.Common.Extensions
 
 
             services.Configure<JwtSettings>(configuration.GetSection("Jwt"));
-
             var jwtSettings = configuration.GetSection("Jwt").Get<JwtSettings>() ?? new JwtSettings();
+
+            if (jwtSettings.Key == new JwtSettings().Key)
+                Log.Warning("Default JWT key is used. Please set a custom key in the configuration.");
+            
             var key = Encoding.UTF8.GetBytes(jwtSettings.Key);
 
             services.AddAuthentication(options =>

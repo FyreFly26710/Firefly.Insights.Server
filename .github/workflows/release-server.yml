@@ -102,6 +102,7 @@ jobs:
             echo "GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}" >> .env
             echo "GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}" >> .env
             echo "CLIENT_ORIGINS=${{ secrets.CLIENT_ORIGINS }}" >> .env
+            echo "JWT_KEY=${{ secrets.JWT_KEY }}" >> .env
 
             export PATH=/usr/local/bin:/opt/homebrew/bin:\$PATH
             docker compose -f docker-compose.prod.yml pull
