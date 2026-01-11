@@ -11,7 +11,7 @@ public record ArticleListRequest : PageInfo
     public bool? IsTopicSummary { get; init; }
     public bool? IsHidden { get; init; }
     public long? UserId { get; init; }
-    public List<string>? Tags { get; init; }
+    public List<long>? TagIds { get; init; }
     public override bool IsAscending { get; init; } = false;
     public override string? SortField { get; init; } = nameof(ArticleMeta.CreatedAt);
 }

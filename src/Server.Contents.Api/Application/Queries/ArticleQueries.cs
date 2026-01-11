@@ -45,8 +45,8 @@ public class ArticleQueries(ContentsContext _contentsContext, ILogger<ArticleQue
             query = query.Where(am => am.IsHidden == request.IsHidden);
         if (request.UserId is not null)
             query = query.Where(am => am.UserId == request.UserId);
-        if (request.Tags is not null)
-            query = query.Where(am => am.ArticleTags.Any(at => request.Tags.Contains(at.Tag.Name)));
+        if (request.TagIds is not null)
+            query = query.Where(am => am.ArticleTags.Any(at => request.TagIds.Contains(at.TagId)));
 
         var userIds = query.Select(am => am.UserId).Distinct().ToList();
         var userRequestMessages = await _messageBus.RequestAsync<UserListRequestMessage, UserListRequestMessageResponse>(new UserListRequestMessage(userIds));
