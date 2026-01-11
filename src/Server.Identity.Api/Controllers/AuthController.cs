@@ -80,15 +80,27 @@ public class AuthController(
 
         var tokenResponse = await _oAuthService.GetGmailToken(code, apiUrl);
         if (string.IsNullOrEmpty(tokenResponse.AccessToken))
+        {
+            _logger.LogError("Failed to get access token from Google OAuth.");
             throw new ExceptionBadRequest("Failed to get access token from Google.");
+        }
 
         var userInfo = await _oAuthService.GetUserInfoFromGmailToken(tokenResponse.AccessToken);
         if (string.IsNullOrEmpty(userInfo.Email))
+        {
+            _logger.LogError("Failed to get user email from Google OAuth.");
             throw new ExceptionBadRequest("Failed to get user email from Google.");
+        }
 
         var user = await _userQueries.GetUserByEmail(userInfo.Email);
         var token = _jwtService.GenerateToken(user.UserId.ToString(), user.UserName ?? "", user.UserRole);
+        if (string.IsNullOrEmpty(token))
+        {
+            _logger.LogError("Failed to generate JWT token for user {UserEmail}.", userInfo.Email);
+            throw new ExceptionBadRequest("Failed to generate JWT token.");
+        }
 
+        _logger.LogInformation("User {UserEmail} logged in via Google OAuth.", userInfo.Email);
         string script = $@"
         <html>
         <body>

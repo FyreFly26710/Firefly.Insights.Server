@@ -39,31 +39,23 @@ namespace Server.Common.Extensions
                 .Enrich.WithProperty("ApplicationName", projectName)
                 .Enrich.WithProperty("ThreadId", Environment.CurrentManagedThreadId);
 
-            // Global Overrides
-            loggerConfiguration
-                .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
-                .MinimumLevel.Override("Microsoft.EntityFrameworkCore.Database.Command", LogEventLevel.Warning)
-                .MinimumLevel.Override("Microsoft.Hosting.Lifetime", LogEventLevel.Information);
-
             var seqUrl = configuration.GetValue<string>("Serilog:SeqUrl") ?? "http://localhost:5341";
             loggerConfiguration.WriteTo.Seq(seqUrl);
 
             if (EnvUtil.IsDevelopment())
             {
-                loggerConfiguration.MinimumLevel.Override("MassTransit", LogEventLevel.Debug);
-                loggerConfiguration.MinimumLevel.Override("Yarp", LogEventLevel.Debug);
                 const string customTemplate = "{Timestamp: HH:mm:ss} [{Level:u3}] {SourceContext} {NewLine} {Message:lj}{NewLine}{Exception}";
                 loggerConfiguration.WriteTo.Console(theme: AnsiConsoleTheme.Literate, outputTemplate: customTemplate);
             }
 
-            if (EnvUtil.IsProduction())
-            {
-                string connString = configuration.GetValue<string>("ApplicationInsights:ConnectionString") ?? string.Empty;
-                loggerConfiguration.WriteTo.ApplicationInsights(
-                    connectionString: connString,
-                    telemetryConverter: TelemetryConverter.Traces);
+            // if (EnvUtil.IsProduction())
+            // {
+            //     string connString = configuration.GetValue<string>("ApplicationInsights:ConnectionString") ?? string.Empty;
+            //     loggerConfiguration.WriteTo.ApplicationInsights(
+            //         connectionString: connString,
+            //         telemetryConverter: TelemetryConverter.Traces);
 
-            }
+            // }
 
             Log.Logger = loggerConfiguration.CreateLogger();
             builder.Services.AddSerilog();

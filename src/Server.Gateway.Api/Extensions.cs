@@ -25,20 +25,20 @@ public static class ProgramExtensions
         if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
         {
             loggerConfiguration.MinimumLevel.Override("Yarp", LogEventLevel.Debug);
-            
+
             const string customTemplate = "{Timestamp: HH:mm:ss} [{Level:u3}] {SourceContext} {NewLine} {Message:lj}{NewLine}{Exception}";
             loggerConfiguration.WriteTo.Console(
                 theme: AnsiConsoleTheme.Literate,
                 outputTemplate: customTemplate);
         }
-        if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Production")
-        {
-            string connString = configuration.GetValue<string>("ApplicationInsights:ConnectionString") ?? string.Empty;
+        // if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Production")
+        // {
+        //     string connString = configuration.GetValue<string>("ApplicationInsights:ConnectionString") ?? string.Empty;
 
-            loggerConfiguration.WriteTo.ApplicationInsights(
-                connectionString: connString,
-                telemetryConverter: TelemetryConverter.Traces);
-        }
+        //     loggerConfiguration.WriteTo.ApplicationInsights(
+        //         connectionString: connString,
+        //         telemetryConverter: TelemetryConverter.Traces);
+        // }
         Log.Logger = loggerConfiguration.CreateLogger();
         builder.Services.AddSerilog();
 
